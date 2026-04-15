@@ -14,7 +14,7 @@ jobs:
     name: Build .deb
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Set version from tag
         run: |
@@ -43,7 +43,7 @@ jobs:
     name: Build AppImage
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Set version from tag
         run: |
