@@ -4,6 +4,9 @@
 #ifndef SCANTAILOR_CORE_TIFFREADER_H_
 #define SCANTAILOR_CORE_TIFFREADER_H_
 
+#include <QByteArray>
+#include <QtGlobal>
+
 #include "ImageMetadataLoader.h"
 #include "VirtualFunction.h"
 
@@ -47,7 +50,25 @@ class TiffReader {
 
   static Dpi getDpi(float xres, float yres, unsigned resUnit);
 
+  static QByteArray readIccProfile(const TiffHandle& tif);
+
+  static void applyColorProfile(QImage& image, const QByteArray& iccProfile, bool preserveEmbeddedProfile);
+
   static QImage extractBinaryOrIndexed8Image(const TiffHandle& tif, const TiffInfo& info);
+
+  static QImage extractRgb32Image(const TiffHandle& tif, const TiffInfo& info);
+
+  static QImage extractArgb32Image(const TiffHandle& tif, const TiffInfo& info);
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 13, 0)
+  static QImage extractGrayscale16Image(const TiffHandle& tif, const TiffInfo& info);
+#endif
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
+  static QImage extractRgbx64Image(const TiffHandle& tif, const TiffInfo& info);
+
+  static QImage extractRgba64Image(const TiffHandle& tif, const TiffInfo& info);
+#endif
 
   static void readLines(const TiffHandle& tif, QImage& image);
 

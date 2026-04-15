@@ -8,11 +8,14 @@
 #include <tiffio.h>
 
 #include <QDebug>
+#include <QImage>
+#include <QtGlobal>
 #include <QtCore/QFile>
 #include <cassert>
 #include <cmath>
 
 #include "ApplicationSettings.h"
+#include "ColorProfileUtils.h"
 #include "Dpm.h"
 
 /**
@@ -150,8 +153,19 @@ bool TiffWriter::writeImage(QIODevice& device, const QImage& image) {
     case QImage::Format_MonoLSB:
     case QImage::Format_Indexed8:
       return writeBitonalOrIndexed8Image(tif, image);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 13, 0)
+    case QImage::Format_Grayscale16:
+      return writeGrayscale16Image(tif, image);
+#endif
     default:;
   }
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
+  if ((image.depth() == 64) && !image.isGrayscale()) {
+    return writeRGBA64Image(tif, image.convertToFormat(QImage::Format_RGBA64), image.hasAlphaChannel());
+  }
+#endif
+
   if (image.hasAlphaChannel()) {
     return writeARGB32Image(tif, image.convertToFormat(QImage::Format_ARGB32));
   } else {
@@ -188,6 +202,16 @@ void TiffWriter::setDpm(const TiffHandle& tif, const Dpm& dpm) {
   TIFFSetField(tif.handle(), TIFFTAG_XRESOLUTION, xres);
   TIFFSetField(tif.handle(), TIFFTAG_YRESOLUTION, yres);
   TIFFSetField(tif.handle(), TIFFTAG_RESOLUTIONUNIT, unit);
+}
+
+void TiffWriter::setIccProfile(const TiffHandle& tif, const QImage& image) {
+  const QByteArray iccProfile(color_profile::effectiveIccProfileForImage(image));
+  if (iccProfile.isEmpty()) {
+    return;
+  }
+
+  TIFFSetField(tif.handle(), TIFFTAG_ICCPROFILE, uint32_t(iccProfile.size()),
+               static_cast<void*>(const_cast<char*>(iccProfile.constData())));
 }
 
 bool TiffWriter::writeBitonalOrIndexed8Image(const TiffHandle& tif, const QImage& image) {
@@ -231,6 +255,7 @@ bool TiffWriter::writeBitonalOrIndexed8Image(const TiffHandle& tif, const QImage
 
   TIFFSetField(tif.handle(), TIFFTAG_BITSPERSAMPLE, bitsPerSample);
   TIFFSetField(tif.handle(), TIFFTAG_PHOTOMETRIC, photometric);
+  setIccProfile(tif, image);
 
   if (photometric == PHOTOMETRIC_PALETTE) {
     const int numColors = 1 << bitsPerSample;
@@ -261,6 +286,29 @@ bool TiffWriter::writeBitonalOrIndexed8Image(const TiffHandle& tif, const QImage
   }
 }  // TiffWriter::writeBitonalOrIndexed8Image
 
+bool TiffWriter::writeGrayscale16Image(const TiffHandle& tif, const QImage& image) {
+  TIFFSetField(tif.handle(), TIFFTAG_SAMPLESPERPIXEL, uint16_t(1));
+  TIFFSetField(tif.handle(), TIFFTAG_COMPRESSION,
+               uint16_t(ApplicationSettings::getInstance().getTiffColorCompression()));
+  TIFFSetField(tif.handle(), TIFFTAG_BITSPERSAMPLE, uint16_t(16));
+  TIFFSetField(tif.handle(), TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_MINISBLACK);
+  setIccProfile(tif, image);
+
+  const int width = image.width();
+  const int height = image.height();
+
+  std::vector<uint16_t> tmpLine(width, 0);
+
+  for (int y = 0; y < height; ++y) {
+    const auto* srcLine = reinterpret_cast<const uint16_t*>(image.scanLine(y));
+    memcpy(&tmpLine[0], srcLine, tmpLine.size() * sizeof(uint16_t));
+    if (TIFFWriteScanline(tif.handle(), &tmpLine[0], y) == -1) {
+      return false;
+    }
+  }
+  return true;
+}
+
 bool TiffWriter::writeRGB32Image(const TiffHandle& tif, const QImage& image) {
   assert(image.format() == QImage::Format_RGB32);
 
@@ -269,6 +317,7 @@ bool TiffWriter::writeRGB32Image(const TiffHandle& tif, const QImage& image) {
                uint16_t(ApplicationSettings::getInstance().getTiffColorCompression()));
   TIFFSetField(tif.handle(), TIFFTAG_BITSPERSAMPLE, uint16_t(8));
   TIFFSetField(tif.handle(), TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
+  setIccProfile(tif, image);
 
   const int width = image.width();
   const int height = image.height();
@@ -303,6 +352,9 @@ bool TiffWriter::writeARGB32Image(const TiffHandle& tif, const QImage& image) {
                uint16_t(ApplicationSettings::getInstance().getTiffColorCompression()));
   TIFFSetField(tif.handle(), TIFFTAG_BITSPERSAMPLE, uint16_t(8));
   TIFFSetField(tif.handle(), TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
+  const uint16_t extraSampleType = EXTRASAMPLE_UNASSALPHA;
+  TIFFSetField(tif.handle(), TIFFTAG_EXTRASAMPLES, uint16_t(1), &extraSampleType);
+  setIccProfile(tif, image);
 
   const int width = image.width();
   const int height = image.height();
@@ -329,6 +381,47 @@ bool TiffWriter::writeARGB32Image(const TiffHandle& tif, const QImage& image) {
   }
   return true;
 }  // TiffWriter::writeARGB32Image
+
+bool TiffWriter::writeRGBA64Image(const TiffHandle& tif, const QImage& image, const bool writeAlpha) {
+  assert(image.format() == QImage::Format_RGBA64);
+
+  TIFFSetField(tif.handle(), TIFFTAG_SAMPLESPERPIXEL, uint16_t(writeAlpha ? 4 : 3));
+  TIFFSetField(tif.handle(), TIFFTAG_COMPRESSION,
+               uint16_t(ApplicationSettings::getInstance().getTiffColorCompression()));
+  TIFFSetField(tif.handle(), TIFFTAG_BITSPERSAMPLE, uint16_t(16));
+  TIFFSetField(tif.handle(), TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
+  if (writeAlpha) {
+    const uint16_t extraSampleType = EXTRASAMPLE_UNASSALPHA;
+    TIFFSetField(tif.handle(), TIFFTAG_EXTRASAMPLES, uint16_t(1), &extraSampleType);
+  }
+  setIccProfile(tif, image);
+
+  const int width = image.width();
+  const int height = image.height();
+  std::vector<uint16_t> tmpLine(width * (writeAlpha ? 4 : 3), 0);
+
+  for (int y = 0; y < height; ++y) {
+    const auto* srcLine = reinterpret_cast<const QRgba64*>(image.scanLine(y));
+    uint16_t* pDst = &tmpLine[0];
+    for (int x = 0; x < width; ++x) {
+      const QRgba64 pixel = srcLine[x];
+      pDst[0] = pixel.red();
+      pDst[1] = pixel.green();
+      pDst[2] = pixel.blue();
+      if (writeAlpha) {
+        pDst[3] = pixel.alpha();
+        pDst += 4;
+      } else {
+        pDst += 3;
+      }
+    }
+
+    if (TIFFWriteScanline(tif.handle(), &tmpLine[0], y) == -1) {
+      return false;
+    }
+  }
+  return true;
+}
 
 bool TiffWriter::write8bitLines(const TiffHandle& tif, const QImage& image) {
   const int width = image.width();

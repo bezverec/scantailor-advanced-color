@@ -15,7 +15,7 @@
 class FilterData {
   // Member-wise copying is OK.
  public:
-  explicit FilterData(const QImage& image);
+  explicit FilterData(const QImage& image, const QImage& sourceImage = QImage());
 
   FilterData(const FilterData& other, const ImageTransformation& xform);
 
@@ -26,6 +26,8 @@ class FilterData {
   const ImageTransformation& xform() const;
 
   const QImage& origImage() const;
+
+  const QImage& sourceImage() const;
 
   const imageproc::GrayImage& grayImage() const;
 
@@ -39,6 +41,7 @@ class FilterData {
 
  private:
   QImage m_origImage;
+  QImage m_sourceImage;
   imageproc::GrayImage m_grayImage;
   ImageTransformation m_xform;
   ImageSettings::PageParams m_imageParams;
@@ -51,6 +54,10 @@ inline const ImageTransformation& FilterData::xform() const {
 
 inline const QImage& FilterData::origImage() const {
   return m_origImage;
+}
+
+inline const QImage& FilterData::sourceImage() const {
+  return m_sourceImage;
 }
 
 inline const imageproc::GrayImage& FilterData::grayImage() const {

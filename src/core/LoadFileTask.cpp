@@ -11,6 +11,7 @@
 #include <QTextDocument>
 
 #include "AbstractFilter.h"
+#include "ColorProfileUtils.h"
 #include "Dpm.h"
 #include "ErrorWidget.h"
 #include "FilterData.h"
@@ -56,6 +57,7 @@ LoadFileTask::~LoadFileTask() = default;
 
 FilterResultPtr LoadFileTask::operator()() {
   QImage image = ImageLoader::load(m_imageId);
+  QImage sourceImage(image);
 
   try {
     throwIfCancelled();
@@ -66,8 +68,9 @@ FilterResultPtr LoadFileTask::operator()() {
       convertToSupportedFormat(image);
       updateImageSizeIfChanged(image);
       overrideDpi(image);
+      overrideDpi(sourceImage);
       m_thumbnailCache->ensureThumbnailExists(m_imageId, image);
-      return m_nextTask->process(*this, FilterData(image));
+      return m_nextTask->process(*this, FilterData(image, sourceImage));
     }
   } catch (const CancelledException&) {
     return nullptr;
@@ -98,11 +101,19 @@ void LoadFileTask::overrideDpi(QImage& image) const {
 }
 
 void LoadFileTask::convertToSupportedFormat(QImage& image) const {
+  const QImage originalImage(image);
+
   if (((image.format() == QImage::Format_Indexed8) && !image.isGrayscale()) || (image.depth() > 8)) {
     const QImage::Format fmt = image.hasAlphaChannel() ? QImage::Format_ARGB32 : QImage::Format_RGB32;
     image = image.convertToFormat(fmt);
+    color_profile::copyColorProfile(originalImage, image);
   } else {
     image = toGrayscale(image);
+    if (originalImage.isGrayscale()) {
+      color_profile::copyColorProfile(originalImage, image);
+    } else {
+      color_profile::applyDefaultColorProfile(image);
+    }
   }
 }
 

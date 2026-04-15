@@ -12,10 +12,13 @@ if (POLICY CMP0071)
   cmake_policy(SET CMP0071 NEW)
 endif()
 
-project("ScanTailor Advanced")
+project("ScanTailor Advanced Color")
 
 # Set compiler flags.
 set(CMAKE_CXX_STANDARD 17)
+
+# Option to disable tests for offline/chroot builds where Boost or test deps may be missing (issue #61).
+option(BUILD_TESTS "Build unit tests (math_tests, imageproc_tests, core_tests, foundation_tests, qt_tests)" ON)
 
 if (NOT DEFAULT_COMPILER_FLAGS_IS_SET)
   if (MSVC)
@@ -162,6 +165,36 @@ if (WIN32)
       INTERFACE_COMPILE_DEFINITIONS USE_LIBTIFF_DLL)
 endif()
 
+#================================== LCMS2 ==================================#
+
+option(ENABLE_LCMS2 "Enable Little CMS 2 helpers for TIFF ICC profile handling." ON)
+
+if (ENABLE_LCMS2)
+  find_package(LCMS2 QUIET)
+
+  if (NOT TARGET LCMS2::LCMS2)
+    find_path(LCMS2_INCLUDE_DIR lcms2.h)
+    find_library(LCMS2_LIBRARY NAMES lcms2 liblcms2)
+
+    if (LCMS2_INCLUDE_DIR AND LCMS2_LIBRARY)
+      add_library(LCMS2::LCMS2 UNKNOWN IMPORTED)
+      set_target_properties(
+          LCMS2::LCMS2 PROPERTIES
+          IMPORTED_LOCATION "${LCMS2_LIBRARY}"
+          INTERFACE_INCLUDE_DIRECTORIES "${LCMS2_INCLUDE_DIR}")
+    endif()
+  endif()
+
+  if (TARGET LCMS2::LCMS2)
+    if (WIN32)
+      add_dynamic_library_locations(LCMS2::LCMS2)
+    endif()
+    message(STATUS "LCMS2 support enabled for TIFF ICC profile helpers.")
+  else()
+    message(WARNING "LCMS2 not found. TIFF ICC fallback profiles will be disabled.")
+  endif()
+endif()
+
 #================================= Boost ================================#
 
 #set(Boost_NO_WARN_NEW_VERSIONS ON)
@@ -193,7 +226,11 @@ if (WIN32)
 endif()
 set(Boost_USE_MULTITHREADED ON)
 
-find_package(Boost 1.60 COMPONENTS unit_test_framework REQUIRED)
+if (BUILD_TESTS)
+  find_package(Boost 1.60 COMPONENTS unit_test_framework REQUIRED)
+else()
+  find_package(Boost 1.60 REQUIRED)
+endif()
 
 include_directories(${Boost_INCLUDE_DIRS})
 add_definitions(-DBOOST_MULTI_INDEX_DISABLE_SERIALIZATION)
@@ -266,8 +303,6 @@ if (WIN32 AND MSVC)
   add_definitions(-DNOMINMAX)
 endif()
 
-# Option to disable tests for offline/chroot builds where Boost or test deps may be missing (issue #61).
-option(BUILD_TESTS "Build unit tests (math_tests, imageproc_tests, core_tests, foundation_tests, qt_tests)" ON)
 if (BUILD_TESTS)
   enable_testing()
 endif()
@@ -382,6 +417,10 @@ if (WIN32)
         JPEG::JPEG PNG::PNG ZLIB::ZLIB TIFF::TIFF
         Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Xml
         Qt5::Network Qt5::OpenGL Qt5::Svg)
+  endif()
+
+  if (TARGET LCMS2::LCMS2)
+    list(APPEND dep_libs LCMS2::LCMS2)
   endif()
 
   foreach (_target ${dep_libs})

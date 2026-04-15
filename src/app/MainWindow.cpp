@@ -1633,7 +1633,7 @@ void MainWindow::updateWindowTitle() {
     projectName = QFileInfo(m_projectFile).completeBaseName();
   }
   const QString version(QString::fromUtf8(VERSION));
-  setWindowTitle(tr("%2 - ScanTailor Advanced [%1bit]").arg(sizeof(void*) * 8).arg(projectName));
+  setWindowTitle(tr("%2 - ScanTailor Advanced Color [%1bit]").arg(sizeof(void*) * 8).arg(projectName));
 }
 
 /**

@@ -40,11 +40,17 @@ class TiffWriter {
 
   static void setDpm(const TiffHandle& tif, const Dpm& dpm);
 
+  static void setIccProfile(const TiffHandle& tif, const QImage& image);
+
   static bool writeBitonalOrIndexed8Image(const TiffHandle& tif, const QImage& image);
+
+  static bool writeGrayscale16Image(const TiffHandle& tif, const QImage& image);
 
   static bool writeRGB32Image(const TiffHandle& tif, const QImage& image);
 
   static bool writeARGB32Image(const TiffHandle& tif, const QImage& image);
+
+  static bool writeRGBA64Image(const TiffHandle& tif, const QImage& image, bool writeAlpha);
 
   static bool write8bitLines(const TiffHandle& tif, const QImage& image);
 

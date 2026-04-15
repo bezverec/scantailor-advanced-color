@@ -40,6 +40,9 @@
 #include <imageproc/WienerFilter.h>
 
 #include <QColor>
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+#include <QColorSpace>
+#endif
 #include <QDebug>
 #include <QPainter>
 #include <QPainterPath>
@@ -53,6 +56,7 @@
 #include <stdexcept>
 
 #include "ColorParams.h"
+#include "ColorProfileUtils.h"
 #include "DebugImages.h"
 #include "DewarpingOptions.h"
 #include "Dpm.h"
@@ -199,6 +203,10 @@ class OutputGenerator::Processor {
 
   QImage posterizeImage(const QImage& image, const QColor& backgroundColor = Qt::white) const;
 
+  bool canUseSourcePreservingOutput(const ZoneSet& fillZones) const;
+
+  QImage buildSourcePreservingOutput() const;
+
   ForegroundType getForegroundType() const;
 
   void processPictureZones(BinaryImage& mask, ZoneSet& pictureZones, const GrayImage& image);
@@ -242,6 +250,7 @@ class OutputGenerator::Processor {
 
   bool m_blackOnWhite;
   QImage m_inputOrigImage;
+  QImage m_inputSourceImage;
   GrayImage m_inputGrayImage;
   bool m_colorOriginal;
 
@@ -574,6 +583,7 @@ void fillMarginsInPlace(QImage& image,
                         const QPolygonF& contentPoly,
                         const QColor& color,
                         const bool antialiasing = true) {
+  const QImage originalImage(image);
   const QRect imageRect = image.rect();
   QPolygonF clipped = clipContentPolyToRect(contentPoly, imageRect);
   if (clipped.isEmpty() || clipped.boundingRect().isEmpty()) {
@@ -585,6 +595,7 @@ void fillMarginsInPlace(QImage& image,
     BinaryImage binaryImage(image);
     PolygonRasterizer::fillExcept(binaryImage, (color == Qt::black) ? BLACK : WHITE, clipped, Qt::WindingFill);
     image = binaryImage.toQImage();
+    color_profile::copyColorProfile(originalImage, image);
     return;
   }
   if ((image.format() == QImage::Format_Indexed8) && image.isGrayscale()) {
@@ -610,6 +621,7 @@ void fillMarginsInPlace(QImage& image,
     painter.drawPath(outerPath.subtracted(innerPath));
   }
   image = image.convertToFormat(imageFormat);
+  color_profile::copyColorProfile(originalImage, image);
 }
 
 void fillMarginsInPlace(BinaryImage& image, const QPolygonF& contentPoly, const BWColor color) {
@@ -632,6 +644,7 @@ void fillMarginsInPlace(BinaryImage& image, const BinaryImage& contentMask, cons
 }
 
 void fillMarginsInPlace(QImage& image, const BinaryImage& contentMask, const QColor& color) {
+  const QImage originalImage(image);
   if (image.size() != contentMask.size()) {
     throw std::invalid_argument("fillMarginsInPlace: img and mask have different sizes");
   }
@@ -640,6 +653,7 @@ void fillMarginsInPlace(QImage& image, const BinaryImage& contentMask, const QCo
     BinaryImage binaryImage(image);
     fillExcept(binaryImage, contentMask, (color == Qt::black) ? BLACK : WHITE);
     image = binaryImage.toQImage();
+    color_profile::copyColorProfile(originalImage, image);
     return;
   }
 
@@ -677,6 +691,7 @@ void applyFillZonesInPlace(QImage& img,
     return;
   }
 
+  const QImage originalImage(img);
   QImage canvas(img.convertToFormat(QImage::Format_ARGB32_Premultiplied));
   {
     QPainter painter(&canvas);
@@ -696,6 +711,7 @@ void applyFillZonesInPlace(QImage& img,
   } else {
     img = canvas.convertToFormat(img.format());
   }
+  color_profile::copyColorProfile(originalImage, img);
 }
 
 using MapPointFunc = QPointF (QTransform::*)(const QPointF&) const;
@@ -1242,6 +1258,7 @@ void OutputGenerator::Processor::initFilterData(const FilterData& input) {
 
   m_inputGrayImage = m_blackOnWhite ? input.grayImage() : input.grayImage().inverted();
   m_inputOrigImage = input.origImage();
+  m_inputSourceImage = input.sourceImage().isNull() ? input.origImage() : input.sourceImage();
   if (!m_blackOnWhite) {
     m_inputOrigImage.invertPixels();
   }
@@ -1274,6 +1291,10 @@ std::unique_ptr<OutputImage> OutputGenerator::Processor::processWithoutDewarping
                                                                                  const ZoneSet& fillZones,
                                                                                  BinaryImage* autoPictureMask,
                                                                                  BinaryImage* specklesImage) {
+  if (canUseSourcePreservingOutput(fillZones)) {
+    return OutputImageBuilder().setImage(buildSourcePreservingOutput()).build();
+  }
+
   QImage maybeNormalized, maybeSmoothed;
   BinaryImage bwContent, bwContentMaskOutput, bwContentOutput;
   OutputImageBuilder imageBuilder;
@@ -1353,6 +1374,7 @@ std::unique_ptr<OutputImage> OutputGenerator::Processor::processWithoutDewarping
         if (maybeNormalized.format() == QImage::Format_Indexed8) {
           colorImage.setColorTable(maybeNormalized.colorTable());
         }
+        color_profile::copyColorProfile(maybeNormalized, colorImage);
         colorImage.fill(Qt::white);
         drawOver(colorImage, m_croppedContentRect, maybeNormalized, m_contentRectInWorkingCs);
         maybeNormalized = QImage();
@@ -1471,6 +1493,7 @@ std::unique_ptr<OutputImage> OutputGenerator::Processor::processWithoutDewarping
     // Both the constructor and setColorTable() above can leave the image null.
     throw std::bad_alloc();
   }
+  color_profile::copyColorProfile(maybeNormalized, dst);
 
   if (m_renderParams.needBinarization() && !m_renderParams.originalBackground()) {
     switch (m_colorParams.colorCommonOptions().getFillingColor()) {
@@ -1525,6 +1548,63 @@ std::unique_ptr<OutputImage> OutputGenerator::Processor::processWithoutDewarping
     }
   }
   return imageBuilder.setImage(dst).build();
+}
+
+bool OutputGenerator::Processor::canUseSourcePreservingOutput(const ZoneSet& fillZones) const {
+  const ColorCommonOptions& colorCommonOptions = m_colorParams.colorCommonOptions();
+
+  if (m_inputSourceImage.isNull()) {
+    return false;
+  }
+  if (!m_blackOnWhite) {
+    return false;
+  }
+  if (m_renderParams.mixedOutput()) {
+    return false;
+  }
+  if (m_renderParams.needBinarization() || m_renderParams.normalizeIllumination() || m_renderParams.posterize()) {
+    return false;
+  }
+  if (colorCommonOptions.wienerCoef() != 0.0) {
+    return false;
+  }
+  if (!fillZones.empty()) {
+    return false;
+  }
+
+  bool preservesMoreThanWorkingPath = false;
+#if QT_VERSION >= QT_VERSION_CHECK(5, 13, 0)
+  preservesMoreThanWorkingPath = preservesMoreThanWorkingPath || m_inputSourceImage.format() == QImage::Format_Grayscale16;
+#endif
+#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
+  preservesMoreThanWorkingPath
+      = preservesMoreThanWorkingPath
+        || m_inputSourceImage.format() == QImage::Format_RGBX64
+        || m_inputSourceImage.format() == QImage::Format_RGBA64;
+#endif
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+  preservesMoreThanWorkingPath = preservesMoreThanWorkingPath || m_inputSourceImage.colorSpace().isValid();
+#else
+  preservesMoreThanWorkingPath = preservesMoreThanWorkingPath || m_inputSourceImage.depth() > 8;
+#endif
+  return preservesMoreThanWorkingPath;
+}
+
+QImage OutputGenerator::Processor::buildSourcePreservingOutput() const {
+  QColor outsideColor = m_outsideBackgroundColor;
+  switch (m_colorParams.colorCommonOptions().getFillingColor()) {
+    case FILL_WHITE:
+      outsideColor = m_blackOnWhite ? Qt::white : Qt::black;
+      break;
+    case FILL_BLACK:
+      outsideColor = m_blackOnWhite ? Qt::black : Qt::white;
+      break;
+    case FILL_BACKGROUND:
+    default:
+      break;
+  }
+
+  return transform(m_inputSourceImage, m_xform.transform(), m_outRect, OutsidePixels::assumeWeakColor(outsideColor));
 }
 
 std::unique_ptr<OutputImage> OutputGenerator::Processor::processWithDewarping(ZoneSet& pictureZones,
@@ -2517,6 +2597,7 @@ QImage OutputGenerator::Processor::segmentImage(const BinaryImage& image, const 
     m_dbg->add(segmented, "segmented");
   }
   m_status.throwIfCancelled();
+  color_profile::copyColorProfile(colorImage, segmented);
   return segmented;
 }
 
@@ -2532,6 +2613,7 @@ QImage OutputGenerator::Processor::posterizeImage(const QImage& image, const QCo
     m_dbg->add(posterized, "posterized");
   }
   m_status.throwIfCancelled();
+  color_profile::copyColorProfile(image, posterized);
   return posterized;
 }
 

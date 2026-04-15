@@ -9,11 +9,15 @@
 
 using namespace imageproc;
 
-FilterData::FilterData(const QImage& image)
-    : m_origImage(image), m_grayImage(toGrayscale(m_origImage)), m_xform(image.rect(), Dpm(image)) {}
+FilterData::FilterData(const QImage& image, const QImage& sourceImage)
+    : m_origImage(image),
+      m_sourceImage(sourceImage.isNull() ? image : sourceImage),
+      m_grayImage(toGrayscale(m_origImage)),
+      m_xform(image.rect(), Dpm(image)) {}
 
 FilterData::FilterData(const FilterData& other, const ImageTransformation& xform)
     : m_origImage(other.m_origImage),
+      m_sourceImage(other.m_sourceImage),
       m_grayImage(other.m_grayImage),
       m_xform(xform),
       m_imageParams(other.m_imageParams) {}

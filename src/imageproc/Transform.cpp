@@ -4,7 +4,11 @@
 #include "Transform.h"
 
 #include <QDebug>
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+#include <QColorSpace>
+#endif
 #include <cassert>
+#include <limits>
 #include <stdexcept>
 
 #include "BadAllocIfNull.h"
@@ -20,6 +24,84 @@ struct XLess {
 struct YLess {
   bool operator()(const QPointF& lhs, const QPointF& rhs) const { return lhs.y() < rhs.y(); }
 };
+
+template <typename AccumType>
+class GrayColorMixer16 {
+  using Traits = std::numeric_limits<AccumType>;
+
+ public:
+  using accumType = AccumType;
+  using resultType = uint16_t;
+
+  GrayColorMixer16() : m_accum() {}
+
+  void add(const uint16_t grayLevel, const AccumType weight) { m_accum += AccumType(grayLevel) * weight; }
+
+  resultType mix(const AccumType totalWeight) const {
+    assert(totalWeight > 0);
+
+    if constexpr (Traits::is_integer) {
+      const AccumType halfWeight = totalWeight >> 1;
+      return static_cast<uint16_t>((m_accum + halfWeight) / totalWeight);
+    } else {
+      return static_cast<uint16_t>(m_accum / totalWeight + AccumType(0.5));
+    }
+  }
+
+ private:
+  AccumType m_accum;
+};
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
+template <typename AccumType>
+class Rgba64ColorMixer {
+  using Traits = std::numeric_limits<AccumType>;
+
+ public:
+  using accumType = AccumType;
+  using resultType = QRgba64;
+
+  Rgba64ColorMixer() : m_alphaAccum(), m_redAccum(), m_greenAccum(), m_blueAccum() {}
+
+  void add(const QRgba64 rgba, const AccumType weight) {
+    const AccumType alpha = AccumType(rgba.alpha());
+    const AccumType alphaWeight = alpha * weight;
+    m_alphaAccum += alphaWeight;
+    m_redAccum += AccumType(rgba.red()) * alphaWeight;
+    m_greenAccum += AccumType(rgba.green()) * alphaWeight;
+    m_blueAccum += AccumType(rgba.blue()) * alphaWeight;
+  }
+
+  resultType mix(const AccumType totalWeight) const {
+    assert(totalWeight > 0);
+    if (m_alphaAccum == AccumType(0)) {
+      return qRgba64(0, 0, 0, 0);
+    }
+
+    if constexpr (Traits::is_integer) {
+      const AccumType halfWeight1 = totalWeight >> 1;
+      const AccumType halfWeight2 = m_alphaAccum >> 1;
+      return qRgba64(uint16_t((m_redAccum + halfWeight2) / m_alphaAccum),
+                     uint16_t((m_greenAccum + halfWeight2) / m_alphaAccum),
+                     uint16_t((m_blueAccum + halfWeight2) / m_alphaAccum),
+                     uint16_t((m_alphaAccum + halfWeight1) / totalWeight));
+    } else {
+      const AccumType scale1 = AccumType(1) / totalWeight;
+      const AccumType scale2 = AccumType(1) / m_alphaAccum;
+      return qRgba64(uint16_t(AccumType(0.5) + m_redAccum * scale2),
+                     uint16_t(AccumType(0.5) + m_greenAccum * scale2),
+                     uint16_t(AccumType(0.5) + m_blueAccum * scale2),
+                     uint16_t(AccumType(0.5) + m_alphaAccum * scale1));
+    }
+  }
+
+ private:
+  AccumType m_alphaAccum;
+  AccumType m_redAccum;
+  AccumType m_greenAccum;
+  AccumType m_blueAccum;
+};
+#endif
 
 QSizeF calcSrcUnitSize(const QTransform& xform, const QSizeF& min) {
   // Imagine a rectangle of (0, 0, 1, 1), except we take
@@ -288,6 +370,28 @@ void fixDpiInPlace(ImageT& dst, const QImage& src, const QTransform& xform) {
   dst.setDotsPerMeterX(qRound(xform.map(horLine).length()));
   dst.setDotsPerMeterY(qRound(xform.map(verLine).length()));
 }
+
+void copyColorSpaceInPlace(QImage& dst, const QImage& src) {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+  if (src.colorSpace().isValid()) {
+    dst.setColorSpace(src.colorSpace());
+  }
+#else
+  Q_UNUSED(dst);
+  Q_UNUSED(src);
+#endif
+}
+
+void copyColorSpaceInPlace(GrayImage& dst, const QImage& src) {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+  if (src.isGrayscale() && src.colorSpace().isValid()) {
+    dst.setColorSpace(src.colorSpace());
+  }
+#else
+  Q_UNUSED(dst);
+  Q_UNUSED(src);
+#endif
+}
 }  // namespace
 
 QImage transform(const QImage& src,
@@ -310,6 +414,47 @@ QImage transform(const QImage& src,
   switch (src.format()) {
     case QImage::Format_Invalid:
       return QImage();
+#if QT_VERSION >= QT_VERSION_CHECK(5, 13, 0)
+    case QImage::Format_Grayscale16: {
+      QImage dst(dstRect.size(), QImage::Format_Grayscale16);
+      badAllocIfNull(dst);
+
+      using AccumType = uint64_t;
+      transformGeneric<uint16_t, GrayColorMixer16<AccumType>>(
+          reinterpret_cast<const uint16_t*>(src.bits()), src.bytesPerLine() / 2, src.size(),
+          reinterpret_cast<uint16_t*>(dst.bits()), dst.bytesPerLine() / 2, xform, dstRect,
+          static_cast<uint16_t>(outsidePixels.grayLevel() * 257u), outsidePixels.flags(), minMappingArea);
+
+      fixDpiInPlace(dst, src, xform);
+      copyColorSpaceInPlace(dst, src);
+      return dst;
+    }
+#endif
+#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
+    case QImage::Format_RGBX64:
+    case QImage::Format_RGBA64: {
+      const bool opaqueOutside = !src.hasAlphaChannel() && (qAlpha(outsidePixels.rgba()) == 0xff);
+      const QImage src64(
+          src.convertToFormat(src.hasAlphaChannel() ? QImage::Format_RGBA64 : QImage::Format_RGBX64));
+      badAllocIfNull(src64);
+      QImage dst(dstRect.size(), src.hasAlphaChannel() ? QImage::Format_RGBA64 : QImage::Format_RGBX64);
+      badAllocIfNull(dst);
+
+      using AccumType = float;
+      const QRgba64 outsideColor = qRgba64(uint16_t(qRed(outsidePixels.rgba()) * 257u),
+                                           uint16_t(qGreen(outsidePixels.rgba()) * 257u),
+                                           uint16_t(qBlue(outsidePixels.rgba()) * 257u),
+                                           uint16_t((opaqueOutside ? 255u : qAlpha(outsidePixels.rgba())) * 257u));
+      transformGeneric<QRgba64, Rgba64ColorMixer<AccumType>>(
+          reinterpret_cast<const QRgba64*>(src64.bits()), src64.bytesPerLine() / int(sizeof(QRgba64)), src64.size(),
+          reinterpret_cast<QRgba64*>(dst.bits()), dst.bytesPerLine() / int(sizeof(QRgba64)), xform, dstRect,
+          outsideColor, outsidePixels.flags(), minMappingArea);
+
+      fixDpiInPlace(dst, src, xform);
+      copyColorSpaceInPlace(dst, src);
+      return dst;
+    }
+#endif
     case QImage::Format_Indexed8:
     case QImage::Format_Mono:
     case QImage::Format_MonoLSB:
@@ -340,6 +485,7 @@ QImage transform(const QImage& src,
             dst.bytesPerLine() / 4, xform, dstRect, outsidePixels.rgb(), outsidePixels.flags(), minMappingArea);
 
         fixDpiInPlace(dst, src, xform);
+        copyColorSpaceInPlace(dst, src);
         return dst;
       } else {
         const QImage srcArgb32(src.convertToFormat(QImage::Format_ARGB32));
@@ -353,6 +499,7 @@ QImage transform(const QImage& src,
             dst.bytesPerLine() / 4, xform, dstRect, outsidePixels.rgba(), outsidePixels.flags(), minMappingArea);
 
         fixDpiInPlace(dst, src, xform);
+        copyColorSpaceInPlace(dst, src);
         return dst;
       }
   }
@@ -382,6 +529,7 @@ GrayImage transformToGray(const QImage& src,
                                                        outsidePixels.flags(), minMappingArea);
 
   fixDpiInPlace(dst, src, xform);
+  copyColorSpaceInPlace(dst, src);
   return dst;
 }
 }  // namespace imageproc

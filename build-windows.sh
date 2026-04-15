@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# Cross-compile ScanTailor Advanced to Windows .exe from Linux using MXE.
+# Cross-compile ScanTailor Advanced Color to Windows .exe from Linux using MXE.
 #
 # Prerequisites:
 #   1. Install MXE (M Cross Environment): https://mxe.cc/
 #   2. Build the required packages (one-time, can take 1–2 hours):
 #      cd /path/to/mxe
 #      make MXE_TARGETS=x86_64-w64-mingw32.static \
-#        qt5 jpeg libpng tiff zlib boost
+#        qt5 jpeg libpng tiff zlib boost lcms
 #
 # Usage:
 #   MXE_DIR=/path/to/mxe ./build-windows.sh
@@ -43,7 +43,7 @@ else
   echo "" >&2
   echo "One-time setup:" >&2
   echo "  git clone https://github.com/mxe/mxe.git ~/mxe" >&2
-  echo "  cd ~/mxe && make MXE_TARGETS=${MXE_TARGET} qt5 jpeg libpng tiff zlib boost" >&2
+  echo "  cd ~/mxe && make MXE_TARGETS=${MXE_TARGET} qt5 jpeg libpng tiff zlib boost lcms" >&2
   echo "  (This can take 1–2 hours.)" >&2
   exit 1
 fi
@@ -52,7 +52,7 @@ TOOLCHAIN_FILE="${MXE_ROOT}/usr/${MXE_TARGET}/share/cmake/mxe-conf.cmake"
 if [[ ! -f "$TOOLCHAIN_FILE" ]]; then
   echo "Error: MXE toolchain not found: $TOOLCHAIN_FILE" >&2
   echo "Build the MXE target first:" >&2
-  echo "  cd $MXE_ROOT && make MXE_TARGETS=${MXE_TARGET} qt5 jpeg libpng tiff zlib boost" >&2
+  echo "  cd $MXE_ROOT && make MXE_TARGETS=${MXE_TARGET} qt5 jpeg libpng tiff zlib boost lcms" >&2
   exit 1
 fi
 

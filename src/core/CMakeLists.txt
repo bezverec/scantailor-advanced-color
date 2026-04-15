@@ -43,6 +43,7 @@ set(common_sources
     StageSequence.cpp StageSequence.h
     ProjectPages.cpp ProjectPages.h
     FilterData.cpp FilterData.h
+    ColorProfileUtils.cpp ColorProfileUtils.h
     ImageMetadataLoader.cpp ImageMetadataLoader.h
     TiffReader.cpp TiffReader.h
     TiffWriter.cpp TiffWriter.h
@@ -136,6 +137,11 @@ else()
 endif()
 target_include_directories(core PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
 set_target_properties(core PROPERTIES AUTOUIC ON)
+
+if (TARGET LCMS2::LCMS2)
+  target_link_libraries(core PRIVATE LCMS2::LCMS2)
+  target_compile_definitions(core PRIVATE SCANTAILOR_HAVE_LCMS2)
+endif()
 
 translation_sources(scantailor ${common_sources} ${common_ui_files})
 

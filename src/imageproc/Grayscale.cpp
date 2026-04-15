@@ -3,12 +3,31 @@
 
 #include "Grayscale.h"
 
+#include <QtGlobal>
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+#include <QColorSpace>
+#endif
 #include <stdexcept>
 
 #include "BinaryImage.h"
 #include "BitOps.h"
 
 namespace imageproc {
+namespace {
+
+void copyGrayscaleColorSpaceIfPresent(const QImage& src, QImage& dst) {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+  if (src.isGrayscale() && src.colorSpace().isValid()) {
+    dst.setColorSpace(src.colorSpace());
+  }
+#else
+  Q_UNUSED(src);
+  Q_UNUSED(dst);
+#endif
+}
+
+}  // namespace
+
 static QImage monoMsbToGrayscale(const QImage& src) {
   const int width = src.width();
   const int height = src.height();
@@ -47,6 +66,7 @@ static QImage monoMsbToGrayscale(const QImage& src) {
 
   dst.setDotsPerMeterX(src.dotsPerMeterX());
   dst.setDotsPerMeterY(src.dotsPerMeterY());
+  copyGrayscaleColorSpaceIfPresent(src, dst);
   return dst;
 }  // monoMsbToGrayscale
 
@@ -88,6 +108,7 @@ static QImage monoLsbToGrayscale(const QImage& src) {
 
   dst.setDotsPerMeterX(src.dotsPerMeterX());
   dst.setDotsPerMeterY(src.dotsPerMeterY());
+  copyGrayscaleColorSpaceIfPresent(src, dst);
   return dst;
 }  // monoLsbToGrayscale
 
@@ -113,6 +134,7 @@ static QImage anyToGrayscale(const QImage& src) {
 
   dst.setDotsPerMeterX(src.dotsPerMeterX());
   dst.setDotsPerMeterY(src.dotsPerMeterY());
+  copyGrayscaleColorSpaceIfPresent(src, dst);
   return dst;
 }
 
@@ -144,6 +166,7 @@ QImage toGrayscale(const QImage& src) {
           if (!src.isNull() && dst.isNull()) {
             throw std::bad_alloc();
           }
+          copyGrayscaleColorSpaceIfPresent(src, dst);
           return dst;
         }
       }

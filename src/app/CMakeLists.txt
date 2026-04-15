@@ -81,13 +81,23 @@ install(TARGETS scantailor RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
 
 if (Qt6_FOUND AND WIN32)
   #manage plugins with windeployqt.
+  find_program(
+    WINDEPLOYQT_EXECUTABLE
+    NAMES windeployqt windeployqt.exe
+    HINTS
+      "${QT_BINDIR}"
+      "${QT6_INSTALL_PREFIX}/tools/Qt6/bin"
+  )
+  if (NOT WINDEPLOYQT_EXECUTABLE)
+    message(FATAL_ERROR "windeployqt executable not found.")
+  endif()
   add_custom_command(
     TARGET scantailor
     POST_BUILD
-    COMMAND ${QT_BINDIR}/windeployqt  $<TARGET_FILE:scantailor>
+    COMMAND "${WINDEPLOYQT_EXECUTABLE}" $<TARGET_FILE:scantailor>
     COMMENT "deploy qt files alongside binary (e.g. plugins)"
   )
-  install(CODE "execute_process(COMMAND \"${QT_BINDIR}/windeployqt\" \"\$\{CMAKE_INSTALL_PREFIX\}\")")
+  install(CODE "execute_process(COMMAND \"${WINDEPLOYQT_EXECUTABLE}\" \"\$\{CMAKE_INSTALL_PREFIX\}\")")
 endif()
 
 translation_sources(scantailor ${gui_only_sources} ${gui_only_ui_files})

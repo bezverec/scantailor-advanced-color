@@ -81,6 +81,8 @@ class GrayImage {
 
   void setDotsPerMeterY(int value);
 
+  void setColorSpace(const QColorSpace& colorSpace);
+
  private:
   QImage m_image;
 };

@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>ScanTailor Advanced</string>
+   <string>ScanTailor Advanced Color</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -30,7 +30,7 @@
        <item row="3" column="0" colspan="2">
         <widget class="QLabel" name="label_4">
          <property name="text">
-          <string>Scan Tailor is an interactive post-processing tool for scanned pages. It performs operations such as page splitting, skew correction, adding/removing margins, and others. You give it raw scans, and you get pages ready to be printed or assembled into a PDF or DJVU file.  Scanning and optical character recognition is out of scope of this project.</string>
+          <string>Scan Tailor is an interactive post-processing tool for scanned pages. It performs operations such as page splitting, skew correction, adding/removing margins, and others. This Color branch also targets preservation-oriented workflows, including TIFF / TIF handling with retained bit depth, color space, and ICC-aware output where possible. Scanning and optical character recognition are out of scope of this project.</string>
          </property>
          <property name="wordWrap">
           <bool>true</bool>
@@ -63,7 +63,7 @@
 font-weight: bold;</string>
          </property>
          <property name="text">
-          <string notr="true">ScanTailor Advanced</string>
+          <string notr="true">ScanTailor Advanced Color</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignBottom|Qt::AlignHCenter</set>
@@ -156,6 +156,23 @@ font-weight:bold;</string>
             <widget class="QLabel" name="label_9">
              <property name="text">
               <string>4lex4</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_31">
+             <property name="styleSheet">
+              <string notr="true">font-weight: bold;</string>
+             </property>
+             <property name="text">
+              <string>Lead Developer of Color branch</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_30">
+             <property name="text">
+              <string>OpenAI Codex (implemented with Jan Houserek collaboration)</string>
              </property>
             </widget>
            </item>

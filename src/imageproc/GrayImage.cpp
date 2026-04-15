@@ -5,6 +5,11 @@
 
 #include "Grayscale.h"
 
+#include <QtGlobal>
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+#include <QColorSpace>
+#endif
+
 namespace imageproc {
 GrayImage::GrayImage(QSize size) {
   if (size.isEmpty()) {
@@ -44,5 +49,13 @@ void GrayImage::setDotsPerMeterX(int value) {
 
 void GrayImage::setDotsPerMeterY(int value) {
   m_image.setDotsPerMeterY(value);
+}
+
+void GrayImage::setColorSpace(const QColorSpace& colorSpace) {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+  m_image.setColorSpace(colorSpace);
+#else
+  Q_UNUSED(colorSpace);
+#endif
 }
 }  // namespace imageproc

@@ -1,6 +1,6 @@
 [Desktop Entry]
 Version=@VERSION@
-Name=ScanTailor Advanced
+Name=ScanTailor Advanced Color
 Comment=Interactive post-processing tool for scanned pages
 Exec=scantailor %f
 Icon=ScanTailor

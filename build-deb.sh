@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Build ScanTailor Advanced and create a .deb package for Ubuntu/Debian.
+# Build ScanTailor Advanced Color and create a .deb package for Ubuntu/Debian.
 # Usage: ./build-deb.sh [build_dir]
 # The .deb will be created in the project root.
 
@@ -22,7 +22,7 @@ if [[ -z "$VERSION" ]]; then
   exit 1
 fi
 
-echo "Building ScanTailor Advanced ${VERSION}"
+echo "Building ScanTailor Advanced Color ${VERSION}"
 
 # Configure and build
 cd "$BUILD_DIR"
@@ -58,7 +58,7 @@ Architecture: ${ARCH}
 Depends: ${DEPS}
 Maintainer: 4lex4 <4lex49@zoho.com>
 Description: Interactive post-processing tool for scanned pages
- ScanTailor Advanced merges features from ScanTailor Featured and Enhanced,
+ ScanTailor Advanced Color merges features from ScanTailor Featured and Enhanced,
  with improvements for page splitting, deskewing, content selection,
  margins, dewarping and output. Supports batch processing and multiple
  output formats.

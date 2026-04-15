@@ -63,12 +63,19 @@ ui_*.h
 # IDEs y editores
 .vscode/
 .idea/
+.vs/
 *.sublime-project
 *.sublime-workspace
 *~
 *.swp
 *.swo
 .*.sw?
+*.VC.db
+*.VC.opendb
+*.sln
+*.vcxproj.user
+*.ncb
+ipch/
 
 # Sistema operativo
 .DS_Store
@@ -127,3 +134,7 @@ local.cmake
 *.bak
 *.cache
 .cache/
+Debug/
+Release/
+x64/
+x86/
