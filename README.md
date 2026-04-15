@@ -1,7 +1,7 @@
 # ScanTailor Advanced Color
 
-The ScanTailor version that merges the features of the `ScanTailor Featured` and `ScanTailor Enhanced` versions,
-brings new ones and fixes.
+The ScanTailor version that merges the features of the `ScanTailor Featured` and `ScanTailor Enhanced` and `ScanTailor Advanced` forks,
+developed by `OpenAI Codex` with human supervision.
 
 This fork is also a good fit for preservation-oriented workflows where the operator needs only minimal interventions
 such as cropping, rotating, deskewing, page splitting, and light cleanup, while preserving the source image
