@@ -34,7 +34,7 @@ jobs:
         run: ./build-deb.sh build
 
       - name: Upload .deb artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: deb-package
           path: scantailor-advanced_*_amd64.deb
@@ -86,7 +86,7 @@ jobs:
           mv "$OUT" "../scantailor-advanced-${{ github.ref_name }}-x86_64.AppImage"
 
       - name: Upload AppImage artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: appimage
           path: scantailor-advanced-*-x86_64.AppImage
