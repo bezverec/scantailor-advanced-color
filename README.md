@@ -7,9 +7,9 @@ This fork is also a good fit for preservation-oriented workflows where the opera
 such as cropping, rotating, deskewing, page splitting, and light cleanup, while preserving the source image
 characteristics as much as possible.
 
-### Video demonstration of an older version
-[![image](https://github.com/ScanTailor-Advanced/scantailor-advanced/assets/6695517/d0e1dbbe-0e97-4d72-a011-28b171cad939)](https://vimeo.com/12524529) 
-If the video doesn't play, you may to have to login into your vimeo account.
+### Screenshot
+<img width="2560" height="1392" alt="scantailor_advanced_color_1 1 2" src="https://github.com/user-attachments/assets/cd272470-cad1-4eae-af01-30c44896315c" />
+
 
 ## Contents:
 * [Description](#description)
