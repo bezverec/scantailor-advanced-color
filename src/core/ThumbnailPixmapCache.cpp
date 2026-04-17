@@ -19,9 +19,11 @@
 #include <boost/multi_index_container.hpp>
 
 #include "AtomicFileOverwriter.h"
+#include "ColorProfileUtils.h"
 #include "ImageId.h"
 #include "ImageLoader.h"
 #include "OutOfMemoryHandler.h"
+#include "RawImageLoader.h"
 #include "RelinkablePath.h"
 
 using namespace ::boost;
@@ -597,7 +599,13 @@ QImage ThumbnailPixmapCache::Impl::loadSaveThumbnail(const ImageId& imageId,
     return image;
   }
 
-  image = ImageLoader::load(imageId);
+  if (RawImageLoader::isRawFile(imageId.filePath())) {
+    image = RawImageLoader::loadThumbnail(imageId.filePath());
+  }
+
+  if (image.isNull()) {
+    image = ImageLoader::load(imageId);
+  }
   if (image.isNull()) {
     return QImage();
   }
@@ -610,6 +618,7 @@ QImage ThumbnailPixmapCache::Impl::loadSaveThumbnail(const ImageId& imageId,
 QString ThumbnailPixmapCache::Impl::getThumbFilePath(const ImageId& imageId,
                                                      const QString& thumbDir,
                                                      const QSize& maxThumbSize) {
+  const QString thumbnailCacheRevision = QStringLiteral("v3");
   // Because a project may have several files with the same name (from
   // different directories), we add a hash of the original image path
   // to the thumbnail file name.
@@ -628,23 +637,45 @@ QString ThumbnailPixmapCache::Impl::getThumbFilePath(const ImageId& imageId,
   thumbFilePath += origPathHashStr;
   thumbFilePath += QChar('_');
   thumbFilePath += thumbnailQualityStr;
+  thumbFilePath += QChar('_');
+  thumbFilePath += thumbnailCacheRevision;
   thumbFilePath += QString::fromLatin1(".png");
   return thumbFilePath;
 }
 
 QImage ThumbnailPixmapCache::Impl::makeThumbnail(const QImage& image, const QSize& maxThumbSize) {
-  if ((image.width() < maxThumbSize.width()) && (image.height() < maxThumbSize.height())) {
-    return image;
+  QImage thumbnail(image);
+
+  if ((thumbnail.width() >= maxThumbSize.width()) || (thumbnail.height() >= maxThumbSize.height())) {
+    QSize toSize(thumbnail.size());
+    toSize.scale(maxThumbSize, Qt::KeepAspectRatio);
+
+    if ((thumbnail.format() == QImage::Format_Indexed8) && thumbnail.isGrayscale()) {
+      // This will be faster than QImage::scale().
+      thumbnail = scaleToGray(GrayImage(thumbnail), toSize);
+    } else {
+      thumbnail = thumbnail.scaled(toSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    }
   }
 
-  QSize toSize(image.size());
-  toSize.scale(maxThumbSize, Qt::KeepAspectRatio);
+  if (thumbnail.depth() > 8) {
+    const QImage original(thumbnail);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 13, 0)
+    if (thumbnail.format() == QImage::Format_Grayscale16) {
+      thumbnail = thumbnail.convertToFormat(QImage::Format_Grayscale8);
+    } else
+#endif
+    {
+      thumbnail = thumbnail.convertToFormat(thumbnail.hasAlphaChannel() ? QImage::Format_ARGB32 : QImage::Format_RGB32);
+    }
+    color_profile::copyColorProfile(original, thumbnail);
+  }
 
-  if ((image.format() == QImage::Format_Indexed8) && image.isGrayscale()) {
+  if ((thumbnail.format() == QImage::Format_Indexed8) && thumbnail.isGrayscale()) {
     // This will be faster than QImage::scale().
-    return scaleToGray(GrayImage(image), toSize);
+    return thumbnail;
   }
-  return image.scaled(toSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+  return thumbnail;
 }
 
 void ThumbnailPixmapCache::Impl::queuedToInProgress(const LoadQueue::iterator& lqIt) {

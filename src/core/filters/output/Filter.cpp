@@ -16,6 +16,7 @@
 #include "Task.h"
 #include "ThumbnailPixmapCache.h"
 #include "Utils.h"
+#include "core/OutputFileFormatSettings.h"
 
 namespace output {
 Filter::Filter(const PageSelectionAccessor& pageSelectionAccessor)
@@ -49,6 +50,17 @@ void Filter::preUpdateUI(FilterUiInterface* ui, const PageInfo& pageInfo) {
 
 QDomElement Filter::saveSettings(const ProjectWriter& writer, QDomDocument& doc) const {
   QDomElement filterEl(doc.createElement("output"));
+  QDomElement outputFormatEl(doc.createElement("file-format"));
+  outputFormatEl.setAttribute("format",
+                              outputFileFormatToString(OutputFileFormatSettings::getInstance().format()));
+  outputFormatEl.setAttribute("colorProfileMode",
+                              outputColorProfileModeToString(OutputFileFormatSettings::getInstance().colorProfileMode()));
+  outputFormatEl.setAttribute("renderingIntent",
+                              outputRenderingIntentToString(OutputFileFormatSettings::getInstance().renderingIntent()));
+  if (!OutputFileFormatSettings::getInstance().customIccProfilePath().isEmpty()) {
+    outputFormatEl.setAttribute("customIccProfilePath", OutputFileFormatSettings::getInstance().customIccProfilePath());
+  }
+  filterEl.appendChild(outputFormatEl);
 
   writer.enumPages(
       [&](const PageId& pageId, int numericId) { this->writePageSettings(doc, filterEl, pageId, numericId); });
@@ -76,8 +88,28 @@ void Filter::writePageSettings(QDomDocument& doc, QDomElement& filterEl, const P
 
 void Filter::loadSettings(const ProjectReader& reader, const QDomElement& filtersEl) {
   m_settings->clear();
+  OutputFileFormatSettings::getInstance().resetToDefault();
 
   const QDomElement filterEl(filtersEl.namedItem("output").toElement());
+  const QDomElement outputFormatEl(filterEl.namedItem("file-format").toElement());
+  if (!outputFormatEl.isNull()) {
+    OutputFileFormat format = OutputFileFormat::Tiff;
+    if (outputFileFormatFromString(outputFormatEl.attribute("format"), &format)) {
+      OutputFileFormatSettings::getInstance().setFormat(format);
+    }
+
+    OutputColorProfileMode colorProfileMode = OutputColorProfileMode::Source;
+    if (outputColorProfileModeFromString(outputFormatEl.attribute("colorProfileMode"), &colorProfileMode)) {
+      OutputFileFormatSettings::getInstance().setColorProfileMode(colorProfileMode);
+    }
+
+    OutputRenderingIntent renderingIntent = OutputRenderingIntent::RelativeColorimetric;
+    if (outputRenderingIntentFromString(outputFormatEl.attribute("renderingIntent"), &renderingIntent)) {
+      OutputFileFormatSettings::getInstance().setRenderingIntent(renderingIntent);
+    }
+
+    OutputFileFormatSettings::getInstance().setCustomIccProfilePath(outputFormatEl.attribute("customIccProfilePath"));
+  }
 
   const QString pageTagName("page");
   QDomNode node(filterEl.firstChild());

@@ -9,6 +9,8 @@
 #include <QtGui/QImageReader>
 
 #include "ImageId.h"
+#include "RawImageLoader.h"
+#include "RawSettings.h"
 #include "TiffReader.h"
 
 QImage ImageLoader::load(const ImageId& imageId) {
@@ -16,6 +18,13 @@ QImage ImageLoader::load(const ImageId& imageId) {
 }
 
 QImage ImageLoader::load(const QString& filePath, const int pageNum) {
+  if (RawImageLoader::isRawFile(filePath)) {
+    if (pageNum != 0) {
+      return QImage();
+    }
+    return RawImageLoader::load(filePath, RawSettings::getInstance().getParams());
+  }
+
   QFile file(filePath);
   if (!file.open(QIODevice::ReadOnly)) {
     return QImage();
@@ -24,6 +33,15 @@ QImage ImageLoader::load(const QString& filePath, const int pageNum) {
 }
 
 QImage ImageLoader::load(QIODevice& ioDev, const int pageNum) {
+  if (QFile* const file = qobject_cast<QFile*>(&ioDev)) {
+    if (RawImageLoader::isRawFile(file->fileName())) {
+      if (pageNum != 0) {
+        return QImage();
+      }
+      return RawImageLoader::load(file->fileName(), RawSettings::getInstance().getParams());
+    }
+  }
+
   if (TiffReader::canRead(ioDev)) {
     return TiffReader::readImage(ioDev, pageNum);
   }

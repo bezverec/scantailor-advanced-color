@@ -5,6 +5,9 @@
 #define SCANTAILOR_CORE_COLORPROFILEUTILS_H_
 
 #include <QByteArray>
+#include <QString>
+
+#include "OutputFileFormatSettings.h"
 
 class QImage;
 
@@ -21,6 +24,15 @@ void applyIccProfile(QImage& image, const QByteArray& iccProfile);
 void applyDefaultColorProfile(QImage& image);
 
 void copyColorProfile(const QImage& source, QImage& target);
+
+QByteArray readIccProfileFromFile(const QString& path);
+
+QByteArray builtInIccProfile(OutputColorProfileMode mode, const QImage& image);
+
+QImage prepareForOutput(const QImage& image,
+                        OutputColorProfileMode profileMode,
+                        OutputRenderingIntent renderingIntent,
+                        const QString& customProfilePath);
 
 }  // namespace color_profile
 

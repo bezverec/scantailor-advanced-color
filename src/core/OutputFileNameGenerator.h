@@ -9,6 +9,7 @@
 #include <memory>
 
 #include "FileNameDisambiguator.h"
+#include "OutputFileFormat.h"
 
 class PageId;
 class AbstractRelinker;
@@ -34,7 +35,11 @@ class OutputFileNameGenerator {
 
   QString fileNameFor(const PageId& page) const;
 
+  QString fileNameFor(const PageId& page, OutputFileFormat format) const;
+
   QString filePathFor(const PageId& page) const;
+
+  QString filePathFor(const PageId& page, OutputFileFormat format) const;
 
  private:
   std::shared_ptr<FileNameDisambiguator> m_disambiguator;

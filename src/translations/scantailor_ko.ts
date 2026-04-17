@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
+<!DOCTYPE TS []>
 <TS version="2.1" language="ko_KR">
 <context>
     <name>AboutDialog</name>
     <message>
-        <source>ScanTailor Advanced</source>
+        <source>ScanTailor Advanced Color</source>
         <translatorcomment>프로그램 제목이므로 번역 안함.</translatorcomment>
-        <translation>ScanTailor Advanced</translation>
+        <translation>ScanTailor Advanced Color</translation>
     </message>
     <message>
         <source>About</source>
-        <translation>ScanTailor Advanced 정보</translation>
+        <translation>ScanTailor Advanced Color 정보</translation>
     </message>
     <message>
-        <source>Scan Tailor is an interactive post-processing tool for scanned pages. It performs operations such as page splitting, skew correction, adding/removing margins, and others. You give it raw scans, and you get pages ready to be printed or assembled into a PDF or DJVU file.  Scanning and optical character recognition is out of scope of this project.</source>
-        <translation>Scan Tailor는 스캔한 페이지를 처리하기 위한 상호 후처리 프로그램입니다. 페이지 분할, 기울기 보정, 여백 추가/제거 등과 같은 작업이 가능합니다. 막 스캔한 페이지를 이용해 PDF 또는 DJVU 파일로 인쇄 또는 저장할 수 있습니다. 스캔과 OCR에 관해서는 이 프로그램에서 다루지 않습니다. 한글패치 : mirusu400</translation>
+        <source>Scan Tailor is an interactive post-processing tool for scanned pages. It performs operations such as page splitting, skew correction, adding/removing margins, and others. This Color branch also targets preservation-oriented workflows, including TIFF / TIF handling with retained bit depth, color space, and ICC-aware output where possible. Scanning and optical character recognition are out of scope of this project.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Authors</source>
@@ -71,6 +71,14 @@
     <message>
         <source>4lex4</source>
         <translation>4lex4</translation>
+    </message>
+    <message>
+        <source>Lead Developer of Color version</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>OpenAI Codex (implemented with Jan Houserek collaboration)</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Petr Kovář - ver. Enhanced</source>
@@ -706,7 +714,7 @@
         <translation>DPI가 너무 크고 잘못된 것 같습니다.</translation>
     </message>
     <message>
-        <source>DPI is too small. Even if it&apos;s correct, you are not going to get acceptable results with it.</source>
+        <source>DPI is too small. Even if it's correct, you are not going to get acceptable results with it.</source>
         <translation>DPI가 너무 작습니다. 정확한 DPI여도, 괜찮은 결과물을 얻지 못할 것입니다.</translation>
     </message>
     <message>
@@ -753,8 +761,8 @@
 %1</translation>
     </message>
     <message>
-        <source>The following file doesn&apos;t exist:&lt;br&gt;%1&lt;br&gt;&lt;br&gt;Use the &lt;a href=&quot;#relink&quot;&gt;Relinking Tool&lt;/a&gt; to locate it.</source>
-        <translation>이 파일들은 존재하지 않습니다:&lt;br&gt;%1&lt;br&gt;&lt;br&gt; &lt;a href=&quot;#relink&quot;&gt;재 링크 도구&lt;/a&gt; 로 다시 위치시키세요.</translation>
+        <source>The following file doesn't exist:&lt;br&gt;%1&lt;br&gt;&lt;br&gt;Use the &lt;a href="#relink"&gt;Relinking Tool&lt;/a&gt; to locate it.</source>
+        <translation>이 파일들은 존재하지 않습니다:&lt;br&gt;%1&lt;br&gt;&lt;br&gt; &lt;a href="#relink"&gt;재 링크 도구&lt;/a&gt; 로 다시 위치시키세요.</translation>
     </message>
 </context>
 <context>
@@ -964,9 +972,9 @@
     </message>
     <message>
         <source>Output is not yet possible, as the final size of pages is not yet known.
-To determine it, run batch processing at &quot;Select Content&quot; or &quot;Margins&quot;.</source>
+To determine it, run batch processing at "Select Content" or "Margins".</source>
         <translation>페이지의 최종 크기를 알 수 없기 때문에 출력이 불가능합니다.
-&quot;컨텐츠 선택&quot; 또는 &quot;테두리&quot; 작업을 먼저 수행해 주세요.</translation>
+"컨텐츠 선택" 또는 "테두리" 작업을 먼저 수행해 주세요.</translation>
     </message>
     <message>
         <source>Unnamed</source>
@@ -1202,11 +1210,11 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
         <translation>원본 이미지의 DPI를 정상적으로 수정하셨습니까?</translation>
     </message>
     <message>
-        <source>Sometimes your source images may have wrong DPI embedded into them. Scan Tailor tries to detect those, but it&apos;s not always easy to tell. You may need to check &quot;Fix DPI even if they look normal&quot; when creating a project and look into &quot;All pages&quot; tab in the &quot;Fix DPI&quot; dialog, which is also accessible from the Tools menu.</source>
-        <translation>때때로 원본 이미지가 잘못된 DPI가 포함되어 있을수도 있습니다. Scan Tailor가 이를 감지할려 하지만, 쉬운 일이 아닙니다. 프로젝트를 새로 시작할 때 DPI가 정상적인 것 처럼 보여도 &quot;도구 -&gt; DPI 수정&quot;을 이용해 확인해봐야 합니다.</translation>
+        <source>Sometimes your source images may have wrong DPI embedded into them. Scan Tailor tries to detect those, but it's not always easy to tell. You may need to check "Fix DPI even if they look normal" when creating a project and look into "All pages" tab in the "Fix DPI" dialog, which is also accessible from the Tools menu.</source>
+        <translation>때때로 원본 이미지가 잘못된 DPI가 포함되어 있을수도 있습니다. Scan Tailor가 이를 감지할려 하지만, 쉬운 일이 아닙니다. 프로젝트를 새로 시작할 때 DPI가 정상적인 것 처럼 보여도 "도구 -&gt; DPI 수정"을 이용해 확인해봐야 합니다.</translation>
     </message>
     <message>
-        <source>Is your output DPI set too high? Usually you don&apos;t need it higher than 600.</source>
+        <source>Is your output DPI set too high? Usually you don't need it higher than 600.</source>
         <translation>출력 DPI가 너무 높지 않습니까? 일반적인 기기에선 600DPI 이상 필요하지 않습니다.</translation>
     </message>
     <message>
@@ -1214,9 +1222,9 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
         <translation>도울수 있는 무언가</translation>
     </message>
     <message>
-        <source>Fix your DPIs. Learn how to &lt;a href=&quot;http://vimeo.com/12524529&quot;&gt;estimate unknown DPIs&lt;/a&gt;.</source>
+        <source>Fix your DPIs. Learn how to &lt;a href="http://vimeo.com/12524529"&gt;estimate unknown DPIs&lt;/a&gt;.</source>
         <extracomment>Feel free to change the URL to a localized video / text tutorial.</extracomment>
-        <translation>DPI를 수정해야 합니다. 관련 &lt;a href=&quot;http://vimeo.com/12524529&quot;&gt;estimate 동영상&lt;/a&gt;.</translation>
+        <translation>DPI를 수정해야 합니다. 관련 &lt;a href="http://vimeo.com/12524529"&gt;estimate 동영상&lt;/a&gt;.</translation>
     </message>
     <message>
         <source>If your hardware and operating system are 64-bit capable, consider switching to a 64-bit version of Scan Tailor.</source>
@@ -1231,11 +1239,11 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
         <translation>최후의 수단으로, 미리보기 이미지를 미리 만들고 작업하게 할 수 있습니다. 실제 작업을 하기 전에 미리보기 리스트의 스크롤을 위에서 아래로 천천히 내려주세요.</translation>
     </message>
     <message>
-        <source>What won&apos;t help</source>
+        <source>What won't help</source>
         <translation>쓸데 없는 것</translation>
     </message>
     <message>
-        <source>Surprisingly, upgrading your RAM won&apos;t help here. The lack of RAM is compensated by the swap mechanism, which makes things slow, but keeps programs running. An out of memory situation means we ran out of memory address space, which has nothing to do with the amount of RAM you have. The only way to increase the memory address space is to go 64-bit hardware, 64-bit operating system and 64-bit Scan Tailor.</source>
+        <source>Surprisingly, upgrading your RAM won't help here. The lack of RAM is compensated by the swap mechanism, which makes things slow, but keeps programs running. An out of memory situation means we ran out of memory address space, which has nothing to do with the amount of RAM you have. The only way to increase the memory address space is to go 64-bit hardware, 64-bit operating system and 64-bit Scan Tailor.</source>
         <translation>놀랍게도, RAM을 업그레이드 하는게 도움이 안 될 수 있습니다. RAM부족 현상은 스왑 메커니즘에 의해 보완되므로 속도가 굉장히 느려지지만 프로그램은 계속 실행이 가능합니다. 이는 실제 RAM 용량과는 관련이 없습니다. 메모리 주소 공간을 늘리는 유일한 방법은 64비트 OS와 64비트 Scan Tailor를 사용하는 방법 뿐입니다.</translation>
     </message>
     <message>
@@ -1247,7 +1255,7 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
         <translation>프로젝트 다른 이름으로 저장</translation>
     </message>
     <message>
-        <source>Don&apos;t Save</source>
+        <source>Don't Save</source>
         <translation>저장하지 않기</translation>
     </message>
     <message>
@@ -1255,7 +1263,7 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
         <translation>프로젝트 저장 성공</translation>
     </message>
     <message>
-        <source>Please note that while Scan Tailor tries to catch out-of-memory situations and give you the opportunity to save your project, it&apos;s not always possible. This time it succeeded, but the next time it might just crash.</source>
+        <source>Please note that while Scan Tailor tries to catch out-of-memory situations and give you the opportunity to save your project, it's not always possible. This time it succeeded, but the next time it might just crash.</source>
         <translation>Scan Tailor는 항상 메모리 부족 현상을 탐지하고 튕기기 직전 프로젝트를 저장할 기회를 줄려 노력하지만, 항상 가능한 것은 아닙니다. 운 좋게 이번에는 저장했지만 다음은 아닐 수도 있습니다.</translation>
     </message>
     <message>
@@ -1718,26 +1726,26 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
         <translation type="vanished">가이드 도움말</translation>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+        <source>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd"&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name="qrichtext" content="1" /&gt;&lt;style type="text/css"&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;‣ Right-click&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; to create/remove guides from the &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;context menu&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; called.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;‣ Right-click&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; on a guide to delete that guide from the &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;context menu&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; called.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;‣ Shift+LMB&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; - drag the guide under the cursor.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;‣ Shift/Ctrl+LMB&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; on the content rectangle - drag the page content. Hold &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Shift&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; pressed to restrict moving along the horizontal axis only or &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Ctrl&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; for the vertical one. Hold &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Shift+Ctrl&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; for usual dragging.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;‣ Double-click&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; on content - automatically attach that content to the nearest guide. Hold &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Shift&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; pressed to select vertical guides only or &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Ctrl&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; for horizontal ones. Hold &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Shift+Ctrl&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; to attach that to both the nearest vertical and horizontal guides.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;‣&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; Use the &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;context menu&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; to enable/disable showing the hard margins rectangle.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="vanished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;"&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" font-size:7pt; font-weight:600;"&gt;‣ Right-click&lt;/span&gt;&lt;span style=" font-size:7pt;"&gt; to create/remove guides from the &lt;/span&gt;&lt;span style=" font-size:7pt; font-weight:600;"&gt;context menu&lt;/span&gt;&lt;span style=" font-size:7pt;"&gt; called.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" font-size:7pt; font-weight:600;"&gt;‣ Right-click&lt;/span&gt;&lt;span style=" font-size:7pt;"&gt; on a guide to delete that guide from the &lt;/span&gt;&lt;span style=" font-size:7pt; font-weight:600;"&gt;context menu&lt;/span&gt;&lt;span style=" font-size:7pt;"&gt; called.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" font-size:7pt; font-weight:600;"&gt;‣ Shift+LMB&lt;/span&gt;&lt;span style=" font-size:7pt;"&gt; - drag the guide under the cursor.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" font-size:7pt; font-weight:600;"&gt;‣ Shift/Ctrl+LMB&lt;/span&gt;&lt;span style=" font-size:7pt;"&gt; on the content rectangle - drag the page content. Hold &lt;/span&gt;&lt;span style=" font-size:7pt; font-weight:600;"&gt;Shift&lt;/span&gt;&lt;span style=" font-size:7pt;"&gt; pressed to restrict moving along the horizontal axis only or &lt;/span&gt;&lt;span style=" font-size:7pt; font-weight:600;"&gt;Ctrl&lt;/span&gt;&lt;span style=" font-size:7pt;"&gt; for the vertical one. Hold &lt;/span&gt;&lt;span style=" font-size:7pt; font-weight:600;"&gt;Shift+Ctrl&lt;/span&gt;&lt;span style=" font-size:7pt;"&gt; for usual dragging.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" font-size:7pt; font-weight:600;"&gt;‣ Double-click&lt;/span&gt;&lt;span style=" font-size:7pt;"&gt; on content - automatically attach that content to the nearest guide. Hold &lt;/span&gt;&lt;span style=" font-size:7pt; font-weight:600;"&gt;Shift&lt;/span&gt;&lt;span style=" font-size:7pt;"&gt; pressed to select vertical guides only or &lt;/span&gt;&lt;span style=" font-size:7pt; font-weight:600;"&gt;Ctrl&lt;/span&gt;&lt;span style=" font-size:7pt;"&gt; for horizontal ones. Hold &lt;/span&gt;&lt;span style=" font-size:7pt; font-weight:600;"&gt;Shift+Ctrl&lt;/span&gt;&lt;span style=" font-size:7pt;"&gt; to attach that to both the nearest vertical and horizontal guides.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" font-size:7pt; font-weight:600;"&gt;‣&lt;/span&gt;&lt;span style=" font-size:7pt;"&gt; Use the &lt;/span&gt;&lt;span style=" font-size:7pt; font-weight:600;"&gt;context menu&lt;/span&gt;&lt;span style=" font-size:7pt;"&gt; to enable/disable showing the hard margins rectangle.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="vanished">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd"&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name="qrichtext" content="1" /&gt;&lt;style type="text/css"&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;‣ 우 클릭&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;을 통해&lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;컨텍스트 메뉴&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;에서 가이드를 추가/제거 할 수 있습니다.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;‣ 우 클릭&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;을 가이드 위에서 하면&lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;컨텍스트 메뉴&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;에서 가이드를 제거 할 수 있습니다.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;‣ Shift+왼쪽 버튼&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; - 가이드를 커서 아래에서 드래그합니다.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;‣ Shift/Ctrl+왼쪽 버튼&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; - 컨텐츠 사각형 위에 있을 시 페이지 컨텐츠를 드래그합니다. &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Shift&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;를 누른채 움직이면 수평으로만 움직이며 &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Ctrl&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;을 누른채 움직이면 수직으로만 움직입니다. &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Shift+Ctrl&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;를 누르면 일반적인 드래그입니다.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;‣ 더블 클릭&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; 을 컨텐츠 위에서 - 자동으로 컨텐츠를 주변 가이드에 붙입니다. &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Shift&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;를 누르면 수직 가이드만 적용되며 &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Ctrl&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;을 누르면 수평 가이드만 적용됩니다. &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Shift+Ctrl&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;를 누르면 수직, 수평 가이드가 모두 적용됩니다.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;‣&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;&lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;컨텍스트 메뉴&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;를 이용해 두꺼운 여백 사각형을 보일지 결정할 수 있습니다..&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;"&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" font-size:7pt; font-weight:600;"&gt;‣ 우 클릭&lt;/span&gt;&lt;span style=" font-size:7pt;"&gt;을 통해&lt;/span&gt;&lt;span style=" font-size:7pt; font-weight:600;"&gt;컨텍스트 메뉴&lt;/span&gt;&lt;span style=" font-size:7pt;"&gt;에서 가이드를 추가/제거 할 수 있습니다.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" font-size:7pt; font-weight:600;"&gt;‣ 우 클릭&lt;/span&gt;&lt;span style=" font-size:7pt;"&gt;을 가이드 위에서 하면&lt;/span&gt;&lt;span style=" font-size:7pt; font-weight:600;"&gt;컨텍스트 메뉴&lt;/span&gt;&lt;span style=" font-size:7pt;"&gt;에서 가이드를 제거 할 수 있습니다.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" font-size:7pt; font-weight:600;"&gt;‣ Shift+왼쪽 버튼&lt;/span&gt;&lt;span style=" font-size:7pt;"&gt; - 가이드를 커서 아래에서 드래그합니다.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" font-size:7pt; font-weight:600;"&gt;‣ Shift/Ctrl+왼쪽 버튼&lt;/span&gt;&lt;span style=" font-size:7pt;"&gt; - 컨텐츠 사각형 위에 있을 시 페이지 컨텐츠를 드래그합니다. &lt;/span&gt;&lt;span style=" font-size:7pt; font-weight:600;"&gt;Shift&lt;/span&gt;&lt;span style=" font-size:7pt;"&gt;를 누른채 움직이면 수평으로만 움직이며 &lt;/span&gt;&lt;span style=" font-size:7pt; font-weight:600;"&gt;Ctrl&lt;/span&gt;&lt;span style=" font-size:7pt;"&gt;을 누른채 움직이면 수직으로만 움직입니다. &lt;/span&gt;&lt;span style=" font-size:7pt; font-weight:600;"&gt;Shift+Ctrl&lt;/span&gt;&lt;span style=" font-size:7pt;"&gt;를 누르면 일반적인 드래그입니다.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" font-size:7pt; font-weight:600;"&gt;‣ 더블 클릭&lt;/span&gt;&lt;span style=" font-size:7pt;"&gt; 을 컨텐츠 위에서 - 자동으로 컨텐츠를 주변 가이드에 붙입니다. &lt;/span&gt;&lt;span style=" font-size:7pt; font-weight:600;"&gt;Shift&lt;/span&gt;&lt;span style=" font-size:7pt;"&gt;를 누르면 수직 가이드만 적용되며 &lt;/span&gt;&lt;span style=" font-size:7pt; font-weight:600;"&gt;Ctrl&lt;/span&gt;&lt;span style=" font-size:7pt;"&gt;을 누르면 수평 가이드만 적용됩니다. &lt;/span&gt;&lt;span style=" font-size:7pt; font-weight:600;"&gt;Shift+Ctrl&lt;/span&gt;&lt;span style=" font-size:7pt;"&gt;를 누르면 수직, 수평 가이드가 모두 적용됩니다.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" font-size:7pt; font-weight:600;"&gt;‣&lt;/span&gt;&lt;span style=" font-size:7pt;"&gt;&lt;/span&gt;&lt;span style=" font-size:7pt; font-weight:600;"&gt;컨텍스트 메뉴&lt;/span&gt;&lt;span style=" font-size:7pt;"&gt;를 이용해 두꺼운 여백 사각형을 보일지 결정할 수 있습니다..&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Mode:</source>
@@ -1876,24 +1884,24 @@ p, li { white-space: pre-wrap; }
         <translation>모두 선택하기</translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+        <source>&lt;html&gt;&lt;head&gt;&lt;meta name="qrichtext" content="1" /&gt;&lt;style type="text/css"&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Add selected files to project.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;"&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;Add selected files to project.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name="qrichtext" content="1" /&gt;&lt;style type="text/css"&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;선택된 파일을 프로젝트에 추가합니다.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;"&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;선택된 파일을 프로젝트에 추가합니다.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+        <source>&lt;html&gt;&lt;head&gt;&lt;meta name="qrichtext" content="1" /&gt;&lt;style type="text/css"&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Remove selected files from project.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;"&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;Remove selected files from project.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name="qrichtext" content="1" /&gt;&lt;style type="text/css"&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;선택된 파일을 프로젝트에서 삭제합니다.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;"&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;선택된 파일을 프로젝트에서 삭제합니다.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Files In Project</source>
@@ -1916,11 +1924,11 @@ p, li { white-space: pre-wrap; }
         <translation>프로젝트에 사용할 파일이 없습니다!</translation>
     </message>
     <message>
-        <source>Input directory is not set or doesn&apos;t exist.</source>
+        <source>Input directory is not set or doesn't exist.</source>
         <translation>입력 디렉토리가 설정되지 않았거나 존재하지 않습니다.</translation>
     </message>
     <message>
-        <source>Input and output directories can&apos;t be the same.</source>
+        <source>Input and output directories can't be the same.</source>
         <translation>입력 디렉토리와 출력 디렉토리가 동일합니다.</translation>
     </message>
     <message>
@@ -1928,7 +1936,7 @@ p, li { white-space: pre-wrap; }
         <translation>디렉토리를 만드시겠습니까?</translation>
     </message>
     <message>
-        <source>Output directory doesn&apos;t exist.  Create it?</source>
+        <source>Output directory doesn't exist.  Create it?</source>
         <translation>출력 디렉토리가 존재하지 않습니다. 만드시겠습니까?</translation>
     </message>
     <message>
@@ -1936,12 +1944,12 @@ p, li { white-space: pre-wrap; }
         <translation>출력 디렉토리를 만들 수 없습니다.</translation>
     </message>
     <message>
-        <source>Output directory is not set or doesn&apos;t exist.</source>
+        <source>Output directory is not set or doesn't exist.</source>
         <translation>출력 디렉토리가 설정되지 않았거나 존재하지 않습니다.</translation>
     </message>
     <message>
         <source>Some of the files failed to load.
-Either we don&apos;t support their format, or they are broken.
+Either we don't support their format, or they are broken.
 You should remove them from the project.</source>
         <translation>몇몇 파일의 로드에 실패했습니다.
 또는 파일 포맷을 지원하지 않거나, 깨진 파일일 수 있습니다.
@@ -1990,7 +1998,7 @@ You should remove them from the project.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Don&apos;t show this message again.</source>
+        <source>Don't show this message again.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2250,7 +2258,7 @@ You should remove them from the project.</source>
         <translation>컬러 압축</translation>
     </message>
     <message>
-        <source>Your hardware / driver don&apos;t provide the necessary features</source>
+        <source>Your hardware / driver don't provide the necessary features</source>
         <translation>하드웨어 / 드라이버가 필요한 기능을 제공하지 않습니다.</translation>
     </message>
     <message>
@@ -2576,45 +2584,45 @@ You should remove them from the project.</source>
     <name>deskew::ApplyDialog</name>
     <message>
         <source>Apply to</source>
-        <translation type="unfinished">적용하기</translation>
+        <translation>적용하기</translation>
     </message>
     <message>
         <source>This page only (already applied)</source>
-        <translation type="unfinished">이 페이지만 (이미 적용되어 있음)</translation>
+        <translation>이 페이지만 (이미 적용되어 있음)</translation>
     </message>
     <message>
         <source>All pages</source>
-        <translation type="unfinished">모든 페이지</translation>
+        <translation>모든 페이지</translation>
     </message>
     <message>
         <source>This page and the following ones</source>
-        <translation type="unfinished">이 페이지와 다음 페이지</translation>
+        <translation>이 페이지와 다음 페이지</translation>
     </message>
     <message>
         <source>This page and the following every other page</source>
         <extracomment>All odd or even pages, depending on the current page being odd or even.</extracomment>
-        <translation type="unfinished">이 페이지와 모든 짝수(홀수) 페이지</translation>
+        <translation>이 페이지와 모든 짝수(홀수) 페이지</translation>
     </message>
     <message>
         <source>Every other page</source>
         <extracomment>All odd or even pages, depending on the current page being odd or even.</extracomment>
-        <translation type="unfinished">모든 짝수(홀수) 페이지</translation>
+        <translation>모든 짝수(홀수) 페이지</translation>
     </message>
     <message>
         <source>Selected pages</source>
-        <translation type="unfinished">선택된 페이지</translation>
+        <translation>선택된 페이지</translation>
     </message>
     <message>
         <source>Use Ctrl+Click / Shift+Click to select multiple pages.</source>
-        <translation type="unfinished">Ctrl+Click / Shift+Click 으로 여러 페이지를 선택 가능합니다</translation>
+        <translation>Ctrl+Click / Shift+Click 으로 여러 페이지를 선택 가능합니다</translation>
     </message>
     <message>
         <source>Every other selected page</source>
-        <translation type="unfinished">선택된 모든 짝수(홀수) 페이지</translation>
+        <translation>선택된 모든 짝수(홀수) 페이지</translation>
     </message>
     <message>
         <source>The current page will be included.</source>
-        <translation type="unfinished">현재 페이지도 포함됩니다.</translation>
+        <translation>현재 페이지도 포함됩니다.</translation>
     </message>
 </context>
 <context>
@@ -2651,19 +2659,19 @@ You should remove them from the project.</source>
     </message>
     <message>
         <source>Form</source>
-        <translation type="unfinished">폼</translation>
+        <translation>폼</translation>
     </message>
     <message>
         <source>Deskew</source>
-        <translation type="unfinished">기울기 보정</translation>
+        <translation>기울기 보정</translation>
     </message>
     <message>
         <source>Auto</source>
-        <translation type="unfinished">자동</translation>
+        <translation>자동</translation>
     </message>
     <message>
         <source>Manual</source>
-        <translation type="unfinished">수동</translation>
+        <translation>수동</translation>
     </message>
     <message>
         <source>Apply To ...</source>
@@ -2674,49 +2682,49 @@ You should remove them from the project.</source>
     <name>fix_orientation::ApplyDialog</name>
     <message>
         <source>Fix Orientation</source>
-        <translation type="unfinished">방향 수정</translation>
+        <translation>방향 수정</translation>
     </message>
     <message>
         <source>Apply to</source>
-        <translation type="unfinished">적용하기</translation>
+        <translation>적용하기</translation>
     </message>
     <message>
         <source>This page only (already applied)</source>
-        <translation type="unfinished">이 페이지만 (이미 적용되어 있음)</translation>
+        <translation>이 페이지만 (이미 적용되어 있음)</translation>
     </message>
     <message>
         <source>All pages</source>
-        <translation type="unfinished">모든 페이지</translation>
+        <translation>모든 페이지</translation>
     </message>
     <message>
         <source>This page and the following ones</source>
-        <translation type="unfinished">이 페이지와 다음 페이지</translation>
+        <translation>이 페이지와 다음 페이지</translation>
     </message>
     <message>
         <source>This page and the following every other page</source>
         <extracomment>All odd or even pages, depending on the current page being odd or even.</extracomment>
-        <translation type="unfinished">이 페이지와 모든 짝수(홀수) 페이지</translation>
+        <translation>이 페이지와 모든 짝수(홀수) 페이지</translation>
     </message>
     <message>
         <source>Every other page</source>
         <extracomment>All odd or even pages, depending on the current page being odd or even.</extracomment>
-        <translation type="unfinished">모든 짝수(홀수) 페이지</translation>
+        <translation>모든 짝수(홀수) 페이지</translation>
     </message>
     <message>
         <source>Selected pages</source>
-        <translation type="unfinished">선택된 페이지</translation>
+        <translation>선택된 페이지</translation>
     </message>
     <message>
         <source>Use Ctrl+Click / Shift+Click to select multiple pages.</source>
-        <translation type="unfinished">Ctrl+Click / Shift+Click 으로 여러 페이지를 선택 가능합니다</translation>
+        <translation>Ctrl+Click / Shift+Click 으로 여러 페이지를 선택 가능합니다</translation>
     </message>
     <message>
         <source>Every other selected page</source>
-        <translation type="unfinished">선택된 모든 짝수(홀수) 페이지</translation>
+        <translation>선택된 모든 짝수(홀수) 페이지</translation>
     </message>
     <message>
         <source>The current page will be included.</source>
-        <translation type="unfinished">현재 페이지도 포함됩니다.</translation>
+        <translation>현재 페이지도 포함됩니다.</translation>
     </message>
 </context>
 <context>
@@ -2730,113 +2738,113 @@ You should remove them from the project.</source>
     <name>fix_orientation::OptionsWidget</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished">폼</translation>
+        <translation>폼</translation>
     </message>
     <message>
         <source>Rotate</source>
-        <translation type="unfinished">회전</translation>
+        <translation>회전</translation>
     </message>
     <message>
         <source>...</source>
-        <translation type="unfinished">...</translation>
+        <translation>...</translation>
     </message>
     <message>
         <source>Reset</source>
-        <translation type="unfinished">초기화</translation>
+        <translation>초기화</translation>
     </message>
     <message>
         <source>Apply to ...</source>
-        <translation type="unfinished">적용하기</translation>
+        <translation>적용하기</translation>
     </message>
 </context>
 <context>
     <name>output::ApplyColorsDialog</name>
     <message>
         <source>Apply Mode</source>
-        <translation type="unfinished">적용 모드</translation>
+        <translation>적용 모드</translation>
     </message>
     <message>
         <source>Apply to</source>
-        <translation type="unfinished">적용하기</translation>
+        <translation>적용하기</translation>
     </message>
     <message>
         <source>This page only (already applied)</source>
-        <translation type="unfinished">이 페이지만 (이미 적용되어 있음)</translation>
+        <translation>이 페이지만 (이미 적용되어 있음)</translation>
     </message>
     <message>
         <source>All pages</source>
-        <translation type="unfinished">모든 페이지</translation>
+        <translation>모든 페이지</translation>
     </message>
     <message>
         <source>This page and the following ones</source>
-        <translation type="unfinished">이 페이지와 다음 페이지</translation>
+        <translation>이 페이지와 다음 페이지</translation>
     </message>
     <message>
         <source>Selected pages</source>
-        <translation type="unfinished">선택된 페이지</translation>
+        <translation>선택된 페이지</translation>
     </message>
     <message>
         <source>Use Ctrl+Click / Shift+Click to select multiple pages.</source>
-        <translation type="unfinished">Ctrl+Click / Shift+Click 으로 여러 페이지를 선택 가능합니다</translation>
+        <translation>Ctrl+Click / Shift+Click 으로 여러 페이지를 선택 가능합니다</translation>
     </message>
 </context>
 <context>
     <name>output::ChangeDewarpingDialog</name>
     <message>
         <source>Apply Dewarping Mode</source>
-        <translation type="unfinished">왜곡 보정 모드 적용</translation>
+        <translation>왜곡 보정 모드 적용</translation>
     </message>
     <message>
         <source>Mode</source>
-        <translation type="unfinished">모드</translation>
+        <translation>모드</translation>
     </message>
     <message>
         <source>Off</source>
-        <translation type="unfinished">끄기</translation>
+        <translation>끄기</translation>
     </message>
     <message>
         <source>Auto (experimental)</source>
-        <translation type="unfinished">자동 (실험적)</translation>
+        <translation>자동 (실험적)</translation>
     </message>
     <message>
         <source>Marginal (experimental)</source>
-        <translation type="unfinished">테두리 (실험적)</translation>
+        <translation>테두리 (실험적)</translation>
     </message>
     <message>
         <source>Manual</source>
-        <translation type="unfinished">수동</translation>
+        <translation>수동</translation>
     </message>
     <message>
         <source>Options</source>
-        <translation type="unfinished">옵션</translation>
+        <translation>옵션</translation>
     </message>
     <message>
         <source>Post deskew</source>
-        <translation type="unfinished">사전 기울기 보정</translation>
+        <translation>사전 기울기 보정</translation>
     </message>
     <message>
         <source>Apply to</source>
-        <translation type="unfinished">적용하기</translation>
+        <translation>적용하기</translation>
     </message>
     <message>
         <source>This page only</source>
-        <translation type="unfinished">이 페이지만</translation>
+        <translation>이 페이지만</translation>
     </message>
     <message>
         <source>All pages</source>
-        <translation type="unfinished">모든 페이지</translation>
+        <translation>모든 페이지</translation>
     </message>
     <message>
         <source>This page and the following ones</source>
-        <translation type="unfinished">이 페이지와 다음 페이지</translation>
+        <translation>이 페이지와 다음 페이지</translation>
     </message>
     <message>
         <source>Selected pages</source>
-        <translation type="unfinished">선택된 페이지</translation>
+        <translation>선택된 페이지</translation>
     </message>
     <message>
         <source>Use Ctrl+Click / Shift+Click to select multiple pages.</source>
-        <translation type="unfinished">Ctrl+Click / Shift+Click 으로 여러 페이지를 선택 가능합니다</translation>
+        <translation>Ctrl+Click / Shift+Click 으로 여러 페이지를 선택 가능합니다</translation>
     </message>
 </context>
 <context>
@@ -2863,35 +2871,35 @@ You should remove them from the project.</source>
     </message>
     <message>
         <source>Apply Output Resolution</source>
-        <translation type="unfinished">출력 해상도 적용</translation>
+        <translation>출력 해상도 적용</translation>
     </message>
     <message>
         <source>DPI</source>
-        <translation type="unfinished">DPI</translation>
+        <translation>DPI</translation>
     </message>
     <message>
         <source>Apply to</source>
-        <translation type="unfinished">적용하기</translation>
+        <translation>적용하기</translation>
     </message>
     <message>
         <source>This page only</source>
-        <translation type="unfinished">이 페이지만</translation>
+        <translation>이 페이지만</translation>
     </message>
     <message>
         <source>All pages</source>
-        <translation type="unfinished">모든 페이지</translation>
+        <translation>모든 페이지</translation>
     </message>
     <message>
         <source>This page and the following ones</source>
-        <translation type="unfinished">이 페이지와 다음 페이지</translation>
+        <translation>이 페이지와 다음 페이지</translation>
     </message>
     <message>
         <source>Selected pages</source>
-        <translation type="unfinished">선택된 페이지</translation>
+        <translation>선택된 페이지</translation>
     </message>
     <message>
         <source>Use Ctrl+Click / Shift+Click to select multiple pages.</source>
-        <translation type="unfinished">Ctrl+Click / Shift+Click 으로 여러 페이지를 선택 가능합니다</translation>
+        <translation>Ctrl+Click / Shift+Click 으로 여러 페이지를 선택 가능합니다</translation>
     </message>
 </context>
 <context>
@@ -2996,95 +3004,179 @@ You should remove them from the project.</source>
     </message>
     <message>
         <source>Form</source>
-        <translation type="unfinished">폼</translation>
+        <translation>폼</translation>
     </message>
     <message>
         <source>Output Resolution (DPI)</source>
-        <translation type="unfinished">출력 해상도 (DPI)</translation>
+        <translation>출력 해상도 (DPI)</translation>
     </message>
     <message>
         <source>0</source>
-        <translation type="unfinished">0</translation>
+        <translation>0</translation>
     </message>
     <message>
         <source>Change ...</source>
-        <translation type="unfinished">변경</translation>
+        <translation>변경</translation>
+    </message>
+    <message>
+        <source>File format</source>
+        <translation>파일 형식</translation>
+    </message>
+    <message>
+        <source>Format:</source>
+        <translation>형식:</translation>
+    </message>
+    <message>
+        <source>TIFF</source>
+        <translation>TIFF</translation>
+    </message>
+    <message>
+        <source>PNG</source>
+        <translation>PNG</translation>
+    </message>
+    <message>
+        <source>JPEG</source>
+        <translation>JPEG</translation>
+    </message>
+    <message>
+        <source>Embedded / Source</source>
+        <translation>Embedded / Source</translation>
+    </message>
+    <message>
+        <source>sRGB</source>
+        <translation>sRGB</translation>
+    </message>
+    <message>
+        <source>Adobe RGB</source>
+        <translation>Adobe RGB</translation>
+    </message>
+    <message>
+        <source>eciRGB v2</source>
+        <translation>eciRGB v2</translation>
+    </message>
+    <message>
+        <source>Custom ICC</source>
+        <translation>Custom ICC</translation>
+    </message>
+    <message>
+        <source>Relative colorimetric</source>
+        <translation>Relative colorimetric</translation>
+    </message>
+    <message>
+        <source>Perceptual</source>
+        <translation>Perceptual</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>Saturation</translation>
+    </message>
+    <message>
+        <source>Absolute colorimetric</source>
+        <translation>Absolute colorimetric</translation>
+    </message>
+    <message>
+        <source>ICC:</source>
+        <translation>ICC:</translation>
+    </message>
+    <message>
+        <source>Choose ICC...</source>
+        <translation>Choose ICC...</translation>
+    </message>
+    <message>
+        <source>No custom ICC selected</source>
+        <translation>No custom ICC selected</translation>
+    </message>
+    <message>
+        <source>Intent:</source>
+        <translation>Intent:</translation>
+    </message>
+    <message>
+        <source>Select ICC Profile</source>
+        <translation>Select ICC Profile</translation>
+    </message>
+    <message>
+        <source>ICC profiles (*.icc *.icm);;All files (*)</source>
+        <translation>ICC profiles (*.icc *.icm);;All files (*)</translation>
+    </message>
+    <message>
+        <source>JPEG is lossy and may reduce bit depth, ICC fidelity and mask quality.</source>
+        <translation>JPEG는 손실 압축 형식이므로 비트 심도, ICC 정확도 및 마스크 품질이 저하될 수 있습니다.</translation>
     </message>
     <message>
         <source>Mode</source>
-        <translation type="unfinished">모드</translation>
+        <translation>모드</translation>
     </message>
     <message>
         <source>Options</source>
-        <translation type="unfinished">옵션</translation>
+        <translation>옵션</translation>
     </message>
     <message>
         <source>Fill offcut</source>
-        <translation type="unfinished">오프컷 채우기</translation>
+        <translation>오프컷 채우기</translation>
     </message>
     <message>
         <source>Fill margins</source>
-        <translation type="unfinished">테두리 채우기</translation>
+        <translation>테두리 채우기</translation>
     </message>
     <message>
         <source>Normalize illumination before binarization.</source>
-        <translation type="unfinished">이진화 이전에 조명을 통일시키세요.</translation>
+        <translation>이진화 이전에 조명을 통일시키세요.</translation>
     </message>
     <message>
         <source>Equalize illumination (B&amp;&amp;W)</source>
-        <translation type="unfinished">조명 통일 (흑백)</translation>
+        <translation>조명 통일 (흑백)</translation>
     </message>
     <message>
         <source>Normalize illumination in color mode / in picture zones in mixed mode.</source>
-        <translation type="unfinished">믹스 모드의 사진 영역과 컬러 모드에서 조명을 통일시킵니다.</translation>
+        <translation>믹스 모드의 사진 영역과 컬러 모드에서 조명을 통일시킵니다.</translation>
     </message>
     <message>
         <source>Equalize illumination (Color)</source>
-        <translation type="unfinished">조명 통일 (컬러)</translation>
+        <translation>조명 통일 (컬러)</translation>
     </message>
     <message>
         <source>Savitzky-Golay smoothing</source>
-        <translation type="unfinished">Savitzky-Golay 스무딩</translation>
+        <translation>Savitzky-Golay 스무딩</translation>
     </message>
     <message>
         <source>Morphological smoothing</source>
-        <translation type="unfinished">Morphological(형태학적) 스무딩</translation>
+        <translation>Morphological(형태학적) 스무딩</translation>
     </message>
     <message>
         <source>Filling</source>
-        <translation type="unfinished">채우기</translation>
+        <translation>채우기</translation>
     </message>
     <message>
         <source>Color: </source>
-        <translation type="unfinished">색상: </translation>
+        <translation>색상: </translation>
     </message>
     <message>
         <source>Threshold</source>
-        <translation type="unfinished">임계값</translation>
+        <translation>임계값</translation>
     </message>
     <message>
         <source>Method:</source>
-        <translation type="unfinished">방법</translation>
+        <translation>방법</translation>
     </message>
     <message>
         <source>Color operations</source>
-        <translation type="unfinished">색상 조정</translation>
+        <translation>색상 조정</translation>
     </message>
     <message>
         <source>Split the image into color segments and colorize b&amp;w mask.</source>
-        <translation type="unfinished">이미지를 색상 조각으로 분할하고 흑백 마스크로 칠합니다.</translation>
+        <translation>이미지를 색상 조각으로 분할하고 흑백 마스크로 칠합니다.</translation>
     </message>
     <message>
         <source>Color segmentation</source>
-        <translation type="unfinished">색상 분할</translation>
+        <translation>색상 분할</translation>
     </message>
     <message>
         <source>R</source>
-        <translation type="unfinished">R</translation>
+        <translation>R</translation>
     </message>
     <message>
         <source>Red component adjustment. A negative value means the segmenter will be more sensitive to red and vice versa for a positive one.</source>
-        <translation type="unfinished">빨간색 요소 조정. 음수의 경우 빨간색에 더 민감하고 양수의 경우 덜 민감해집니다.</translation>
+        <translation>빨간색 요소 조정. 음수의 경우 빨간색에 더 민감하고 양수의 경우 덜 민감해집니다.</translation>
     </message>
     <message>
         <source>G</source>
@@ -3092,7 +3184,7 @@ You should remove them from the project.</source>
     </message>
     <message>
         <source>Green component adjustment. A negative value means the segmenter will be more sensitive to green and vice versa for a positive one.</source>
-        <translation type="unfinished">초록색 요소 조정. 음수의 경우 초록색에 더 민감하고 양수의 경우 덜 민감해집니다.</translation>
+        <translation>초록색 요소 조정. 음수의 경우 초록색에 더 민감하고 양수의 경우 덜 민감해집니다.</translation>
     </message>
     <message>
         <source>B</source>
@@ -3100,47 +3192,47 @@ You should remove them from the project.</source>
     </message>
     <message>
         <source>Blue component adjustment. A negative value means the segmenter will be more sensitive to blue and vice versa for a positive one.</source>
-        <translation type="unfinished">파란색 요소 조정. 음수의 경우 파란색에 더 민감하고 양수의 경우 덜 민감해집니다.</translation>
+        <translation>파란색 요소 조정. 음수의 경우 파란색에 더 민감하고 양수의 경우 덜 민감해집니다.</translation>
     </message>
     <message>
         <source>Reduce noise:</source>
-        <translation type="unfinished">노이즈 줄이기:</translation>
+        <translation>노이즈 줄이기:</translation>
     </message>
     <message>
         <source>Reduce the number of colors of the output image by grouping similar colors.</source>
-        <translation type="unfinished">유사한 색상을 그룹화해 출력 이미지의 색상 종류를 줄여줍니다.</translation>
+        <translation>유사한 색상을 그룹화해 출력 이미지의 색상 종류를 줄여줍니다.</translation>
     </message>
     <message>
         <source>Posterize</source>
-        <translation type="unfinished">Posterize(명암 단위 제한)</translation>
+        <translation>Posterize(명암 단위 제한)</translation>
     </message>
     <message>
         <source>Level:</source>
-        <translation type="unfinished">레벨:</translation>
+        <translation>레벨:</translation>
     </message>
     <message>
         <source>Lower value means lower count of colors in the output image, values between 2 and 6 inclusive guarantee an indexed image.</source>
-        <translation type="unfinished">값이 낮을수록 출력 이미지의 색상 수가 적어집니다. 2~6은 인덱스 이미지를 보장합니다.</translation>
+        <translation>값이 낮을수록 출력 이미지의 색상 수가 적어집니다. 2~6은 인덱스 이미지를 보장합니다.</translation>
     </message>
     <message>
         <source>Normalize</source>
-        <translation type="unfinished">일반화</translation>
+        <translation>일반화</translation>
     </message>
     <message>
         <source>Make dark and light gray gradients black and white respectively.</source>
-        <translation type="unfinished">어두은 회색, 밝은 회색 그라디언트를 각각 흑백으로 만듭니다.</translation>
+        <translation>어두은 회색, 밝은 회색 그라디언트를 각각 흑백으로 만듭니다.</translation>
     </message>
     <message>
         <source>Force b&amp;&amp;w</source>
-        <translation type="unfinished">강제 흑백화</translation>
+        <translation>강제 흑백화</translation>
     </message>
     <message>
         <source>Picture Shape</source>
-        <translation type="unfinished">사진 모양</translation>
+        <translation>사진 모양</translation>
     </message>
     <message>
         <source>Sensitivity (%):</source>
-        <translation type="unfinished">민감도 (%):</translation>
+        <translation>민감도 (%):</translation>
     </message>
     <message>
         <source>Higher search sensitivity</source>
@@ -3152,55 +3244,55 @@ You should remove them from the project.</source>
     </message>
     <message>
         <source>Splitting</source>
-        <translation type="unfinished">분할</translation>
+        <translation>분할</translation>
     </message>
     <message>
         <source>Split output</source>
-        <translation type="unfinished">분할 결과</translation>
+        <translation>분할 결과</translation>
     </message>
     <message>
         <source>B&amp;&amp;W foreground</source>
-        <translation type="unfinished">흑백 전경</translation>
+        <translation>흑백 전경</translation>
     </message>
     <message>
         <source>Save the original background of the foreground layer.</source>
-        <translation type="unfinished">전경 부분을 원본 배경으로 저장합니다.</translation>
+        <translation>전경 부분을 원본 배경으로 저장합니다.</translation>
     </message>
     <message>
         <source>Original background</source>
-        <translation type="unfinished">원본 배경</translation>
+        <translation>원본 배경</translation>
     </message>
     <message>
         <source>Color foreground</source>
-        <translation type="unfinished">색상 전경</translation>
+        <translation>색상 전경</translation>
     </message>
     <message>
         <source>Despeckling</source>
-        <translation type="unfinished">얼룩 제거</translation>
+        <translation>얼룩 제거</translation>
     </message>
     <message>
         <source>Despeckle</source>
-        <translation type="unfinished">얼룩 제거</translation>
+        <translation>얼룩 제거</translation>
     </message>
     <message>
         <source>Processing</source>
-        <translation type="unfinished">작업</translation>
+        <translation>작업</translation>
     </message>
     <message>
         <source>This option should be enabled when the page has dark content on light background and disabled if vice versa in order to correct processing algorithms.</source>
-        <translation type="unfinished">이 옵션은 밝은 배경에서 검은 내용이 있을 때 활성화 해야 하고, 반대의 경우에는 비활성화 해야 합니다.</translation>
+        <translation>이 옵션은 밝은 배경에서 검은 내용이 있을 때 활성화 해야 하고, 반대의 경우에는 비활성화 해야 합니다.</translation>
     </message>
     <message>
         <source>Black on white mode</source>
-        <translation type="unfinished">흰 종이 검은 글씨 모드</translation>
+        <translation>흰 종이 검은 글씨 모드</translation>
     </message>
     <message>
         <source>Depth perception</source>
-        <translation type="unfinished">깊이 인식</translation>
+        <translation>깊이 인식</translation>
     </message>
     <message>
         <source>Dewarping</source>
-        <translation type="unfinished">왜곡 보정</translation>
+        <translation>왜곡 보정</translation>
     </message>
     <message>
         <source>Black</source>
@@ -3215,11 +3307,11 @@ You should remove them from the project.</source>
     <name>output::OtsuBinarizationOptionsWidget</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished">폼</translation>
+        <translation>폼</translation>
     </message>
     <message>
         <source>0</source>
-        <translation type="unfinished">0</translation>
+        <translation>0</translation>
     </message>
     <message>
         <source>Thinner</source>
@@ -3234,42 +3326,42 @@ You should remove them from the project.</source>
     <name>output::PictureZonePropDialog</name>
     <message>
         <source>Zone Properties</source>
-        <translation type="unfinished">영역 속성</translation>
+        <translation>영역 속성</translation>
     </message>
     <message>
         <source>Subtract from all layers</source>
-        <translation type="unfinished">모든 레이어에서 빼기</translation>
+        <translation>모든 레이어에서 빼기</translation>
     </message>
     <message>
         <source>Add to auto layer</source>
-        <translation type="unfinished">자동 레이어에 더하기</translation>
+        <translation>자동 레이어에 더하기</translation>
     </message>
     <message>
         <source>Subtract from auto layer</source>
-        <translation type="unfinished">자동 레이어에 빼기</translation>
+        <translation>자동 레이어에 빼기</translation>
     </message>
 </context>
 <context>
     <name>output::SauvolaBinarizationOptionsWidget</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished">폼</translation>
+        <translation>폼</translation>
     </message>
     <message>
         <source>Coef:</source>
-        <translation type="unfinished">계수</translation>
+        <translation>계수</translation>
     </message>
     <message>
         <source>The dimensions of a pixel neighborhood to consider.</source>
-        <translation type="unfinished">고려해야할 주변 픽셀수의 범위를 설정합니다.</translation>
+        <translation>고려해야할 주변 픽셀수의 범위를 설정합니다.</translation>
     </message>
     <message>
         <source>Default value is 0.34.</source>
-        <translation type="unfinished">기본값은 0.34입니다.</translation>
+        <translation>기본값은 0.34입니다.</translation>
     </message>
     <message>
         <source>Window size:</source>
-        <translation type="unfinished">창 크기:</translation>
+        <translation>창 크기:</translation>
     </message>
 </context>
 <context>
@@ -3286,7 +3378,7 @@ You should remove them from the project.</source>
         <translation>그림 영역은 혼합 모드에서만 사용 가능합니다.</translation>
     </message>
     <message>
-        <source>Despeckling can&apos;t be done in Color / Grayscale mode.</source>
+        <source>Despeckling can't be done in Color / Grayscale mode.</source>
         <translation>얼룩 제거는 컬러 / 회색조 모드에서 적용 불가능합니다.</translation>
     </message>
     <message>
@@ -3314,84 +3406,84 @@ You should remove them from the project.</source>
     <name>output::WolfBinarizationOptionsWidget</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished">폼</translation>
+        <translation>폼</translation>
     </message>
     <message>
         <source>The dimensions of a pixel neighborhood to consider.</source>
-        <translation type="unfinished">고려해야할 주변 픽셀수의 범위를 설정합니다.</translation>
+        <translation>고려해야할 주변 픽셀수의 범위를 설정합니다.</translation>
     </message>
     <message>
         <source>Window size:</source>
-        <translation type="unfinished">창 크기:</translation>
+        <translation>창 크기:</translation>
     </message>
     <message>
         <source>The minimum possible gray level that can be made white.</source>
-        <translation type="unfinished">흰색으로 만들 수 있는 회색 레벨의 최소값입니다.</translation>
+        <translation>흰색으로 만들 수 있는 회색 레벨의 최소값입니다.</translation>
     </message>
     <message>
         <source>Upper Bound: </source>
-        <translation type="unfinished">상한:</translation>
+        <translation>상한:</translation>
     </message>
     <message>
         <source>Lower bound: </source>
-        <translation type="unfinished">하한:</translation>
+        <translation>하한:</translation>
     </message>
     <message>
         <source>The maximum possible gray level that can be made black.</source>
-        <translation type="unfinished">흰색으로 만들 수 있는 회색 레벨의 최대값입니다.</translation>
+        <translation>흰색으로 만들 수 있는 회색 레벨의 최대값입니다.</translation>
     </message>
     <message>
         <source>Coeff:</source>
-        <translation type="unfinished">계수</translation>
+        <translation>계수</translation>
     </message>
     <message>
         <source>Default value is 0.3.</source>
-        <translation type="unfinished">기본값은 0.3입니다.</translation>
+        <translation>기본값은 0.3입니다.</translation>
     </message>
 </context>
 <context>
     <name>page_layout::ApplyDialog</name>
     <message>
         <source>Apply to</source>
-        <translation type="unfinished">적용하기</translation>
+        <translation>적용하기</translation>
     </message>
     <message>
         <source>This page only (already applied)</source>
-        <translation type="unfinished">이 페이지만 (이미 적용되어 있음)</translation>
+        <translation>이 페이지만 (이미 적용되어 있음)</translation>
     </message>
     <message>
         <source>All pages</source>
-        <translation type="unfinished">모든 페이지</translation>
+        <translation>모든 페이지</translation>
     </message>
     <message>
         <source>This page and the following ones</source>
-        <translation type="unfinished">이 페이지와 다음 페이지</translation>
+        <translation>이 페이지와 다음 페이지</translation>
     </message>
     <message>
         <source>This page and the following every other page</source>
         <extracomment>All odd or even pages, depending on the current page being odd or even.</extracomment>
-        <translation type="unfinished">이 페이지와 모든 짝수(홀수) 페이지</translation>
+        <translation>이 페이지와 모든 짝수(홀수) 페이지</translation>
     </message>
     <message>
         <source>Every other page</source>
         <extracomment>All odd or even pages, depending on the current page being odd or even.</extracomment>
-        <translation type="unfinished">모든 짝수(홀수) 페이지</translation>
+        <translation>모든 짝수(홀수) 페이지</translation>
     </message>
     <message>
         <source>Selected pages</source>
-        <translation type="unfinished">선택된 페이지</translation>
+        <translation>선택된 페이지</translation>
     </message>
     <message>
         <source>Use Ctrl+Click / Shift+Click to select multiple pages.</source>
-        <translation type="unfinished">Ctrl+Click / Shift+Click 으로 여러 페이지를 선택 가능합니다</translation>
+        <translation>Ctrl+Click / Shift+Click 으로 여러 페이지를 선택 가능합니다</translation>
     </message>
     <message>
         <source>Every other selected page</source>
-        <translation type="unfinished">선택된 모든 짝수(홀수) 페이지</translation>
+        <translation>선택된 모든 짝수(홀수) 페이지</translation>
     </message>
     <message>
         <source>The current page will be included.</source>
-        <translation type="unfinished">현재 페이지도 포함됩니다.</translation>
+        <translation>현재 페이지도 포함됩니다.</translation>
     </message>
 </context>
 <context>
@@ -3468,11 +3560,11 @@ You should remove them from the project.</source>
     </message>
     <message>
         <source>Form</source>
-        <translation type="unfinished">폼</translation>
+        <translation>폼</translation>
     </message>
     <message>
         <source>Margins</source>
-        <translation type="unfinished">테두리</translation>
+        <translation>테두리</translation>
     </message>
     <message>
         <source>Auto Margins</source>
@@ -3480,23 +3572,23 @@ You should remove them from the project.</source>
     </message>
     <message>
         <source>...</source>
-        <translation type="unfinished">...</translation>
+        <translation>...</translation>
     </message>
     <message>
         <source>Top</source>
-        <translation type="unfinished">위</translation>
+        <translation>위</translation>
     </message>
     <message>
         <source>Right</source>
-        <translation type="unfinished">오른쪽</translation>
+        <translation>오른쪽</translation>
     </message>
     <message>
         <source>Left</source>
-        <translation type="unfinished">왼쪽</translation>
+        <translation>왼쪽</translation>
     </message>
     <message>
         <source>Bottom</source>
-        <translation type="unfinished">아래</translation>
+        <translation>아래</translation>
     </message>
     <message>
         <source>Apply To ...</source>
@@ -3504,11 +3596,11 @@ You should remove them from the project.</source>
     </message>
     <message>
         <source>Alignment</source>
-        <translation type="unfinished">위치 조정</translation>
+        <translation>위치 조정</translation>
     </message>
     <message>
         <source>Match size with other pages</source>
-        <translation type="unfinished">다른 페이지와 크기 같게 하기</translation>
+        <translation>다른 페이지와 크기 같게 하기</translation>
     </message>
     <message>
         <source>Horizontal mode:</source>
@@ -3521,33 +3613,33 @@ You should remove them from the project.</source>
     <message>
         <source>Auto</source>
         <comment>auto</comment>
-        <translation type="unfinished">자동</translation>
+        <translation>자동</translation>
     </message>
     <message>
         <source>Manual</source>
         <comment>manual</comment>
-        <translation type="unfinished">수동</translation>
+        <translation>수동</translation>
     </message>
     <message>
         <source>Original</source>
         <comment>original</comment>
-        <translation type="unfinished">원래대로</translation>
+        <translation>원래대로</translation>
     </message>
     <message>
         <source>Guides Help</source>
-        <translation type="unfinished">가이드 도움말</translation>
+        <translation>가이드 도움말</translation>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+        <source>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd"&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name="qrichtext" content="1" /&gt;&lt;style type="text/css"&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;‣ Right-click&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; to create/remove guides from the &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;context menu&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; called.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;‣ Right-click&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; on a guide to delete that guide from the &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;context menu&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; called.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;‣ Ctrl+Alt+LMB&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; - drag the guide under the cursor.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;‣ Shift/Ctrl+LMB&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; on the content rectangle - drag the page content. Hold &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Shift&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; pressed to restrict moving along the horizontal axis only or &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Ctrl&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; for the vertical one. Hold &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Shift+Ctrl&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; for usual dragging.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;‣ Double-click&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; on content - automatically attach that content to the nearest guide. Hold &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Shift&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; pressed to select vertical guides only or &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Ctrl&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; for horizontal ones. Hold &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Shift+Ctrl&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; to attach that to both the nearest vertical and horizontal guides.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;‣&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; Use the &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;context menu&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; to enable/disable showing the hard margins rectangle.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;"&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" font-size:7pt; font-weight:600;"&gt;‣ Right-click&lt;/span&gt;&lt;span style=" font-size:7pt;"&gt; to create/remove guides from the &lt;/span&gt;&lt;span style=" font-size:7pt; font-weight:600;"&gt;context menu&lt;/span&gt;&lt;span style=" font-size:7pt;"&gt; called.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" font-size:7pt; font-weight:600;"&gt;‣ Right-click&lt;/span&gt;&lt;span style=" font-size:7pt;"&gt; on a guide to delete that guide from the &lt;/span&gt;&lt;span style=" font-size:7pt; font-weight:600;"&gt;context menu&lt;/span&gt;&lt;span style=" font-size:7pt;"&gt; called.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" font-size:7pt; font-weight:600;"&gt;‣ Ctrl+Alt+LMB&lt;/span&gt;&lt;span style=" font-size:7pt;"&gt; - drag the guide under the cursor.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" font-size:7pt; font-weight:600;"&gt;‣ Shift/Ctrl+LMB&lt;/span&gt;&lt;span style=" font-size:7pt;"&gt; on the content rectangle - drag the page content. Hold &lt;/span&gt;&lt;span style=" font-size:7pt; font-weight:600;"&gt;Shift&lt;/span&gt;&lt;span style=" font-size:7pt;"&gt; pressed to restrict moving along the horizontal axis only or &lt;/span&gt;&lt;span style=" font-size:7pt; font-weight:600;"&gt;Ctrl&lt;/span&gt;&lt;span style=" font-size:7pt;"&gt; for the vertical one. Hold &lt;/span&gt;&lt;span style=" font-size:7pt; font-weight:600;"&gt;Shift+Ctrl&lt;/span&gt;&lt;span style=" font-size:7pt;"&gt; for usual dragging.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" font-size:7pt; font-weight:600;"&gt;‣ Double-click&lt;/span&gt;&lt;span style=" font-size:7pt;"&gt; on content - automatically attach that content to the nearest guide. Hold &lt;/span&gt;&lt;span style=" font-size:7pt; font-weight:600;"&gt;Shift&lt;/span&gt;&lt;span style=" font-size:7pt;"&gt; pressed to select vertical guides only or &lt;/span&gt;&lt;span style=" font-size:7pt; font-weight:600;"&gt;Ctrl&lt;/span&gt;&lt;span style=" font-size:7pt;"&gt; for horizontal ones. Hold &lt;/span&gt;&lt;span style=" font-size:7pt; font-weight:600;"&gt;Shift+Ctrl&lt;/span&gt;&lt;span style=" font-size:7pt;"&gt; to attach that to both the nearest vertical and horizontal guides.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" font-size:7pt; font-weight:600;"&gt;‣&lt;/span&gt;&lt;span style=" font-size:7pt;"&gt; Use the &lt;/span&gt;&lt;span style=" font-size:7pt; font-weight:600;"&gt;context menu&lt;/span&gt;&lt;span style=" font-size:7pt;"&gt; to enable/disable showing the hard margins rectangle.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3585,11 +3677,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Form</source>
-        <translation type="unfinished">폼</translation>
+        <translation>폼</translation>
     </message>
     <message>
         <source>Page Layout</source>
-        <translation type="unfinished">페이지 레이아웃</translation>
+        <translation>페이지 레이아웃</translation>
     </message>
     <message>
         <source>?</source>
@@ -3597,86 +3689,86 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Change ...</source>
-        <translation type="unfinished">변경</translation>
+        <translation>변경</translation>
     </message>
     <message>
         <source>Split Line</source>
-        <translation type="unfinished">줄 나누기</translation>
+        <translation>줄 나누기</translation>
     </message>
     <message>
         <source>Auto</source>
-        <translation type="unfinished">자동</translation>
+        <translation>자동</translation>
     </message>
     <message>
         <source>Manual</source>
-        <translation type="unfinished">수동</translation>
+        <translation>수동</translation>
     </message>
 </context>
 <context>
     <name>page_split::SplitModeDialog</name>
     <message>
         <source>Split Pages</source>
-        <translation type="unfinished">페이지 분할</translation>
+        <translation>페이지 분할</translation>
     </message>
     <message>
         <source>Mode</source>
-        <translation type="unfinished">모드</translation>
+        <translation>모드</translation>
     </message>
     <message>
         <source>Auto</source>
-        <translation type="unfinished">자동</translation>
+        <translation>자동</translation>
     </message>
     <message>
         <source>Manual</source>
-        <translation type="unfinished">수동</translation>
+        <translation>수동</translation>
     </message>
     <message>
         <source>Options</source>
-        <translation type="unfinished">옵션</translation>
+        <translation>옵션</translation>
     </message>
     <message>
         <source>Apply cut</source>
-        <translation type="unfinished">잘라내기 적용</translation>
+        <translation>잘라내기 적용</translation>
     </message>
     <message>
         <source>Apply to</source>
-        <translation type="unfinished">적용하기</translation>
+        <translation>적용하기</translation>
     </message>
     <message>
         <source>This page only</source>
-        <translation type="unfinished">이 페이지만</translation>
+        <translation>이 페이지만</translation>
     </message>
     <message>
         <source>All pages</source>
-        <translation type="unfinished">모든 페이지</translation>
+        <translation>모든 페이지</translation>
     </message>
     <message>
         <source>This page and the following ones</source>
-        <translation type="unfinished">이 페이지와 다음 페이지</translation>
+        <translation>이 페이지와 다음 페이지</translation>
     </message>
     <message>
         <source>This page and the following every other page</source>
-        <translation type="unfinished">이 페이지와 모든 짝수(홀수) 페이지</translation>
+        <translation>이 페이지와 모든 짝수(홀수) 페이지</translation>
     </message>
     <message>
         <source>Every other page</source>
-        <translation type="unfinished">모든 짝수(홀수) 페이지</translation>
+        <translation>모든 짝수(홀수) 페이지</translation>
     </message>
     <message>
         <source>Selected pages</source>
-        <translation type="unfinished">선택된 페이지</translation>
+        <translation>선택된 페이지</translation>
     </message>
     <message>
         <source>Use Ctrl+Click / Shift+Click to select multiple pages.</source>
-        <translation type="unfinished">Ctrl+Click / Shift+Click 으로 여러 페이지를 선택 가능합니다</translation>
+        <translation>Ctrl+Click / Shift+Click 으로 여러 페이지를 선택 가능합니다</translation>
     </message>
     <message>
         <source>Every other selected page</source>
-        <translation type="unfinished">선택된 모든 짝수(홀수) 페이지</translation>
+        <translation>선택된 모든 짝수(홀수) 페이지</translation>
     </message>
     <message>
         <source>The current page will be included.</source>
-        <translation type="unfinished">현재 페이지도 포함됩니다.</translation>
+        <translation>현재 페이지도 포함됩니다.</translation>
     </message>
 </context>
 <context>
@@ -3690,61 +3782,61 @@ p, li { white-space: pre-wrap; }
     <name>select_content::ApplyDialog</name>
     <message>
         <source>Select Content</source>
-        <translation type="unfinished">컨텐츠 선택</translation>
+        <translation>컨텐츠 선택</translation>
     </message>
     <message>
         <source>Options</source>
-        <translation type="unfinished">옵션</translation>
+        <translation>옵션</translation>
     </message>
     <message>
         <source>Apply page box</source>
-        <translation type="unfinished">페이지 박스 적용</translation>
+        <translation>페이지 박스 적용</translation>
     </message>
     <message>
         <source>Apply content box</source>
-        <translation type="unfinished">컨텐츠 박스 적용</translation>
+        <translation>컨텐츠 박스 적용</translation>
     </message>
     <message>
         <source>Apply to</source>
-        <translation type="unfinished">적용하기</translation>
+        <translation>적용하기</translation>
     </message>
     <message>
         <source>This page only (already applied)</source>
-        <translation type="unfinished">이 페이지만 (이미 적용되어 있음)</translation>
+        <translation>이 페이지만 (이미 적용되어 있음)</translation>
     </message>
     <message>
         <source>All pages</source>
-        <translation type="unfinished">모든 페이지</translation>
+        <translation>모든 페이지</translation>
     </message>
     <message>
         <source>This page and the following ones</source>
-        <translation type="unfinished">이 페이지와 다음 페이지</translation>
+        <translation>이 페이지와 다음 페이지</translation>
     </message>
     <message>
         <source>This page and the following every other page</source>
         <extracomment>All odd or even pages, depending on the current page being odd or even.</extracomment>
-        <translation type="unfinished">이 페이지와 모든 짝수(홀수) 페이지</translation>
+        <translation>이 페이지와 모든 짝수(홀수) 페이지</translation>
     </message>
     <message>
         <source>Every other page</source>
         <extracomment>All odd or even pages, depending on the current page being odd or even.</extracomment>
-        <translation type="unfinished">모든 짝수(홀수) 페이지</translation>
+        <translation>모든 짝수(홀수) 페이지</translation>
     </message>
     <message>
         <source>Selected pages</source>
-        <translation type="unfinished">선택된 페이지</translation>
+        <translation>선택된 페이지</translation>
     </message>
     <message>
         <source>Use Ctrl+Click / Shift+Click to select multiple pages.</source>
-        <translation type="unfinished">Ctrl+Click / Shift+Click 으로 여러 페이지를 선택 가능합니다</translation>
+        <translation>Ctrl+Click / Shift+Click 으로 여러 페이지를 선택 가능합니다</translation>
     </message>
     <message>
         <source>Every other selected page</source>
-        <translation type="unfinished">선택된 모든 짝수(홀수) 페이지</translation>
+        <translation>선택된 모든 짝수(홀수) 페이지</translation>
     </message>
     <message>
         <source>The current page will be included.</source>
-        <translation type="unfinished">현재 페이지도 포함됩니다.</translation>
+        <translation>현재 페이지도 포함됩니다.</translation>
     </message>
 </context>
 <context>
@@ -3809,51 +3901,51 @@ p, li { white-space: pre-wrap; }
     <name>select_content::OptionsWidget</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished">폼</translation>
+        <translation>폼</translation>
     </message>
     <message>
         <source>Page Box</source>
-        <translation type="unfinished">페이지 박스</translation>
+        <translation>페이지 박스</translation>
     </message>
     <message>
         <source>Disable</source>
-        <translation type="unfinished">비활성화</translation>
+        <translation>비활성화</translation>
     </message>
     <message>
         <source>Auto</source>
-        <translation type="unfinished">자동</translation>
+        <translation>자동</translation>
     </message>
     <message>
         <source>Manual</source>
-        <translation type="unfinished">수동</translation>
+        <translation>수동</translation>
     </message>
     <message>
         <source>Options</source>
-        <translation type="unfinished">옵션</translation>
+        <translation>옵션</translation>
     </message>
     <message>
         <source>Shift with corners while they are in black. </source>
-        <translation type="unfinished">검은색 테두리를 옮기기</translation>
+        <translation>검은색 테두리를 옮기기</translation>
     </message>
     <message>
         <source>Fine Tune Page Corners</source>
-        <translation type="unfinished">페이지 테두리 깔끔하게 자르기</translation>
+        <translation>페이지 테두리 깔끔하게 자르기</translation>
     </message>
     <message>
         <source>Width</source>
-        <translation type="unfinished">폭</translation>
+        <translation>폭</translation>
     </message>
     <message>
         <source>Height</source>
-        <translation type="unfinished">높이</translation>
+        <translation>높이</translation>
     </message>
     <message>
         <source>Content Box</source>
-        <translation type="unfinished">컨텐츠 박스</translation>
+        <translation>컨텐츠 박스</translation>
     </message>
     <message>
         <source>Apply to ...</source>
-        <translation type="unfinished">적용하기</translation>
+        <translation>적용하기</translation>
     </message>
 </context>
 </TS>

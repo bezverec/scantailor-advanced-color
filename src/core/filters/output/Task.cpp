@@ -6,6 +6,8 @@
 #include <DewarpingPointMapper.h>
 #include <PolygonUtils.h>
 #include <UnitsProvider.h>
+#include <core/ImageFileWriter.h>
+#include <core/OutputFileFormatSettings.h>
 #include <core/TiffWriter.h>
 
 #include <QDir>
@@ -42,6 +44,46 @@
 
 using namespace imageproc;
 using namespace dewarping;
+
+namespace {
+QString filePathForFormat(const OutputFileNameGenerator& outFileNameGen,
+                          const PageId& pageId,
+                          const OutputFileFormat format,
+                          const QString& dir = QString()) {
+  if (dir.isEmpty()) {
+    return outFileNameGen.filePathFor(pageId, format);
+  }
+
+  return QDir(dir).absoluteFilePath(outFileNameGen.fileNameFor(pageId, format));
+}
+
+void removeOutputFormatVariants(const OutputFileNameGenerator& outFileNameGen,
+                                const PageId& pageId,
+                                const QString& dir = QString()) {
+  for (const OutputFileFormat format : allOutputFileFormats()) {
+    QFile::remove(filePathForFormat(outFileNameGen, pageId, format, dir));
+  }
+}
+
+void removeOutputFormatVariantsExcept(const OutputFileNameGenerator& outFileNameGen,
+                                      const PageId& pageId,
+                                      const OutputFileFormat keepFormat,
+                                      const QString& dir = QString()) {
+  for (const OutputFileFormat format : allOutputFileFormats()) {
+    if (format == keepFormat) {
+      continue;
+    }
+
+    QFile::remove(filePathForFormat(outFileNameGen, pageId, format, dir));
+  }
+}
+
+void removeTiffVariant(const OutputFileNameGenerator& outFileNameGen,
+                       const PageId& pageId,
+                       const QString& dir) {
+  QFile::remove(filePathForFormat(outFileNameGen, pageId, OutputFileFormat::Tiff, dir));
+}
+}  // namespace
 
 namespace output {
 class Task::UiUpdater : public FilterResult {
@@ -133,12 +175,15 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data, 
   const QFileInfo originalBackgroundFileInfo(originalBackgroundFilePath);
 
   const QString automaskDir(Utils::automaskDir(m_outFileNameGen.outDir()));
-  const QString automaskFilePath(QDir(automaskDir).absoluteFilePath(outFileInfo.fileName()));
+  const QString automaskFilePath(
+      QDir(automaskDir).absoluteFilePath(m_outFileNameGen.fileNameFor(m_pageId, OutputFileFormat::Tiff)));
   QFileInfo automaskFileInfo(automaskFilePath);
 
   const QString specklesDir(Utils::specklesDir(m_outFileNameGen.outDir()));
-  const QString specklesFilePath(QDir(specklesDir).absoluteFilePath(outFileInfo.fileName()));
+  const QString specklesFilePath(
+      QDir(specklesDir).absoluteFilePath(m_outFileNameGen.fileNameFor(m_pageId, OutputFileFormat::Tiff)));
   QFileInfo specklesFileInfo(specklesFilePath);
+  const OutputFileFormat outputFormat = OutputFileFormatSettings::getInstance().format();
 
   const bool needPictureEditor = renderParams.mixedOutput() && !m_batchProcessing;
   const bool needSpecklesImage
@@ -344,8 +389,8 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data, 
 
         QDir().mkdir(foregroundDir);
         QDir().mkdir(backgroundDir);
-        if (!TiffWriter::writeImage(foregroundFilePath, outputImageWithForeground->getForegroundImage())
-            || !TiffWriter::writeImage(backgroundFilePath, outputImageWithForeground->getBackgroundImage())) {
+        if (!ImageFileWriter::writeImage(foregroundFilePath, outputImageWithForeground->getForegroundImage())
+            || !ImageFileWriter::writeImage(backgroundFilePath, outputImageWithForeground->getBackgroundImage())) {
           invalidateParams = true;
         }
 
@@ -353,27 +398,38 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data, 
           auto* outputImageWithOrigBg = dynamic_cast<OutputImageWithOriginalBackground*>(outputImage.get());
 
           QDir().mkdir(originalBackgroundDir);
-          if (!TiffWriter::writeImage(originalBackgroundFilePath,
-                                      outputImageWithOrigBg->getOriginalBackgroundImage())) {
+          if (!ImageFileWriter::writeImage(originalBackgroundFilePath,
+                                           outputImageWithOrigBg->getOriginalBackgroundImage())) {
             invalidateParams = true;
           }
         }
+      } else {
+        removeOutputFormatVariants(m_outFileNameGen, m_pageId, foregroundDir);
+        removeOutputFormatVariants(m_outFileNameGen, m_pageId, backgroundDir);
       }
 
       outImg = *outputImage;
     }
 
     if (!renderParams.originalBackground()) {
-      QFile::remove(originalBackgroundFilePath);
+      removeOutputFormatVariants(m_outFileNameGen, m_pageId, originalBackgroundDir);
     }
     if (!renderParams.splitOutput()) {
-      QFile::remove(foregroundFilePath);
-      QFile::remove(backgroundFilePath);
+      removeOutputFormatVariants(m_outFileNameGen, m_pageId, foregroundDir);
+      removeOutputFormatVariants(m_outFileNameGen, m_pageId, backgroundDir);
     }
 
-    if (!TiffWriter::writeImage(outFilePath, outImg)) {
+    if (!ImageFileWriter::writeImage(outFilePath, outImg)) {
       invalidateParams = true;
     } else {
+      removeOutputFormatVariantsExcept(m_outFileNameGen, m_pageId, outputFormat);
+      if (renderParams.splitOutput()) {
+        removeOutputFormatVariantsExcept(m_outFileNameGen, m_pageId, outputFormat, foregroundDir);
+        removeOutputFormatVariantsExcept(m_outFileNameGen, m_pageId, outputFormat, backgroundDir);
+        if (renderParams.originalBackground()) {
+          removeOutputFormatVariantsExcept(m_outFileNameGen, m_pageId, outputFormat, originalBackgroundDir);
+        }
+      }
       deleteMutuallyExclusiveOutputFiles();
     }
 
@@ -443,14 +499,23 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data, 
  * Delete output files mutually exclusive to m_pageId.
  */
 void Task::deleteMutuallyExclusiveOutputFiles() {
+  auto removeAllFormats = [this](const PageId& pageId) {
+    removeOutputFormatVariants(m_outFileNameGen, pageId);
+    removeOutputFormatVariants(m_outFileNameGen, pageId, Utils::foregroundDir(m_outFileNameGen.outDir()));
+    removeOutputFormatVariants(m_outFileNameGen, pageId, Utils::backgroundDir(m_outFileNameGen.outDir()));
+    removeOutputFormatVariants(m_outFileNameGen, pageId, Utils::originalBackgroundDir(m_outFileNameGen.outDir()));
+    removeTiffVariant(m_outFileNameGen, pageId, Utils::automaskDir(m_outFileNameGen.outDir()));
+    removeTiffVariant(m_outFileNameGen, pageId, Utils::specklesDir(m_outFileNameGen.outDir()));
+  };
+
   switch (m_pageId.subPage()) {
     case PageId::SINGLE_PAGE:
-      QFile::remove(m_outFileNameGen.filePathFor(PageId(m_pageId.imageId(), PageId::LEFT_PAGE)));
-      QFile::remove(m_outFileNameGen.filePathFor(PageId(m_pageId.imageId(), PageId::RIGHT_PAGE)));
+      removeAllFormats(PageId(m_pageId.imageId(), PageId::LEFT_PAGE));
+      removeAllFormats(PageId(m_pageId.imageId(), PageId::RIGHT_PAGE));
       break;
     case PageId::LEFT_PAGE:
     case PageId::RIGHT_PAGE:
-      QFile::remove(m_outFileNameGen.filePathFor(PageId(m_pageId.imageId(), PageId::SINGLE_PAGE)));
+      removeAllFormats(PageId(m_pageId.imageId(), PageId::SINGLE_PAGE));
       break;
   }
 }

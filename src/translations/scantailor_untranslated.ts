@@ -4,7 +4,7 @@
 <context>
     <name>AboutDialog</name>
     <message>
-        <source>ScanTailor Advanced</source>
+        <source>ScanTailor Advanced Color</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -12,7 +12,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Scan Tailor is an interactive post-processing tool for scanned pages. It performs operations such as page splitting, skew correction, adding/removing margins, and others. You give it raw scans, and you get pages ready to be printed or assembled into a PDF or DJVU file.  Scanning and optical character recognition is out of scope of this project.</source>
+        <source>Scan Tailor is an interactive post-processing tool for scanned pages. It performs operations such as page splitting, skew correction, adding/removing margins, and others. This Color branch also targets preservation-oriented workflows, including TIFF / TIF handling with retained bit depth, color space, and ICC-aware output where possible. Scanning and optical character recognition are out of scope of this project.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -29,6 +29,14 @@
     </message>
     <message>
         <source>Lead Developer of Advanced version</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lead Developer of Color version</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>OpenAI Codex (implemented with Jan Houserek collaboration)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1954,6 +1962,66 @@ You should remove them from the project.</source>
     </message>
     <message>
         <source>Change ...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Embedded / Source</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>sRGB</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Adobe RGB</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>eciRGB v2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Custom ICC</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Relative colorimetric</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Perceptual</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Absolute colorimetric</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ICC:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Choose ICC...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No custom ICC selected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Intent:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select ICC Profile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ICC profiles (*.icc *.icm);;All files (*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

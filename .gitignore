@@ -120,6 +120,7 @@ lcov.info
 *.rpm
 *.msi
 packaging/build/
+dist/
 
 # Variables de entorno / local
 .env
@@ -138,3 +139,7 @@ Debug/
 Release/
 x64/
 x86/
+
+# Local validation assets
+dng/
+exiftool-13.57_64/

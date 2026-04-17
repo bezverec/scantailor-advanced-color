@@ -174,14 +174,24 @@ if (ENABLE_LCMS2)
 
   if (NOT TARGET LCMS2::LCMS2)
     find_path(LCMS2_INCLUDE_DIR lcms2.h)
-    find_library(LCMS2_LIBRARY NAMES lcms2 liblcms2)
+    find_library(LCMS2_LIBRARY_RELEASE NAMES lcms2 liblcms2)
+    find_library(LCMS2_LIBRARY_DEBUG NAMES lcms2 liblcms2 PATH_SUFFIXES debug/lib)
 
-    if (LCMS2_INCLUDE_DIR AND LCMS2_LIBRARY)
+    if (LCMS2_INCLUDE_DIR AND (LCMS2_LIBRARY_RELEASE OR LCMS2_LIBRARY_DEBUG))
       add_library(LCMS2::LCMS2 UNKNOWN IMPORTED)
       set_target_properties(
           LCMS2::LCMS2 PROPERTIES
-          IMPORTED_LOCATION "${LCMS2_LIBRARY}"
           INTERFACE_INCLUDE_DIRECTORIES "${LCMS2_INCLUDE_DIR}")
+
+      if (LCMS2_LIBRARY_RELEASE)
+        set_property(TARGET LCMS2::LCMS2 APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
+        set_target_properties(LCMS2::LCMS2 PROPERTIES IMPORTED_LOCATION_RELEASE "${LCMS2_LIBRARY_RELEASE}")
+      endif()
+
+      if (LCMS2_LIBRARY_DEBUG)
+        set_property(TARGET LCMS2::LCMS2 APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
+        set_target_properties(LCMS2::LCMS2 PROPERTIES IMPORTED_LOCATION_DEBUG "${LCMS2_LIBRARY_DEBUG}")
+      endif()
     endif()
   endif()
 
@@ -192,6 +202,49 @@ if (ENABLE_LCMS2)
     message(STATUS "LCMS2 support enabled for TIFF ICC profile helpers.")
   else()
     message(WARNING "LCMS2 not found. TIFF ICC fallback profiles will be disabled.")
+  endif()
+endif()
+
+#================================= LibRaw ================================#
+
+option(ENABLE_LIBRAW "Enable RAW/DNG image support via LibRaw." ON)
+
+set(HAVE_LIBRAW FALSE)
+
+if (ENABLE_LIBRAW)
+  find_package(LibRaw QUIET)
+
+  if (NOT TARGET LibRaw::LibRaw)
+    find_path(LibRaw_INCLUDE_DIR libraw/libraw.h)
+    find_library(LibRaw_LIBRARY_RELEASE NAMES raw raw_r libraw libraw_r PATH_SUFFIXES lib/manual-link lib)
+    find_library(LibRaw_LIBRARY_DEBUG NAMES rawd raw_rd librawd librawd PATH_SUFFIXES debug/lib/manual-link debug/lib lib/manual-link lib)
+
+    if (LibRaw_INCLUDE_DIR AND (LibRaw_LIBRARY_RELEASE OR LibRaw_LIBRARY_DEBUG))
+      add_library(LibRaw::LibRaw UNKNOWN IMPORTED)
+      set_target_properties(
+          LibRaw::LibRaw PROPERTIES
+          INTERFACE_INCLUDE_DIRECTORIES "${LibRaw_INCLUDE_DIR}")
+
+      if (LibRaw_LIBRARY_RELEASE)
+        set_property(TARGET LibRaw::LibRaw APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
+        set_target_properties(LibRaw::LibRaw PROPERTIES IMPORTED_LOCATION_RELEASE "${LibRaw_LIBRARY_RELEASE}")
+      endif()
+
+      if (LibRaw_LIBRARY_DEBUG)
+        set_property(TARGET LibRaw::LibRaw APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
+        set_target_properties(LibRaw::LibRaw PROPERTIES IMPORTED_LOCATION_DEBUG "${LibRaw_LIBRARY_DEBUG}")
+      endif()
+    endif()
+  endif()
+
+  if (TARGET LibRaw::LibRaw)
+    set(HAVE_LIBRAW TRUE)
+    if (WIN32)
+      add_dynamic_library_locations(LibRaw::LibRaw)
+    endif()
+    message(STATUS "LibRaw found - RAW/DNG support enabled.")
+  else()
+    message(WARNING "LibRaw not found. RAW/DNG support will be disabled.")
   endif()
 endif()
 
@@ -351,9 +404,13 @@ if ("${VERSION_QUAD}" STREQUAL "${version_h_contents}")
   message(FATAL_ERROR "Failed to extract VERSION_QUAD from version.h")
 endif()
 configure_file(version.h.in "${CMAKE_BINARY_DIR}/version.h" COPYONLY)
-string(REGEX REPLACE "([0-9]+)\\.[0-9]+\\.[0-9]+" "\\1" APPLICATION_VERSION_MAJOR "${VERSION}")
-string(REGEX REPLACE "[0-9]+\\.([0-9]+)\\.[0-9]+" "\\1" APPLICATION_VERSION_MINOR "${VERSION}")
-string(REGEX REPLACE "[0-9]+\\.[0-9]+\\.([0-9]+)" "\\1" APPLICATION_VERSION_PATCH "${VERSION}")
+string(REGEX MATCH "^([0-9]+)\\.([0-9]+)\\.([0-9]+)" VERSION_SEMVER "${VERSION}")
+if (NOT VERSION_SEMVER)
+  message(FATAL_ERROR "VERSION must start with numeric semantic version (for example 1.1.3 or 1.1.3-experimental)")
+endif()
+set(APPLICATION_VERSION_MAJOR "${CMAKE_MATCH_1}")
+set(APPLICATION_VERSION_MINOR "${CMAKE_MATCH_2}")
+set(APPLICATION_VERSION_PATCH "${CMAKE_MATCH_3}")
 
 set(SCANTAILOR_RESOURCES_DIR "${CMAKE_SOURCE_DIR}/src/resources")
 set(SCANTAILOR_TRANSLATIONS_DIR "${CMAKE_SOURCE_DIR}/src/translations")
@@ -421,6 +478,10 @@ if (WIN32)
 
   if (TARGET LCMS2::LCMS2)
     list(APPEND dep_libs LCMS2::LCMS2)
+  endif()
+
+  if (TARGET LibRaw::LibRaw)
+    list(APPEND dep_libs LibRaw::LibRaw)
   endif()
 
   foreach (_target ${dep_libs})

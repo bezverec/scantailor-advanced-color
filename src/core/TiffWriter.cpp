@@ -146,6 +146,7 @@ bool TiffWriter::writeImage(QIODevice& device, const QImage& image) {
   TIFFSetField(tif.handle(), TIFFTAG_IMAGELENGTH, uint32_t(image.height()));
   TIFFSetField(tif.handle(), TIFFTAG_SAMPLEFORMAT, SAMPLEFORMAT_UINT);
   TIFFSetField(tif.handle(), TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
+  TIFFSetField(tif.handle(), TIFFTAG_ROWSPERSTRIP, TIFFDefaultStripSize(tif.handle(), 0));
   setDpm(tif, Dpm(image));
 
   switch (image.format()) {
@@ -172,6 +173,25 @@ bool TiffWriter::writeImage(QIODevice& device, const QImage& image) {
     return writeRGB32Image(tif, image.convertToFormat(QImage::Format_RGB32));
   }
 }  // TiffWriter::writeImage
+
+uint16_t TiffWriter::effectiveColorCompression(const QImage& image) {
+  const int configured = ApplicationSettings::getInstance().getTiffColorCompression();
+
+  if ((configured == COMPRESSION_JPEG) && (image.depth() > 8)) {
+    return COMPRESSION_LZW;
+  }
+
+  return uint16_t(configured);
+}
+
+void TiffWriter::configureCompression(const TiffHandle& tif, const uint16_t compression, const QImage& image) {
+  TIFFSetField(tif.handle(), TIFFTAG_COMPRESSION, compression);
+
+  if ((compression == COMPRESSION_LZW || compression == COMPRESSION_DEFLATE || compression == COMPRESSION_ADOBE_DEFLATE)
+      && image.depth() >= 8) {
+    TIFFSetField(tif.handle(), TIFFTAG_PREDICTOR, PREDICTOR_HORIZONTAL);
+  }
+}
 
 /**
  * Set the physical resolution, if it's defined.
@@ -288,8 +308,7 @@ bool TiffWriter::writeBitonalOrIndexed8Image(const TiffHandle& tif, const QImage
 
 bool TiffWriter::writeGrayscale16Image(const TiffHandle& tif, const QImage& image) {
   TIFFSetField(tif.handle(), TIFFTAG_SAMPLESPERPIXEL, uint16_t(1));
-  TIFFSetField(tif.handle(), TIFFTAG_COMPRESSION,
-               uint16_t(ApplicationSettings::getInstance().getTiffColorCompression()));
+  configureCompression(tif, effectiveColorCompression(image), image);
   TIFFSetField(tif.handle(), TIFFTAG_BITSPERSAMPLE, uint16_t(16));
   TIFFSetField(tif.handle(), TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_MINISBLACK);
   setIccProfile(tif, image);
@@ -313,8 +332,7 @@ bool TiffWriter::writeRGB32Image(const TiffHandle& tif, const QImage& image) {
   assert(image.format() == QImage::Format_RGB32);
 
   TIFFSetField(tif.handle(), TIFFTAG_SAMPLESPERPIXEL, uint16_t(3));
-  TIFFSetField(tif.handle(), TIFFTAG_COMPRESSION,
-               uint16_t(ApplicationSettings::getInstance().getTiffColorCompression()));
+  configureCompression(tif, effectiveColorCompression(image), image);
   TIFFSetField(tif.handle(), TIFFTAG_BITSPERSAMPLE, uint16_t(8));
   TIFFSetField(tif.handle(), TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
   setIccProfile(tif, image);
@@ -348,8 +366,7 @@ bool TiffWriter::writeARGB32Image(const TiffHandle& tif, const QImage& image) {
   assert(image.format() == QImage::Format_ARGB32);
 
   TIFFSetField(tif.handle(), TIFFTAG_SAMPLESPERPIXEL, uint16_t(4));
-  TIFFSetField(tif.handle(), TIFFTAG_COMPRESSION,
-               uint16_t(ApplicationSettings::getInstance().getTiffColorCompression()));
+  configureCompression(tif, effectiveColorCompression(image), image);
   TIFFSetField(tif.handle(), TIFFTAG_BITSPERSAMPLE, uint16_t(8));
   TIFFSetField(tif.handle(), TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
   const uint16_t extraSampleType = EXTRASAMPLE_UNASSALPHA;
@@ -386,8 +403,7 @@ bool TiffWriter::writeRGBA64Image(const TiffHandle& tif, const QImage& image, co
   assert(image.format() == QImage::Format_RGBA64);
 
   TIFFSetField(tif.handle(), TIFFTAG_SAMPLESPERPIXEL, uint16_t(writeAlpha ? 4 : 3));
-  TIFFSetField(tif.handle(), TIFFTAG_COMPRESSION,
-               uint16_t(ApplicationSettings::getInstance().getTiffColorCompression()));
+  configureCompression(tif, effectiveColorCompression(image), image);
   TIFFSetField(tif.handle(), TIFFTAG_BITSPERSAMPLE, uint16_t(16));
   TIFFSetField(tif.handle(), TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
   if (writeAlpha) {

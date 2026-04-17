@@ -38,6 +38,10 @@ class TiffWriter {
  private:
   class TiffHandle;
 
+  static uint16_t effectiveColorCompression(const QImage& image);
+
+  static void configureCompression(const TiffHandle& tif, uint16_t compression, const QImage& image);
+
   static void setDpm(const TiffHandle& tif, const Dpm& dpm);
 
   static void setIccProfile(const TiffHandle& tif, const QImage& image);

@@ -14,6 +14,7 @@
 
 #include "ImageMetadataLoader.h"
 #include "NonCopyable.h"
+#include "RawImageLoader.h"
 #include "SmartFilenameOrdering.h"
 
 class ProjectFilesDialog::Item {
@@ -171,6 +172,9 @@ ProjectFilesDialog::ProjectFilesDialog(QWidget* parent)
   m_supportedExtensions.insert("jpeg");
   m_supportedExtensions.insert("tif");
   m_supportedExtensions.insert("tiff");
+  for (const QString& extension : RawImageLoader::supportedExtensions()) {
+    m_supportedExtensions.insert(extension);
+  }
 
   setupUi(this);
 

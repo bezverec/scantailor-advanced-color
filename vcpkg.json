@@ -3,6 +3,7 @@
     "boost",
     "lcms",
     "libjpeg-turbo",
+    "libraw",
     "libpng",
     "qtbase",
     "qtsvg",

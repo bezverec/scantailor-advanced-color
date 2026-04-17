@@ -17,6 +17,7 @@
 #include "PageInfo.h"
 #include "PageView.h"
 #include "ProjectPages.h"
+#include "RawSettings.h"
 #include "version.h"
 
 #ifndef Q_MOC_RUN
@@ -91,6 +92,7 @@ bool ProjectWriter::write(const QString& filePath, const std::vector<FilterPtr>&
   rootEl.appendChild(processFiles(doc));
   rootEl.appendChild(processImages(doc));
   rootEl.appendChild(processPages(doc));
+  rootEl.appendChild(processRawSettings(doc));
   rootEl.appendChild(m_outFileNameGen.disambiguator()->toXml(
       doc, "file-name-disambiguation", boost::bind(&ProjectWriter::packFilePath, this, boost::placeholders::_1)));
 
@@ -202,6 +204,26 @@ QDomElement ProjectWriter::processPages(QDomDocument& doc) const {
   }
   return pagesEl;
 }  // ProjectWriter::processPages
+
+QDomElement ProjectWriter::processRawSettings(QDomDocument& doc) const {
+  const RawLoadParams& params = RawSettings::getInstance().getParams();
+
+  QDomElement rawSettingsEl(doc.createElement("raw-settings"));
+  rawSettingsEl.setAttribute("demosaic", rawDemosaicToString(params.demosaic));
+  rawSettingsEl.setAttribute("whiteBalance", rawWhiteBalanceToString(params.whiteBalance));
+  rawSettingsEl.setAttribute("useCameraMatrix", params.useCameraMatrix ? 1 : 0);
+  rawSettingsEl.setAttribute("exposureShift", QString::number(params.exposureShift, 'f', 3));
+  rawSettingsEl.setAttribute("halfSize", params.halfSize ? 1 : 0);
+
+  QDomElement manualWbEl(doc.createElement("manual-white-balance"));
+  manualWbEl.setAttribute("red", QString::number(params.wbMult[0], 'f', 6));
+  manualWbEl.setAttribute("green", QString::number(params.wbMult[1], 'f', 6));
+  manualWbEl.setAttribute("blue", QString::number(params.wbMult[2], 'f', 6));
+  manualWbEl.setAttribute("green2", QString::number(params.wbMult[3], 'f', 6));
+  rawSettingsEl.appendChild(manualWbEl);
+
+  return rawSettingsEl;
+}
 
 int ProjectWriter::dirId(const QString& dirPath) const {
   const Directories::const_iterator it(m_dirs.find(dirPath));

@@ -180,6 +180,8 @@ class MainWindow : public QMainWindow, private FilterUiInterface, private Ui::Ma
 
   void onSettingsChanged();
 
+  void onRawSettingsChanged();
+
   void showAboutDialog();
 
   void handleOutOfMemorySituation();
@@ -194,6 +196,19 @@ class MainWindow : public QMainWindow, private FilterUiInterface, private Ui::Ma
   using FilterPtr = std::shared_ptr<AbstractFilter>;
 
   static void removeWidgetsFromLayout(QLayout* layout);
+
+  struct SavedMainAreaViewState {
+    double zoom = 1.0;
+    bool hasScrollNorm = false;
+    double scrollNormX = 0.5;
+    double scrollNormY = 0.5;
+  };
+
+  static ImageViewBase* findPrimaryImageView(QWidget* root);
+
+  static void applySavedMainAreaViewState(ImageViewBase* view, const SavedMainAreaViewState& state);
+
+  void scheduleSavedMainAreaViewStateRestore(const QPointer<ImageViewBase>& view);
 
   void setOptionsWidget(FilterOptionsWidget* widget, Ownership ownership) override;
 
@@ -323,7 +338,7 @@ class MainWindow : public QMainWindow, private FilterUiInterface, private Ui::Ma
   QObjectCleanupHandler m_imageWidgetCleanup;
   std::unique_ptr<OutOfMemoryDialog> m_outOfMemoryDialog;
   int m_curFilter;
-  double m_savedZoomLevel;
+  SavedMainAreaViewState m_savedMainAreaViewState;
   int m_ignoreSelectionChanges;
   int m_ignorePageOrderingChanges;
   bool m_debug;

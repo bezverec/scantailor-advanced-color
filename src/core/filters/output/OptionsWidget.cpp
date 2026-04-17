@@ -3,6 +3,8 @@
 
 #include "OptionsWidget.h"
 
+#include <QFileDialog>
+#include <QFileInfo>
 #include <QToolTip>
 #include <utility>
 
@@ -15,6 +17,7 @@
 #include "OptionsWidgetBinarizationSauvola.h"
 #include "OptionsWidgetBinarizationWolf.h"
 #include "PictureZoneComparator.h"
+#include "core/OutputFileFormatSettings.h"
 
 using namespace core;
 
@@ -24,6 +27,7 @@ OptionsWidget::OptionsWidget(std::shared_ptr<Settings> settings, const PageSelec
       m_pageSelectionAccessor(pageSelectionAccessor),
       m_despeckleLevel(1.0),
       m_lastTab(TAB_OUTPUT),
+      m_outputFileFormat(OutputFileFormatSettings::getInstance().format()),
       m_connectionManager(std::bind(&OptionsWidget::setupUiConnections, this)) {
   setupUi(this);
 
@@ -53,6 +57,22 @@ OptionsWidget::OptionsWidget(std::shared_ptr<Settings> settings, const PageSelec
   fillingColorBox->addItem(tr("Background"), FILL_BACKGROUND);
   fillingColorBox->addItem(tr("White"), FILL_WHITE);
   fillingColorBox->addItem(tr("Black"), FILL_BLACK);
+
+  outputFormatBox->addItem(tr("TIFF"), static_cast<int>(OutputFileFormat::Tiff));
+  outputFormatBox->addItem(tr("PNG"), static_cast<int>(OutputFileFormat::Png));
+  outputFormatBox->addItem(tr("JPEG"), static_cast<int>(OutputFileFormat::Jpeg));
+  outputProfileBox->addItem(tr("Embedded / Source"), static_cast<int>(OutputColorProfileMode::Source));
+  outputProfileBox->addItem(tr("sRGB"), static_cast<int>(OutputColorProfileMode::SRgb));
+  outputProfileBox->addItem(tr("Adobe RGB"), static_cast<int>(OutputColorProfileMode::AdobeRgb));
+  outputProfileBox->addItem(tr("eciRGB v2"), static_cast<int>(OutputColorProfileMode::EciRgbV2));
+  outputProfileBox->addItem(tr("Custom ICC"), static_cast<int>(OutputColorProfileMode::Custom));
+
+  renderingIntentBox->addItem(tr("Relative colorimetric"),
+                              static_cast<int>(OutputRenderingIntent::RelativeColorimetric));
+  renderingIntentBox->addItem(tr("Perceptual"), static_cast<int>(OutputRenderingIntent::Perceptual));
+  renderingIntentBox->addItem(tr("Saturation"), static_cast<int>(OutputRenderingIntent::Saturation));
+  renderingIntentBox->addItem(tr("Absolute colorimetric"),
+                              static_cast<int>(OutputRenderingIntent::AbsoluteColorimetric));
 
   QPointer<OptionsWidgetBinarization> otsuOptionsWidgetBinarization = new OptionsWidgetBinarizationOtsu(m_settings);
   QPointer<OptionsWidgetBinarization> sauvolaOptionsWidgetBinarization
@@ -90,6 +110,8 @@ OptionsWidget::OptionsWidget(std::shared_ptr<Settings> settings, const PageSelec
   pictureShapeSelector->addItem(tr("Rectangular"), RECTANGULAR_SHAPE);
 
   updateDpiDisplay();
+  updateOutputFormatDisplay();
+  updateColorManagementDisplay();
   updateColorsDisplay();
   updateDewarpingDisplay();
 
@@ -106,6 +128,7 @@ void OptionsWidget::preUpdateUI(const PageId& pageId) {
   const Params params = m_settings->getParams(pageId);
   m_pageId = pageId;
   m_outputDpi = params.outputDpi();
+  m_outputFileFormat = OutputFileFormatSettings::getInstance().format();
   m_colorParams = params.colorParams();
   m_splittingOptions = params.splittingOptions();
   m_pictureShapeOptions = params.pictureShapeOptions();
@@ -114,6 +137,8 @@ void OptionsWidget::preUpdateUI(const PageId& pageId) {
   m_despeckleLevel = params.despeckleLevel();
 
   updateDpiDisplay();
+  updateOutputFormatDisplay();
+  updateColorManagementDisplay();
   updateColorsDisplay();
   updateDewarpingDisplay();
   updateProcessingDisplay();
@@ -148,6 +173,59 @@ void OptionsWidget::colorModeChanged(const int idx) {
   m_colorParams.setColorMode((ColorMode) mode);
   m_settings->setColorParams(m_pageId, m_colorParams);
   updateColorsDisplay();
+  emit reloadRequested();
+}
+
+void OptionsWidget::outputFormatChanged(const int idx) {
+  const auto format = static_cast<OutputFileFormat>(outputFormatBox->itemData(idx).toInt());
+  if (m_outputFileFormat == format) {
+    return;
+  }
+
+  m_outputFileFormat = format;
+  OutputFileFormatSettings::getInstance().setFormat(format);
+  updateOutputFormatDisplay();
+  updateColorManagementDisplay();
+  emit invalidateAllThumbnails();
+  emit reloadRequested();
+}
+
+void OptionsWidget::outputProfileChanged(const int idx) {
+  const auto mode = static_cast<OutputColorProfileMode>(outputProfileBox->itemData(idx).toInt());
+  if (OutputFileFormatSettings::getInstance().colorProfileMode() == mode) {
+    return;
+  }
+
+  OutputFileFormatSettings::getInstance().setColorProfileMode(mode);
+  updateColorManagementDisplay();
+  emit invalidateAllThumbnails();
+  emit reloadRequested();
+}
+
+void OptionsWidget::chooseCustomProfileClicked() {
+  const QString currentPath = OutputFileFormatSettings::getInstance().customIccProfilePath();
+  const QString profilePath = QFileDialog::getOpenFileName(
+      this, tr("Select ICC Profile"), currentPath, tr("ICC profiles (*.icc *.icm);;All files (*)"));
+  if (profilePath.isEmpty()) {
+    return;
+  }
+
+  OutputFileFormatSettings::getInstance().setCustomIccProfilePath(profilePath);
+  OutputFileFormatSettings::getInstance().setColorProfileMode(OutputColorProfileMode::Custom);
+  updateColorManagementDisplay();
+  emit invalidateAllThumbnails();
+  emit reloadRequested();
+}
+
+void OptionsWidget::renderingIntentChanged(const int idx) {
+  const auto intent = static_cast<OutputRenderingIntent>(renderingIntentBox->itemData(idx).toInt());
+  if (OutputFileFormatSettings::getInstance().renderingIntent() == intent) {
+    return;
+  }
+
+  OutputFileFormatSettings::getInstance().setRenderingIntent(intent);
+  updateColorManagementDisplay();
+  emit invalidateAllThumbnails();
   emit reloadRequested();
 }
 
@@ -559,6 +637,43 @@ void OptionsWidget::updateDpiDisplay() {
   }
 }
 
+void OptionsWidget::updateOutputFormatDisplay() {
+  outputFormatBox->blockSignals(true);
+  outputFormatBox->setCurrentIndex(outputFormatBox->findData(static_cast<int>(m_outputFileFormat)));
+  outputFormatBox->blockSignals(false);
+  lossyFormatWarningLabel->setVisible(outputFileFormatIsLossy(m_outputFileFormat));
+}
+
+void OptionsWidget::updateColorManagementDisplay() {
+  const OutputColorProfileMode profileMode = OutputFileFormatSettings::getInstance().colorProfileMode();
+  const OutputRenderingIntent renderingIntent = OutputFileFormatSettings::getInstance().renderingIntent();
+  const QString customProfilePath = OutputFileFormatSettings::getInstance().customIccProfilePath();
+  const bool customProfileSelected = profileMode == OutputColorProfileMode::Custom;
+  const bool enableColorManagement = (m_outputFileFormat == OutputFileFormat::Tiff)
+                                     || (m_outputFileFormat == OutputFileFormat::Png)
+                                     || (m_outputFileFormat == OutputFileFormat::Jpeg);
+
+  outputProfileBox->blockSignals(true);
+  outputProfileBox->setCurrentIndex(outputProfileBox->findData(static_cast<int>(profileMode)));
+  outputProfileBox->blockSignals(false);
+
+  renderingIntentBox->blockSignals(true);
+  renderingIntentBox->setCurrentIndex(renderingIntentBox->findData(static_cast<int>(renderingIntent)));
+  renderingIntentBox->blockSignals(false);
+
+  const QFileInfo customProfileInfo(customProfilePath);
+  customProfilePathLabel->setText(customProfilePath.isEmpty() ? tr("No custom ICC selected")
+                                                              : customProfileInfo.fileName());
+  customProfilePathLabel->setToolTip(customProfilePath);
+
+  outputProfileLabel->setEnabled(enableColorManagement);
+  outputProfileBox->setEnabled(enableColorManagement);
+  customProfileButton->setVisible(enableColorManagement && customProfileSelected);
+  customProfilePathLabel->setVisible(enableColorManagement && customProfileSelected);
+  renderingIntentLabel->setEnabled(enableColorManagement && (profileMode != OutputColorProfileMode::Source));
+  renderingIntentBox->setEnabled(enableColorManagement && (profileMode != OutputColorProfileMode::Source));
+}
+
 void OptionsWidget::updateColorsDisplay() {
   colorModeSelector->blockSignals(true);
 
@@ -930,6 +1045,10 @@ void OptionsWidget::sendReloadRequested() {
 
 void OptionsWidget::setupUiConnections() {
   CONNECT(changeDpiButton, SIGNAL(clicked()), this, SLOT(changeDpiButtonClicked()));
+  CONNECT(outputFormatBox, SIGNAL(currentIndexChanged(int)), this, SLOT(outputFormatChanged(int)));
+  CONNECT(outputProfileBox, SIGNAL(currentIndexChanged(int)), this, SLOT(outputProfileChanged(int)));
+  CONNECT(customProfileButton, SIGNAL(clicked()), this, SLOT(chooseCustomProfileClicked()));
+  CONNECT(renderingIntentBox, SIGNAL(currentIndexChanged(int)), this, SLOT(renderingIntentChanged(int)));
   CONNECT(colorModeSelector, SIGNAL(currentIndexChanged(int)), this, SLOT(colorModeChanged(int)));
   CONNECT(thresholdMethodBox, SIGNAL(currentIndexChanged(int)), this, SLOT(thresholdMethodChanged(int)));
   CONNECT(fillingColorBox, SIGNAL(currentIndexChanged(int)), this, SLOT(fillingColorChanged(int)));

@@ -8,6 +8,7 @@
 #include <utility>
 
 #include "AbstractRelinker.h"
+#include "OutputFileFormatSettings.h"
 #include "PageId.h"
 #include "RelinkablePath.h"
 
@@ -27,6 +28,10 @@ void OutputFileNameGenerator::performRelinking(const AbstractRelinker& relinker)
 }
 
 QString OutputFileNameGenerator::fileNameFor(const PageId& page) const {
+  return fileNameFor(page, OutputFileFormatSettings::getInstance().format());
+}
+
+QString OutputFileNameGenerator::fileNameFor(const PageId& page, const OutputFileFormat format) const {
   const bool ltr = (m_layoutDirection == Qt::LeftToRight);
   const PageId::SubPage subPage = page.subPage();
   const int label = m_disambiguator->getLabel(page.imageId().filePath());
@@ -43,11 +48,16 @@ QString OutputFileNameGenerator::fileNameFor(const PageId& page) const {
     name += QLatin1Char(ltr == (subPage == PageId::LEFT_PAGE) ? '1' : '2');
     name += QLatin1Char(subPage == PageId::LEFT_PAGE ? 'L' : 'R');
   }
-  name += QString::fromLatin1(".tif");
+  name += QLatin1Char('.');
+  name += outputFileFormatExtension(format);
   return name;
 }
 
 QString OutputFileNameGenerator::filePathFor(const PageId& page) const {
-  const QString fileName(fileNameFor(page));
+  return filePathFor(page, OutputFileFormatSettings::getInstance().format());
+}
+
+QString OutputFileNameGenerator::filePathFor(const PageId& page, const OutputFileFormat format) const {
+  const QString fileName(fileNameFor(page, format));
   return QDir(m_outDir).absoluteFilePath(fileName);
 }

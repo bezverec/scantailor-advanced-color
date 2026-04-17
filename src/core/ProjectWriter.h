@@ -20,6 +20,7 @@
 #include "OutputFileNameGenerator.h"
 #include "PageId.h"
 #include "PageSequence.h"
+#include "RawImageLoader.h"
 #include "SelectedPage.h"
 #include "VirtualFunction.h"
 
@@ -124,6 +125,8 @@ class ProjectWriter {
   QDomElement processImages(QDomDocument& doc) const;
 
   QDomElement processPages(QDomDocument& doc) const;
+
+  QDomElement processRawSettings(QDomDocument& doc) const;
 
   void writeImageMetadata(QDomDocument& doc, QDomElement& imageEl, const ImageId& imageId) const;
 

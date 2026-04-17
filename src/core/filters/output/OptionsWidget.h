@@ -26,6 +26,7 @@
 #include "PageId.h"
 #include "PageSelectionAccessor.h"
 #include "Params.h"
+#include "core/OutputFileFormat.h"
 #include "ui_OptionsWidget.h"
 
 namespace dewarping {
@@ -77,6 +78,14 @@ class OptionsWidget : public FilterOptionsWidget, private Ui::OptionsWidget {
   void applySplittingOptionsConfirmed(const std::set<PageId>& pages);
 
   void colorModeChanged(int idx);
+
+  void outputFormatChanged(int idx);
+
+  void outputProfileChanged(int idx);
+
+  void chooseCustomProfileClicked();
+
+  void renderingIntentChanged(int idx);
 
   void blackOnWhiteToggled(bool value);
 
@@ -175,6 +184,10 @@ class OptionsWidget : public FilterOptionsWidget, private Ui::OptionsWidget {
 
   void updateProcessingDisplay();
 
+  void updateOutputFormatDisplay();
+
+  void updateColorManagementDisplay();
+
   void addOptionsWidgetBinarization(OptionsWidgetBinarization* widget);
 
   void setupUiConnections();
@@ -191,6 +204,7 @@ class OptionsWidget : public FilterOptionsWidget, private Ui::OptionsWidget {
   double m_despeckleLevel;
   ImageViewTab m_lastTab;
   QTimer m_delayedReloadRequest;
+  OutputFileFormat m_outputFileFormat;
 
   ConnectionManager m_connectionManager;
 };

@@ -8,7 +8,17 @@ such as cropping, rotating, deskewing, page splitting, and light cleanup, while 
 characteristics as much as possible.
 
 ### Screenshot
-<img width="2560" height="1392" alt="scantailor_advanced_color_1 1 2" src="https://github.com/user-attachments/assets/cd272470-cad1-4eae-af01-30c44896315c" />
+<img width="2560" height="1392" alt="scantailor_advanced_color_1 1 3" src="https://github.com/user-attachments/assets/cd272470-cad1-4eae-af01-30c44896315c" />
+
+## What's new in 1.1.3-experimental
+
+- RAW / DNG import support via `LibRaw`, with processed export to TIFF / PNG / JPEG
+- improved DNG metadata handling so TIFF-based RAW files do not unnecessarily fall back to manual DPI repair
+- safer RAW thumbnail loading and TIFF output handling for preservation-oriented workflows
+- selectable output ICC policy: embedded / source, `sRGB`, `Adobe RGB`, `eciRGB v2`, or a custom ICC profile
+- selectable rendering intent for ICC-managed output
+- refreshed Chinese translation and updated translation sources for the new color-management UI
+- clarified, reproducible Windows build instructions using MSVC + `vcpkg`
 
 
 ## Contents:
@@ -79,13 +89,118 @@ to the source as possible.
 
 In particular, the current codebase contains support for:
 
+- importing RAW / DNG with `LibRaw`
 - preserving higher bit-depth image paths where Qt / libtiff make that possible
 - preserving and propagating ICC profile / color space metadata through the processing pipeline
 - writing TIFF output with embedded ICC profiles
-- using Little CMS 2 (`lcms2`) helpers for fallback ICC profile generation when needed
+- selecting output ICC behavior (`Embedded / Source`, `sRGB`, `Adobe RGB`, `eciRGB v2`, or custom ICC) with rendering intent
+- using Little CMS 2 (`lcms2`) helpers for fallback ICC profile generation and color-space conversion when needed
 
 This is especially relevant for TIFF / TIF collections where the user wants to crop, rotate, deskew, or split pages
 without unnecessarily flattening the source into a lower-fidelity derivative.
+
+## RAW / DNG workflow
+
+RAW and DNG files are now first-class input formats in the project loader. The current implementation is aimed at
+minimal-intervention processing of camera captures and preservation-style derivatives:
+
+- supported input extensions currently include `dng`, `cr2`, `cr3`, `crw`, `nef`, `nrw`, `arw`, `srf`, `sr2`, `raf`,
+  `orf`, `pef`, `ptx`, `rw2`, `rwl`, `srw`, `3fr`, `fff`, `iiq`, `mrw`, and `x3f`
+- RAW thumbnails are read through `LibRaw`, so the thumbnail pane can show DNG / RAW projects without first converting
+  the files externally
+- DNG metadata is inspected before fallback decoding, so TIFF-based DNG files no longer depend only on reduced preview
+  metadata
+- if a RAW / DNG file does not contain trustworthy physical resolution tags, ScanTailor assigns a stable import-time
+  fallback DPI to avoid forcing the `Fix DPI` step for files that simply omit that metadata
+- RAW input is decoded into the ScanTailor pipeline as high-bit-depth RGB data where Qt / `LibRaw` permit it
+
+Important limitation: the application does **not** currently write native RAW / DNG files on output. RAW / DNG is an
+input workflow; processed output is still written as `TIFF`, `PNG`, or `JPEG`. For preservation work, `TIFF` is the
+intended target format.
+
+## RAW settings
+
+RAW decoding options are available in **Settings > Processing > RAW Import**.
+
+These settings are project-scoped:
+
+- they are editable only when a project is open
+- they are stored inside the project file and reloaded with that project
+- if the build was made without `LibRaw`, the entire RAW settings group is disabled
+
+### RAW Import options
+
+- `Demosaic`
+  Selects the `LibRaw` demosaic algorithm used for Bayer / CFA decoding. The current UI exposes `Linear`, `VNG`,
+  `PPG`, `AHD`, `DCB`, and `DHT`.
+- `White balance`
+  Controls how the initial RAW RGB balance is produced:
+  `Camera` uses camera metadata, `Auto` lets `LibRaw` estimate it, `Daylight` uses daylight-neutral decoding, and
+  `Manual` enables explicit channel multipliers.
+- `Exposure shift`
+  Applies an exposure compensation during RAW decoding. Default is `0.0`, meaning no correction.
+- `Use camera matrix`
+  Enables the camera color matrix during RAW conversion. In practice this should usually stay enabled unless you are
+  deliberately testing alternate RAW rendering behavior.
+- `Manual white balance`
+  When `White balance = Manual`, the dialog exposes four channel multipliers:
+  `Red`, `Green`, `Blue`, `Green 2`.
+  These are written into the project file and used on the next RAW decode pass.
+
+### What these settings affect
+
+- they affect RAW / DNG decoding at load time, including the image shown in the pipeline and RAW-generated thumbnails
+- they do not replace the output-side ICC policy
+- they are independent from TIFF / PNG / JPEG compression settings
+- the current implementation renders RAW data into a working RGB image first, then the Output filter can preserve,
+  embed, or convert that image into the selected output ICC profile
+
+In other words:
+
+- RAW settings control how sensor data is rendered into working RGB
+- Output settings control how that working RGB is written to the final derivative
+
+## Color management settings
+
+Color-management options for processed output are available in the **Output** filter.
+
+### Output ICC
+
+The current output profile policies are:
+
+- `Embedded / Source`
+  Keeps the effective profile coming from the working image when available. This is the most conservative option when
+  the goal is to avoid unnecessary color reinterpretation.
+- `sRGB`
+  Uses the bundled `sRGB v4 ICC preference` profile.
+- `Adobe RGB`
+  Uses the bundled `Adobe RGB (1998)` profile.
+- `eciRGB v2`
+  Uses the bundled `eciRGB v2 ICCv4` profile. This is the most relevant preset for preservation-oriented workflows that
+  follow European digitization guidance and want a standard device-independent working space.
+- `Custom ICC`
+  Loads an explicitly selected `.icc` / `.icm` file.
+
+### Rendering intent
+
+When the selected output profile is not `Embedded / Source`, ScanTailor can convert through Little CMS 2 using one of
+the standard rendering intents:
+
+- `Relative colorimetric`
+- `Perceptual`
+- `Saturation`
+- `Absolute colorimetric`
+
+### Recommended preservation setup
+
+For minimal-intervention master derivatives:
+
+- prefer `TIFF` output
+- avoid `JPEG` unless you intentionally accept lossy output
+- start with `Embedded / Source` if the source profile is already correct and trustworthy
+- use `eciRGB v2` when you need an explicit preservation-oriented target RGB space shared across a project
+- use `Adobe RGB` where that is required by an existing workflow
+- reserve `sRGB` mainly for lighter access derivatives or interoperability-focused delivery
 
 ## Why "Color"
 
@@ -94,8 +209,11 @@ The `Color` suffix was added to make the purpose of this branch explicit.
 The main reason is the addition of **Little CMS 2 (`lcms2`)** and the related color-management work around it:
 
 - detecting and preserving ICC profiles from TIFF / TIF input
+- keeping more DNG / RAW metadata and high-bit-depth image data in preservation-friendly paths
 - propagating color space information through the processing pipeline
 - embedding ICC profiles back into TIFF output
+- allowing explicit output targeting of `sRGB`, `Adobe RGB`, `eciRGB v2`, embedded / source ICC, or a custom ICC profile
+- exposing rendering intent controls for color-managed output
 - generating fallback ICC profiles when the source image has no explicit profile but a color-managed output is still desirable
 
 In other words, this is not just "Advanced with a few extra tweaks". It is an Advanced branch that explicitly cares about
@@ -123,11 +241,15 @@ For this reason I have created this fork. Compared to the original Advanced code
 - Polish translation (PR in the original repository, credit goes to @ukolaj-s)
 - French translation (PR in the original repository, credit goes to @maltaisn)
 - Korean translation (PR in the original repository, credit goes to @brendan-t and @mirusu400)
+- Chinese translation refresh for the color-management and preservation workflow additions
 - Beside 'background' and white you can now choose black as filling color
 - 1200 DPI output option
+- RAW / DNG import support via `LibRaw`, with processed export to TIFF / PNG / JPEG
 - Preservation-oriented TIFF / TIF workflow improvements
 - `lcms2` integration in the build system and color-profile helper layer
 - ICC profile reading, propagation, and TIFF embedding support
+- output ICC profile selection (`Embedded / Source`, `sRGB`, `Adobe RGB`, `eciRGB v2`, `Custom ICC`)
+- output rendering intent selection
 - retention of more source image characteristics, especially for minimal-intervention workflows
 - Some other fixes and improvements ...
 
@@ -502,42 +624,74 @@ Prerequisites:
 
 1. Visual Studio with **Desktop development with C++** and a recent Windows SDK
 2. CMake (the Visual Studio bundled CMake is fine)
-3. `vcpkg` (the Visual Studio bundled `vcpkg` is fine)
+3. `vcpkg` (the Visual Studio bundled `vcpkg` is fine, or a standalone clone)
 
 The repository includes a `vcpkg.json` manifest with the required dependencies:
 
 - Boost
 - libjpeg-turbo
 - libpng
+- LibRaw
 - libtiff
 - zlib
 - Qt6 (`qtbase`, `qtsvg`, `qttools`)
 - Little CMS (`lcms`, providing `lcms2`)
 
-From an **x64 Visual Studio Developer Command Prompt**:
+Recommended reproducible Windows build recipe:
+
+1. Clone the repository into a short path, for example `C:\src\scantailor-advanced-color`.
+2. Open an **x64 Visual Studio Developer Command Prompt**.
+3. Set `VCPKG_ROOT` to the `vcpkg` you actually want to use.
+4. Install the manifest dependencies for the `x64-windows` triplet.
+5. Configure a fresh out-of-source `Release` build.
+6. Build the project and let the post-build step run `windeployqt`.
+
+Example session:
 
 ```bat
-cd path\to\scantailor-advanced
+cd C:\src\scantailor-advanced-color
 
 set VCPKG_ROOT=%ProgramFiles%\Microsoft Visual Studio\2022\Community\VC\vcpkg
 
 "%VCPKG_ROOT%\vcpkg.exe" install --triplet x64-windows
 
-cmake -S . -B build-vcpkg -G "NMake Makefiles" ^
+cmake -S . -B build-vcpkg-release -G "NMake Makefiles" ^
   -DCMAKE_BUILD_TYPE=Release ^
   -DBUILD_TESTS=OFF ^
+  -DENABLE_LCMS2=ON ^
   -DCMAKE_TOOLCHAIN_FILE="%VCPKG_ROOT%\scripts\buildsystems\vcpkg.cmake" ^
   -DVCPKG_TARGET_TRIPLET=x64-windows
 
-cmake --build build-vcpkg
+cmake --build build-vcpkg-release
 ```
 
 Notes:
 
 - Adjust `%VCPKG_ROOT%` if you use a different Visual Studio version / edition or a standalone `vcpkg`.
-- Prefer `Release` builds on Windows. If a build directory is already cached as `Debug`, recreate or reconfigure it as `Release` before running the deploy step.
-- The executable is written to `build-vcpkg\scantailor.exe`.
+- Prefer a fresh `Release` build directory on Windows. If a build tree was previously configured as `Debug`, create a new one instead of reusing it.
+- The executable is written to `build-vcpkg-release\scantailor.exe`.
 - The post-build step runs `windeployqt` to copy the required Qt runtime files next to the executable.
+- A successful Windows build directory should contain at least:
+  - `scantailor.exe`
+  - `raw.dll`
+  - `lcms2-2.dll`
+  - `tiff.dll`
+  - Qt runtime DLLs such as `Qt6Core.dll`, `Qt6Gui.dll`, `Qt6Widgets.dll`
+- Qt may warn about missing translation catalogs in the `vcpkg` tree. Those warnings are non-fatal as long as the build finishes and the runtime DLLs are deployed.
+- Translation `.qm` files are compiled as part of the normal build.
+
+If you want a completely clean rebuild:
+
+```bat
+rmdir /s /q build-vcpkg-release
+cmake -S . -B build-vcpkg-release -G "NMake Makefiles" ^
+  -DCMAKE_BUILD_TYPE=Release ^
+  -DBUILD_TESTS=OFF ^
+  -DENABLE_LCMS2=ON ^
+  -DCMAKE_TOOLCHAIN_FILE="%VCPKG_ROOT%\scripts\buildsystems\vcpkg.cmake" ^
+  -DVCPKG_TARGET_TRIPLET=x64-windows
+cmake --build build-vcpkg-release
+```
 
 Alternative Windows dependency layout:
 

@@ -11,20 +11,27 @@
 class SettingsDialog : public QDialog {
   Q_OBJECT
  public:
-  explicit SettingsDialog(QWidget* parent = nullptr);
+  explicit SettingsDialog(bool rawSettingsEnabled, QWidget* parent = nullptr);
 
   ~SettingsDialog() override;
 
  signals:
   void settingsChanged();
 
+  void rawSettingsChanged();
+
  private slots:
   void commitChanges();
 
   void blackOnWhiteDetectionToggled(bool checked);
 
+  void rawWhiteBalanceChanged(int idx);
+
  private:
+  void updateRawSettingsUiState();
+
   Ui::SettingsDialog ui;
+  bool m_rawSettingsEnabled;
 };
 
 

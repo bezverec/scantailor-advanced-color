@@ -10,6 +10,7 @@
 #include "AbstractFilter.h"
 #include "FileNameDisambiguator.h"
 #include "ProjectPages.h"
+#include "RawSettings.h"
 #include "XmlUnmarshaller.h"
 #include "version.h"
 
@@ -56,6 +57,7 @@ ProjectReader::ProjectReader(const QDomDocument& doc, const QString& projectFile
     return;
   }
   processPages(pagesEl);
+  processRawSettings(projectEl.namedItem("raw-settings").toElement());
   // Load naming disambiguator.  This needs to be done after processing pages.
   const QDomElement disambigEl(projectEl.namedItem("file-name-disambiguation").toElement());
   m_disambiguator = std::make_shared<FileNameDisambiguator>(
@@ -268,6 +270,44 @@ void ProjectReader::processPages(const QDomElement& pagesEl) {
     }
   }
 }  // ProjectReader::processPages
+
+void ProjectReader::processRawSettings(const QDomElement& rawSettingsEl) {
+  if (rawSettingsEl.isNull()) {
+    return;
+  }
+
+  RawLoadParams params;
+
+  rawDemosaicFromString(rawSettingsEl.attribute("demosaic"), &params.demosaic);
+  rawWhiteBalanceFromString(rawSettingsEl.attribute("whiteBalance"), &params.whiteBalance);
+
+  if (rawSettingsEl.hasAttribute("useCameraMatrix")) {
+    params.useCameraMatrix = rawSettingsEl.attribute("useCameraMatrix") != QLatin1String("0");
+  }
+  if (rawSettingsEl.hasAttribute("halfSize")) {
+    params.halfSize = rawSettingsEl.attribute("halfSize") == QLatin1String("1");
+  }
+
+  bool ok = false;
+  const double exposureShift = rawSettingsEl.attribute("exposureShift").toDouble(&ok);
+  if (ok) {
+    params.exposureShift = static_cast<float>(exposureShift);
+  }
+
+  const QDomElement manualWbEl(rawSettingsEl.namedItem("manual-white-balance").toElement());
+  if (!manualWbEl.isNull()) {
+    const QString attrs[] = {QStringLiteral("red"), QStringLiteral("green"),
+                             QStringLiteral("blue"), QStringLiteral("green2")};
+    for (int i = 0; i < 4; ++i) {
+      const double value = manualWbEl.attribute(attrs[i]).toDouble(&ok);
+      if (ok) {
+        params.wbMult[i] = static_cast<float>(value);
+      }
+    }
+  }
+
+  m_rawLoadParams = params;
+}
 
 QString ProjectReader::getDirPath(const int id) const {
   const auto it(m_dirMap.find(id));

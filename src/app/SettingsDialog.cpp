@@ -4,6 +4,7 @@
 #include "SettingsDialog.h"
 
 #include <core/ApplicationSettings.h>
+#include <core/RawSettings.h>
 #include <tiff.h>
 
 #include <QtCore/QDir>
@@ -12,8 +13,10 @@
 
 #include "Application.h"
 #include "OpenGLSupport.h"
+#include "config.h"
 
-SettingsDialog::SettingsDialog(QWidget* parent) : QDialog(parent) {
+SettingsDialog::SettingsDialog(const bool rawSettingsEnabled, QWidget* parent)
+    : QDialog(parent), m_rawSettingsEnabled(rawSettingsEnabled) {
   ui.setupUi(this);
 
   ApplicationSettings& settings = ApplicationSettings::getInstance();
@@ -82,6 +85,41 @@ SettingsDialog::SettingsDialog(QWidget* parent) : QDialog(parent) {
   ui.singleColumnThumbnailsCB->setChecked(settings.isSingleColumnThumbnailDisplayEnabled());
   ui.cancelingSelectionQuestionCB->setChecked(settings.isCancelingSelectionQuestionEnabled());
 
+  ui.rawDemosaicBox->addItem(tr("Linear"), static_cast<int>(RawLoadParams::Demosaic::Linear));
+  ui.rawDemosaicBox->addItem(tr("VNG"), static_cast<int>(RawLoadParams::Demosaic::VNG));
+  ui.rawDemosaicBox->addItem(tr("PPG"), static_cast<int>(RawLoadParams::Demosaic::PPG));
+  ui.rawDemosaicBox->addItem(tr("AHD"), static_cast<int>(RawLoadParams::Demosaic::AHD));
+  ui.rawDemosaicBox->addItem(tr("DCB"), static_cast<int>(RawLoadParams::Demosaic::DCB));
+  ui.rawDemosaicBox->addItem(tr("DHT"), static_cast<int>(RawLoadParams::Demosaic::DHT));
+
+  ui.rawWhiteBalanceBox->addItem(tr("Camera"), static_cast<int>(RawLoadParams::WhiteBalance::Camera));
+  ui.rawWhiteBalanceBox->addItem(tr("Auto"), static_cast<int>(RawLoadParams::WhiteBalance::Auto));
+  ui.rawWhiteBalanceBox->addItem(tr("Daylight"), static_cast<int>(RawLoadParams::WhiteBalance::Daylight));
+  ui.rawWhiteBalanceBox->addItem(tr("Manual"), static_cast<int>(RawLoadParams::WhiteBalance::Manual));
+
+  const RawLoadParams& rawParams = RawSettings::getInstance().getParams();
+  ui.rawDemosaicBox->setCurrentIndex(ui.rawDemosaicBox->findData(static_cast<int>(rawParams.demosaic)));
+  ui.rawWhiteBalanceBox->setCurrentIndex(
+      ui.rawWhiteBalanceBox->findData(static_cast<int>(rawParams.whiteBalance)));
+  ui.rawExposureShiftSB->setValue(rawParams.exposureShift);
+  ui.rawUseCameraMatrixCB->setChecked(rawParams.useCameraMatrix);
+  ui.rawWbRedSB->setValue(rawParams.wbMult[0]);
+  ui.rawWbGreenSB->setValue(rawParams.wbMult[1]);
+  ui.rawWbBlueSB->setValue(rawParams.wbMult[2]);
+  ui.rawWbGreen2SB->setValue(rawParams.wbMult[3]);
+
+#ifdef HAVE_LIBRAW
+  const bool rawUiEnabled = m_rawSettingsEnabled;
+  ui.rawSettingsHintLabel->setText(rawUiEnabled ? tr("These settings are saved into the current project.")
+                                                : tr("Open a project to edit RAW / DNG import settings."));
+#else
+  const bool rawUiEnabled = false;
+  ui.rawSettingsHintLabel->setText(tr("LibRaw support is not available in this build."));
+#endif
+  ui.rawImportGroup->setEnabled(rawUiEnabled);
+  connect(ui.rawWhiteBalanceBox, SIGNAL(currentIndexChanged(int)), SLOT(rawWhiteBalanceChanged(int)));
+  updateRawSettingsUiState();
+
   connect(ui.buttonBox, SIGNAL(accepted()), SLOT(commitChanges()));
 }
 
@@ -122,9 +160,38 @@ void SettingsDialog::commitChanges() {
   settings.setSingleColumnThumbnailDisplayEnabled(ui.singleColumnThumbnailsCB->isChecked());
   settings.setCancelingSelectionQuestionEnabled(ui.cancelingSelectionQuestionCB->isChecked());
 
+  if (ui.rawImportGroup->isEnabled()) {
+    RawLoadParams params = RawSettings::getInstance().getParams();
+    params.demosaic = static_cast<RawLoadParams::Demosaic>(ui.rawDemosaicBox->currentData().toInt());
+    params.whiteBalance = static_cast<RawLoadParams::WhiteBalance>(ui.rawWhiteBalanceBox->currentData().toInt());
+    params.exposureShift = static_cast<float>(ui.rawExposureShiftSB->value());
+    params.useCameraMatrix = ui.rawUseCameraMatrixCB->isChecked();
+    params.wbMult[0] = static_cast<float>(ui.rawWbRedSB->value());
+    params.wbMult[1] = static_cast<float>(ui.rawWbGreenSB->value());
+    params.wbMult[2] = static_cast<float>(ui.rawWbBlueSB->value());
+    params.wbMult[3] = static_cast<float>(ui.rawWbGreen2SB->value());
+
+    RawSettings& rawSettings = RawSettings::getInstance();
+    if (params != rawSettings.getParams()) {
+      rawSettings.setParams(params);
+      emit rawSettingsChanged();
+    }
+  }
+
   emit settingsChanged();
 }
 
 void SettingsDialog::blackOnWhiteDetectionToggled(bool checked) {
   ui.blackOnWhiteDetectionAtOutputCB->setEnabled(checked);
+}
+
+void SettingsDialog::rawWhiteBalanceChanged(int idx) {
+  Q_UNUSED(idx);
+  updateRawSettingsUiState();
+}
+
+void SettingsDialog::updateRawSettingsUiState() {
+  const bool manualWhiteBalance
+      = ui.rawWhiteBalanceBox->currentData().toInt() == static_cast<int>(RawLoadParams::WhiteBalance::Manual);
+  ui.rawManualWbWidget->setEnabled(ui.rawImportGroup->isEnabled() && manualWhiteBalance);
 }

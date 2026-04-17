@@ -5,9 +5,9 @@
     <name>AboutDialog</name>
     <message>
         <location filename="../app/AboutDialog.ui" line="14"/>
-        <source>ScanTailor Advanced</source>
+        <source>ScanTailor Advanced Color</source>
         <translatorcomment>Software name was not translated at all, neither was any of its related versions (universal, plus, etc).</translatorcomment>
-        <translation></translation>
+        <translation>ScanTailor Advanced Color</translation>
     </message>
     <message>
         <location filename="../app/AboutDialog.ui" line="27"/>
@@ -16,8 +16,8 @@
     </message>
     <message>
         <location filename="../app/AboutDialog.ui" line="33"/>
-        <source>Scan Tailor is an interactive post-processing tool for scanned pages. It performs operations such as page splitting, skew correction, adding/removing margins, and others. You give it raw scans, and you get pages ready to be printed or assembled into a PDF or DJVU file.  Scanning and optical character recognition is out of scope of this project.</source>
-        <translation>Scan Tailor est un outil interactif de post-traitement pour les pages numérisées. Il permet d&apos;effectuer des d&apos;opérations telles que la séparation des pages, le redressement automatique, l&apos;ajout ou le retrait de marges, et plus encore. À partir de numérisations brutes, il est possible d&apos;obtenir des pages prêtes à être imprimées ou assemblées en un fichier PDF ou DJVU. La numérisation en tant que tel ainsi que la reconnaissance de caractères (OCR) ne sont pas visés par ce project.</translation>
+        <source>Scan Tailor is an interactive post-processing tool for scanned pages. It performs operations such as page splitting, skew correction, adding/removing margins, and others. This Color branch also targets preservation-oriented workflows, including TIFF / TIF handling with retained bit depth, color space, and ICC-aware output where possible. Scanning and optical character recognition are out of scope of this project.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../app/AboutDialog.ui" line="110"/>
@@ -83,6 +83,14 @@
         <location filename="../app/AboutDialog.ui" line="158"/>
         <source>4lex4</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>Lead Developer of Color version</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>OpenAI Codex (implemented with Jan Houserek collaboration)</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../app/AboutDialog.ui" line="204"/>
@@ -2600,6 +2608,96 @@ Vous devriez les retirer du projet.</translation>
         <location filename="../core/filters/output/OptionsWidget.ui" line="1605"/>
         <source>Change ...</source>
         <translation>Changer ...</translation>
+    </message>
+    <message>
+        <location filename="../core/filters/output/OptionsWidget.ui" line="121"/>
+        <source>File format</source>
+        <translation>Format de fichier</translation>
+    </message>
+    <message>
+        <location filename="../core/filters/output/OptionsWidget.ui" line="145"/>
+        <source>Format:</source>
+        <translation>Format :</translation>
+    </message>
+    <message>
+        <location filename="../core/filters/output/OptionsWidget.cpp" line="59"/>
+        <source>TIFF</source>
+        <translation>TIFF</translation>
+    </message>
+    <message>
+        <location filename="../core/filters/output/OptionsWidget.cpp" line="60"/>
+        <source>PNG</source>
+        <translation>PNG</translation>
+    </message>
+    <message>
+        <location filename="../core/filters/output/OptionsWidget.cpp" line="61"/>
+        <source>JPEG</source>
+        <translation>JPEG</translation>
+    </message>
+    <message>
+        <source>Embedded / Source</source>
+        <translation>Embedded / Source</translation>
+    </message>
+    <message>
+        <source>sRGB</source>
+        <translation>sRGB</translation>
+    </message>
+    <message>
+        <source>Adobe RGB</source>
+        <translation>Adobe RGB</translation>
+    </message>
+    <message>
+        <source>eciRGB v2</source>
+        <translation>eciRGB v2</translation>
+    </message>
+    <message>
+        <source>Custom ICC</source>
+        <translation>Custom ICC</translation>
+    </message>
+    <message>
+        <source>Relative colorimetric</source>
+        <translation>Relative colorimetric</translation>
+    </message>
+    <message>
+        <source>Perceptual</source>
+        <translation>Perceptual</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>Saturation</translation>
+    </message>
+    <message>
+        <source>Absolute colorimetric</source>
+        <translation>Absolute colorimetric</translation>
+    </message>
+    <message>
+        <source>ICC:</source>
+        <translation>ICC:</translation>
+    </message>
+    <message>
+        <source>Choose ICC...</source>
+        <translation>Choose ICC...</translation>
+    </message>
+    <message>
+        <source>No custom ICC selected</source>
+        <translation>No custom ICC selected</translation>
+    </message>
+    <message>
+        <source>Intent:</source>
+        <translation>Intent:</translation>
+    </message>
+    <message>
+        <source>Select ICC Profile</source>
+        <translation>Select ICC Profile</translation>
+    </message>
+    <message>
+        <source>ICC profiles (*.icc *.icm);;All files (*)</source>
+        <translation>ICC profiles (*.icc *.icm);;All files (*)</translation>
+    </message>
+    <message>
+        <location filename="../core/filters/output/OptionsWidget.ui" line="170"/>
+        <source>JPEG is lossy and may reduce bit depth, ICC fidelity and mask quality.</source>
+        <translation>JPEG est avec perte et peut réduire la profondeur de bits, la fidélité ICC et la qualité des masques.</translation>
     </message>
     <message>
         <location filename="../core/filters/output/OptionsWidget.ui" line="121"/>

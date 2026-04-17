@@ -15,6 +15,7 @@
 #include "ImageInfo.h"
 #include "ImageMetadata.h"
 #include "PageId.h"
+#include "RawImageLoader.h"
 #include "SelectedPage.h"
 
 class QDomElement;
@@ -43,6 +44,8 @@ class ProjectReader {
   const SelectedPage& selectedPage() const { return m_selectedPage; }
 
   const std::shared_ptr<FileNameDisambiguator>& namingDisambiguator() const { return m_disambiguator; }
+
+  const RawLoadParams& rawLoadParams() const { return m_rawLoadParams; }
 
   ImageId imageId(int numericId) const;
 
@@ -73,6 +76,8 @@ class ProjectReader {
 
   void processPages(const QDomElement& pagesEl);
 
+  void processRawSettings(const QDomElement& rawSettingsEl);
+
   QString getDirPath(int id) const;
 
   FileRecord getFileRecord(int id) const;
@@ -92,6 +97,7 @@ class ProjectReader {
   ImageMap m_imageMap;
   PageMap m_pageMap;
   SelectedPage m_selectedPage;
+  RawLoadParams m_rawLoadParams;
   std::shared_ptr<ProjectPages> m_pages;
   std::shared_ptr<FileNameDisambiguator> m_disambiguator;
 };

@@ -44,7 +44,13 @@ set(common_sources
     ProjectPages.cpp ProjectPages.h
     FilterData.cpp FilterData.h
     ColorProfileUtils.cpp ColorProfileUtils.h
+    OutputFileFormat.cpp OutputFileFormat.h
+    OutputFileFormatSettings.cpp OutputFileFormatSettings.h
     ImageMetadataLoader.cpp ImageMetadataLoader.h
+    ImageFileWriter.cpp ImageFileWriter.h
+    RawImageLoader.cpp RawImageLoader.h
+    RawSettings.cpp RawSettings.h
+    RawMetadataLoader.cpp RawMetadataLoader.h
     TiffReader.cpp TiffReader.h
     TiffWriter.cpp TiffWriter.h
     PngMetadataLoader.cpp PngMetadataLoader.h
@@ -141,6 +147,10 @@ set_target_properties(core PROPERTIES AUTOUIC ON)
 if (TARGET LCMS2::LCMS2)
   target_link_libraries(core PRIVATE LCMS2::LCMS2)
   target_compile_definitions(core PRIVATE SCANTAILOR_HAVE_LCMS2)
+endif()
+
+if (TARGET LibRaw::LibRaw)
+  target_link_libraries(core PRIVATE LibRaw::LibRaw)
 endif()
 
 translation_sources(scantailor ${common_sources} ${common_ui_files})
