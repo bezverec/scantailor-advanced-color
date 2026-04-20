@@ -67,8 +67,13 @@ if (WIN32)
   endif()
 endif()
 
+set(scantailor_target_options WIN32)
+if (APPLE)
+  list(APPEND scantailor_target_options MACOSX_BUNDLE)
+endif()
+
 add_executable(
-    scantailor WIN32 ${gui_only_sources} ${gui_only_ui_files}
+    scantailor ${scantailor_target_options} ${gui_only_sources} ${gui_only_ui_files}
     ${resource_files} ${win32_resource_file})
 target_link_libraries(
     scantailor
@@ -77,7 +82,20 @@ target_include_directories(
     scantailor
     PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}"
     "$<TARGET_PROPERTY:TIFF::TIFF,INTERFACE_INCLUDE_DIRECTORIES>")
-install(TARGETS scantailor RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
+
+if (APPLE)
+  set_target_properties(
+      scantailor PROPERTIES
+      MACOSX_BUNDLE TRUE
+      MACOSX_BUNDLE_BUNDLE_NAME "ScanTailor Advanced"
+      MACOSX_BUNDLE_GUI_IDENTIFIER "com.bezverec.scantailor-advanced"
+      MACOSX_BUNDLE_INFO_STRING "ScanTailor Advanced"
+      MACOSX_BUNDLE_BUNDLE_VERSION "${VERSION}"
+      MACOSX_BUNDLE_SHORT_VERSION_STRING "${VERSION}"
+      XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "com.bezverec.scantailor-advanced")
+else()
+  install(TARGETS scantailor RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
+endif()
 
 if (Qt6_FOUND AND WIN32)
   #manage plugins with windeployqt.

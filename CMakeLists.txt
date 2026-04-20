@@ -369,6 +369,9 @@ set(APPLICATION_NAME "scantailor-advanced")
 if (WIN32)
   set(TRANSLATION_DIRS ".:translations")
   set(PLUGIN_DIRS ".")
+elseif(APPLE)
+  set(TRANSLATION_DIRS ".:translations:../Resources/translations:../share/${APPLICATION_NAME}/translations")
+  set(PLUGIN_DIRS ".:../PlugIns:../Frameworks:../lib/${APPLICATION_NAME}")
 else()
   set(TRANSLATION_DIRS ".:translations:../share/${APPLICATION_NAME}/translations")
   set(PLUGIN_DIRS ".:../lib/${APPLICATION_NAME}")
@@ -422,6 +425,10 @@ configure_file(
 
 add_subdirectory(src)
 
+if (APPLE)
+  install(TARGETS scantailor BUNDLE DESTINATION ".")
+endif()
+
 # Translations
 file(GLOB translation_files "${SCANTAILOR_TRANSLATIONS_DIR}/scantailor_*.ts")
 
@@ -435,10 +442,49 @@ else()
   Qt5_add_translation(qm_files ${translation_files})
 endif()
 add_custom_target(compile_translations ALL DEPENDS ${qm_files})
+if (APPLE)
+  add_dependencies(scantailor compile_translations)
+endif()
 if (WIN32)
   install(FILES ${qm_files} DESTINATION "${CMAKE_INSTALL_BINDIR}/translations")
+elseif(APPLE)
+  install(FILES ${qm_files} DESTINATION "scantailor.app/Contents/Resources/translations")
 else()
   install(FILES ${qm_files} DESTINATION "share/${APPLICATION_NAME}/translations")
+endif()
+
+if (APPLE AND Qt6_FOUND)
+  set(SCANTAILOR_MACDEPLOYQT_EXECUTABLE "${QT_BINDIR}/macdeployqt")
+  if (NOT EXISTS "${SCANTAILOR_MACDEPLOYQT_EXECUTABLE}")
+    find_program(
+        SCANTAILOR_MACDEPLOYQT_EXECUTABLE
+        NAMES macdeployqt
+        HINTS "${QT_BINDIR}" "${QT6_INSTALL_PREFIX}/bin")
+  endif()
+
+  set(scantailor_macdeployqt_libpaths "")
+  foreach(_libpath
+      "${QT6_INSTALL_PREFIX}/lib"
+      "${QT6_INSTALL_PREFIX}/Frameworks"
+      "/opt/homebrew/lib"
+      "/opt/homebrew/opt/qtwebengine/lib"
+      "/usr/local/lib"
+      "/usr/local/opt/qtwebengine/lib")
+    if (EXISTS "${_libpath}/QtPdf.framework")
+      list(APPEND scantailor_macdeployqt_libpaths "${_libpath}")
+    endif()
+  endforeach()
+  list(REMOVE_DUPLICATES scantailor_macdeployqt_libpaths)
+
+  set(SCANTAILOR_MACDEPLOYQT_LIBPATHS_CMAKE "")
+  foreach(_libpath IN LISTS scantailor_macdeployqt_libpaths)
+    string(APPEND SCANTAILOR_MACDEPLOYQT_LIBPATHS_CMAKE
+        "list(APPEND _macdeployqt_args \"-libpath=${_libpath}\")\n")
+  endforeach()
+  configure_file(
+      "${CMAKE_SOURCE_DIR}/cmake/MacDeployQt.cmake.in"
+      "${CMAKE_BINARY_DIR}/MacDeployQt.cmake"
+      @ONLY)
 endif()
 
 # Install extra files.
@@ -551,7 +597,7 @@ if (WIN32)
   install(PROGRAMS ${ADDITIONAL_RUNTIME_LIBS_DEBUG} TYPE BIN CONFIGURATIONS Debug)
 endif()
 
-if (UNIX)
+if (UNIX AND NOT APPLE)
   install(FILES "${CMAKE_BINARY_DIR}/scantailor.desktop"
       DESTINATION "share/applications")
   install(FILES "${SCANTAILOR_RESOURCES_DIR}/appicon.svg"
@@ -559,6 +605,10 @@ if (UNIX)
       RENAME "ScanTailor.svg")
   install(FILES "${SCANTAILOR_RESOURCES_DIR}/unix/mime/scantailor-project.xml"
       DESTINATION "share/mime/packages")
+endif()
+
+if (APPLE AND Qt6_FOUND AND EXISTS "${CMAKE_BINARY_DIR}/MacDeployQt.cmake")
+  install(SCRIPT "${CMAKE_BINARY_DIR}/MacDeployQt.cmake")
 endif()
 
 if (WIN32 AND MSVC)
@@ -589,6 +639,8 @@ if (WIN32)
       "CreateShortCut \\\"$DESKTOP\\\\${CMAKE_PROJECT_NAME}.lnk\\\" \\\"$INSTDIR\\\\scantailor.exe\\\"")
   set(CPACK_NSIS_DELETE_ICONS_EXTRA
       "Delete \\\"$DESKTOP\\\\${CMAKE_PROJECT_NAME}.lnk\\\"")
+elseif(APPLE)
+  set(CPACK_GENERATOR "DragNDrop")
 endif()
 set(CPACK_SOURCE_PACKAGE_FILE_NAME "${APPLICATION_NAME}-${VERSION}")
 set(CPACK_SOURCE_IGNORE_FILES

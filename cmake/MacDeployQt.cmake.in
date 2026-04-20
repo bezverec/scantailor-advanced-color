@@ -1,0 +1,88 @@
+set(_app_bundle "scantailor.app")
+set(_app_binary "${CMAKE_INSTALL_PREFIX}/${_app_bundle}/Contents/MacOS/scantailor")
+set(_app_config_dir "${CMAKE_INSTALL_PREFIX}/${_app_bundle}/Contents/MacOS/config")
+if(NOT EXISTS "${_app_binary}")
+  message(FATAL_ERROR "Installed app bundle is missing its executable: ${_app_binary}")
+endif()
+
+if(EXISTS "${_app_config_dir}")
+  file(REMOVE_RECURSE "${_app_config_dir}")
+endif()
+
+set(_macdeployqt "@SCANTAILOR_MACDEPLOYQT_EXECUTABLE@")
+if(NOT EXISTS "${_macdeployqt}")
+  message(FATAL_ERROR "macdeployqt executable not found: ${_macdeployqt}")
+endif()
+
+set(_macdeployqt_args
+    "${_app_bundle}"
+    "-always-overwrite"
+    "-no-strip"
+    "-no-codesign")
+@SCANTAILOR_MACDEPLOYQT_LIBPATHS_CMAKE@
+
+execute_process(
+    COMMAND "${_macdeployqt}" ${_macdeployqt_args}
+    WORKING_DIRECTORY "${CMAKE_INSTALL_PREFIX}"
+    OUTPUT_VARIABLE _macdeployqt_output
+    ERROR_VARIABLE _macdeployqt_error
+    RESULT_VARIABLE _macdeployqt_result)
+
+execute_process(
+    COMMAND /usr/bin/otool -L "${_app_binary}"
+    OUTPUT_VARIABLE _app_binary_otool
+    ERROR_VARIABLE _app_binary_otool_error
+    RESULT_VARIABLE _app_binary_otool_result)
+
+set(_deploy_validation_ok TRUE)
+if(_app_binary_otool_result)
+  set(_deploy_validation_ok FALSE)
+endif()
+if(NOT _app_binary_otool_result EQUAL 0)
+  set(_deploy_validation_ok FALSE)
+endif()
+if(NOT _app_binary_otool MATCHES "@executable_path/../Frameworks/QtCore.framework/Versions/A/QtCore")
+  set(_deploy_validation_ok FALSE)
+endif()
+if(NOT _app_binary_otool MATCHES "@executable_path/../Frameworks/QtGui.framework/Versions/A/QtGui")
+  set(_deploy_validation_ok FALSE)
+endif()
+if(NOT EXISTS "${CMAKE_INSTALL_PREFIX}/${_app_bundle}/Contents/PlugIns/platforms/libqcocoa.dylib")
+  set(_deploy_validation_ok FALSE)
+endif()
+if(NOT EXISTS "${CMAKE_INSTALL_PREFIX}/${_app_bundle}/Contents/Frameworks/libtiff.6.dylib")
+  set(_deploy_validation_ok FALSE)
+endif()
+
+if(_macdeployqt_result AND NOT _deploy_validation_ok)
+  message(FATAL_ERROR
+      "macdeployqt failed with exit code ${_macdeployqt_result}\n"
+      "stdout:\n${_macdeployqt_output}\n"
+      "stderr:\n${_macdeployqt_error}\n"
+      "otool stderr:\n${_app_binary_otool_error}")
+elseif(_macdeployqt_result)
+  message(WARNING
+      "macdeployqt exited with code ${_macdeployqt_result}, but the bundle passed structural validation.\n"
+      "stdout:\n${_macdeployqt_output}\n"
+      "stderr:\n${_macdeployqt_error}")
+endif()
+
+execute_process(
+    COMMAND /usr/bin/xattr -cr "${CMAKE_INSTALL_PREFIX}/${_app_bundle}"
+    RESULT_VARIABLE _xattr_result
+    ERROR_VARIABLE _xattr_error)
+if(_xattr_result)
+  message(FATAL_ERROR "Failed to clear extended attributes before signing: ${_xattr_error}")
+endif()
+
+execute_process(
+    COMMAND /usr/bin/codesign --force --deep --sign - "${CMAKE_INSTALL_PREFIX}/${_app_bundle}"
+    RESULT_VARIABLE _codesign_result
+    OUTPUT_VARIABLE _codesign_output
+    ERROR_VARIABLE _codesign_error)
+if(_codesign_result)
+  message(FATAL_ERROR
+      "codesign failed with exit code ${_codesign_result}\n"
+      "stdout:\n${_codesign_output}\n"
+      "stderr:\n${_codesign_error}")
+endif()
