@@ -129,6 +129,8 @@ class OptionsWidget : public FilterOptionsWidget, private Ui::OptionsWidget {
 
   void fillOffcutToggled(bool checked);
 
+  void fillOutsidePageBoxToggled(bool checked);
+
   void equalizeIlluminationToggled(bool checked);
 
   void equalizeIlluminationColorToggled(bool checked);
