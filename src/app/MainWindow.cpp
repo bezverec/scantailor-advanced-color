@@ -967,7 +967,8 @@ void MainWindow::goPrevSelectedPage() {
 }
 
 void MainWindow::goToPage(const PageId& pageId, const ThumbnailSequence::SelectionAction selectionAction) {
-  focusButton->setChecked(true);
+  // Keep keyboard navigation aligned with mouse thumbnail selection.
+  // Batch processing and similar flows opt into Follow page explicitly.
 
   m_thumbSequence->setSelection(pageId, selectionAction);
 

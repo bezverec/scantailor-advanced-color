@@ -29,6 +29,10 @@ class PageSequence {
 
   std::set<PageId> selectEveryOther(const PageId& base) const;
 
+  std::set<PageId> selectThisPageAndFollowingEveryOther(const PageId& page) const;
+
+  std::set<PageId> selectEveryOtherInSubsetFromPage(const PageId& base, const std::set<PageId>& subset) const;
+
   std::vector<PageInfo>::iterator begin();
 
   std::vector<PageInfo>::iterator end();
