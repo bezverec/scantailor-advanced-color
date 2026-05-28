@@ -360,6 +360,12 @@ void OptionsWidget::applyColorsButtonClicked() {
 
 void OptionsWidget::dpiChanged(const std::set<PageId>& pages, const Dpi& dpi) {
   for (const PageId& pageId : pages) {
+    Params params(m_settings->getParams(pageId));
+    if (params.dewarpingOptions().dewarpingMode() == AUTO) {
+      DewarpingOptions dewarpingOptions(params.dewarpingOptions());
+      dewarpingOptions.setDewarpingMode(MANUAL);
+      m_settings->setDewarpingOptions(pageId, dewarpingOptions);
+    }
     m_settings->setDpi(pageId, dpi);
   }
 
