@@ -10,7 +10,7 @@ characteristics as much as possible.
 ### Screenshot
 <img width="2560" height="1392" alt="scantailor_advanced_color_1 1 3" src="https://github.com/user-attachments/assets/cd272470-cad1-4eae-af01-30c44896315c" />
 
-## What's new in 1.2.1-experimental
+## What's new in 1.2.1-experimental (rc1)
 
 Brings in the application fixes and features of upstream `ScanTailor Advanced` up to 1.2.1
 (original implementations by Pablo Ventura):
@@ -32,6 +32,18 @@ Also new in this fork:
   to the output files via `Exiv2`
 - Output: **Bit depth** (same as source / 8 / 16 bits per channel) for colour and grayscale output; colour
   conversion runs at the higher of the two precisions
+- Output ICC menu shows the profile versions: `sRGB (ICC v4)`, `Adobe RGB (1998)`, `eciRGB v2 (ICC v4)`
+- batch processing starts another page only when there is memory for it, so large 16-bit pages no longer run
+  the system out of memory
+- the filter options panel widens to fit its controls instead of cutting them off
+
+Fixes:
+
+- converting output to sRGB / Adobe RGB / eciRGB / custom ICC wrote the file with 100 DPI instead of the real
+  resolution, and used several gigabytes of extra memory per large page
+- Deskew: Manual mode was not applied or saved, so "Apply To... All pages" left pages on automatic angles
+- Split Pages: a layout applied to all pages was lost when the project was saved before the pages were
+  processed again, and pages kept showing the old split until then
 - fixed a crash after confirming Fix DPI opened from the Page Layout panel
 
 ## What's new in 1.1.3-experimental
