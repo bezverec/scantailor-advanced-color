@@ -231,6 +231,8 @@ class MainWindow : public QMainWindow, private FilterUiInterface, private Ui::Ma
 
   void setupThumbView();
 
+  void updateOptionsPanelMinWidth();
+
   void showNewOpenProjectPanel();
 
   SavePromptResult promptProjectSave();

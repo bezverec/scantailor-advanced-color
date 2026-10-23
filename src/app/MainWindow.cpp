@@ -148,6 +148,9 @@ MainWindow::MainWindow()
   m_imageFrameLayout->setStackingMode(QStackedLayout::StackAll);
 
   m_optionsFrameLayout = new QStackedLayout(filterOptions);
+  // Keep the options panel at least as wide as the current filter's controls need.
+  filterOptions->installEventFilter(this);
+  scrollAreaWidgetContents->installEventFilter(this);
 
   m_statusBarPanel = new StatusBarPanel;
   QMainWindow::statusBar()->addPermanentWidget(m_statusBarPanel);
@@ -522,6 +525,19 @@ void MainWindow::updateThumbViewMinWidth() {
   thumbView->setMinimumWidth((int) std::ceil(m_maxLogicalThumbSize.width() + deltaX));
 }
 
+void MainWindow::updateOptionsPanelMinWidth() {
+  // The scroll area never scrolls horizontally, so a filter panel wider than the dock
+  // used to be cut off. Let the dock grow to the panel's minimum width instead.
+  const int contentWidth = scrollAreaWidgetContents->minimumSizeHint().width();
+  if (contentWidth <= 0) {
+    return;
+  }
+  const int width = contentWidth + scrollArea->verticalScrollBar()->sizeHint().width() + 2 * scrollArea->frameWidth();
+  if (scrollArea->minimumWidth() != width) {
+    scrollArea->setMinimumWidth(width);
+  }
+}
+
 void MainWindow::setupThumbView() {
   updateThumbViewMinWidth();
   m_thumbSequence->attachView(thumbView);
@@ -529,6 +545,10 @@ void MainWindow::setupThumbView() {
 }
 
 bool MainWindow::eventFilter(QObject* obj, QEvent* ev) {
+  if (((obj == filterOptions) || (obj == scrollAreaWidgetContents)) && (ev->type() == QEvent::LayoutRequest)) {
+    updateOptionsPanelMinWidth();
+  }
+
   if ((obj == thumbView) && (ev->type() == QEvent::Resize)) {
     if (!m_sceneItemsPosUpdater.isActive()) {
       m_sceneItemsPosUpdater.start(150);
