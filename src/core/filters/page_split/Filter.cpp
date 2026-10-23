@@ -129,12 +129,20 @@ void Filter::writeImageSettings(QDomDocument& doc,
 
   QDomElement imageEl(doc.createElement("image"));
   imageEl.setAttribute("id", numericId);
+  bool hasSettings = false;
   if (const LayoutType* layoutType = record.layoutType()) {
     imageEl.setAttribute("layoutType", layoutTypeToString(*layoutType));
+    hasSettings = true;
   }
 
   if (const Params* params = record.params()) {
     imageEl.appendChild(params->toXml(doc, "params"));
+    hasSettings = true;
+  }
+
+  // A layout type applied to a page that has not been processed with it yet has no
+  // params; it still has to be saved, or reopening the project would lose it.
+  if (hasSettings) {
     filterEl.appendChild(imageEl);
   }
 }
