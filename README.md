@@ -10,6 +10,22 @@ characteristics as much as possible.
 ### Screenshot
 <img width="2560" height="1392" alt="scantailor_advanced_color_1 1 3" src="https://github.com/user-attachments/assets/cd272470-cad1-4eae-af01-30c44896315c" />
 
+## What's new in 1.2.1-experimental
+
+Brings in the application fixes and features of upstream `ScanTailor Advanced` up to 1.2.1
+(original implementations by Pablo Ventura):
+
+- Deskew: automatic oblique correction is now separate from Auto deskew and has its own Auto / Manual mode;
+  Apply To can copy the deskew angle, the oblique angle, or both
+- Fix Orientation: manual per-image trim
+- Page Layout: source DPI shown inline in the Margins panel; lock the aggregate page size for match-size workflows;
+  Apply To margins now also applies to the current page
+- thumbnails: Ctrl+drag rubber-band selection and a pause button for automatic reordering
+- Tools: reverse the reading order of two-page spreads
+- Output: optional fill outside the page box; AUTO dewarp switches to MANUAL when the output DPI changes
+- Select Content: a manual content box follows the page box when it moves
+- Linux (Qt5 builds): falls back to X11 (`xcb`) under Wayland unless `SCANTAILOR_NO_XCB_FALLBACK=1` is set
+
 ## What's new in 1.1.3-experimental
 
 - RAW / DNG import support via `LibRaw`, with processed export to TIFF / PNG / JPEG
