@@ -177,6 +177,19 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayoutOutputProfile">
         <item>
+         <spacer name="spacerOutputProfileLeft">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>1</width>
+            <height>1</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
          <widget class="QLabel" name="outputProfileLabel">
           <property name="text">
            <string>ICC:</string>
@@ -186,10 +199,36 @@
         <item>
          <widget class="QComboBox" name="outputProfileBox"/>
         </item>
+        <item>
+         <spacer name="spacerOutputProfileRight">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>1</width>
+            <height>1</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
        </layout>
       </item>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayoutCustomProfile">
+        <item>
+         <spacer name="spacerCustomProfileLeft">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>1</width>
+            <height>1</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
         <item>
          <widget class="QPushButton" name="customProfileButton">
           <property name="text">
@@ -207,10 +246,36 @@
           </property>
          </widget>
         </item>
+        <item>
+         <spacer name="spacerCustomProfileRight">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>1</width>
+            <height>1</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
        </layout>
       </item>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayoutRenderingIntent">
+        <item>
+         <spacer name="spacerRenderingIntentLeft">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>1</width>
+            <height>1</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
         <item>
          <widget class="QLabel" name="renderingIntentLabel">
           <property name="text">
@@ -220,6 +285,19 @@
         </item>
         <item>
          <widget class="QComboBox" name="renderingIntentBox"/>
+        </item>
+        <item>
+         <spacer name="spacerRenderingIntentRight">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>1</width>
+            <height>1</height>
+           </size>
+          </property>
+         </spacer>
         </item>
        </layout>
       </item>
