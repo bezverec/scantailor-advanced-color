@@ -40,7 +40,12 @@ ARCH=$(dpkg --print-architecture 2>/dev/null || echo "amd64")
 # Generate Depends via dpkg-shlibdeps when available (more accurate)
 DEPS=""
 if command -v dpkg-shlibdeps >/dev/null 2>&1; then
-  SHLIBS_OUT=$(cd "${PKG_DIR}" && dpkg-shlibdeps -e usr/bin/scantailor -O 2>/dev/null || true)
+  # dpkg-shlibdeps refuses to run without a debian/control in the current directory.
+  SHLIBS_TMP=$(mktemp -d)
+  mkdir -p "${SHLIBS_TMP}/debian"
+  touch "${SHLIBS_TMP}/debian/control"
+  SHLIBS_OUT=$(cd "${SHLIBS_TMP}" && dpkg-shlibdeps -e "${PKG_DIR}/usr/bin/scantailor" -O 2>/dev/null || true)
+  rm -rf "${SHLIBS_TMP}"
   if [[ -n "$SHLIBS_OUT" ]]; then
     DEPS="${SHLIBS_OUT#shlibs:Depends=}"
   fi
