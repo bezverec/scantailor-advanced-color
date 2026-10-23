@@ -46,7 +46,12 @@ set(gui_only_ui_files
 
 set(win32_resource_file "")
 if (WIN32)
-  string(REPLACE "/" "\\\\" SCANTAILOR_WIN_DIR_NATIVE "${SCANTAILOR_RESOURCES_DIR}/win32")
+  if (CMAKE_HOST_WIN32)
+    string(REPLACE "/" "\\\\" SCANTAILOR_WIN_ICON_NATIVE "${SCANTAILOR_RESOURCES_DIR}/win32/scantailor.ico")
+  else()
+    # Cross-compiling: the resource compiler runs on a host with POSIX paths.
+    set(SCANTAILOR_WIN_ICON_NATIVE "${SCANTAILOR_RESOURCES_DIR}/win32/scantailor.ico")
+  endif()
   configure_file("${SCANTAILOR_RESOURCES_DIR}/win32/resources.rc.in" "${CMAKE_BINARY_DIR}/resources.rc" @ONLY)
   set(rc_file "${CMAKE_BINARY_DIR}/resources.rc")
   file(GLOB win32_resources "${SCANTAILOR_RESOURCES_DIR}/win32/*.ico")
@@ -56,10 +61,16 @@ if (WIN32)
   if (MINGW)
     # CMake doesn't know how to process .rc files with MinGW.
     set(win32_resource_file "${CMAKE_BINARY_DIR}/win32_resources.o")
+    # Cross toolchains name it e.g. x86_64-w64-mingw32-windres.
+    if (CMAKE_RC_COMPILER)
+      set(windres_executable "${CMAKE_RC_COMPILER}")
+    else()
+      set(windres_executable windres)
+    endif()
     add_custom_command(
         OUTPUT "${win32_resource_file}"
         WORKING_DIRECTORY "${SCANTAILOR_RESOURCES_DIR}/win32"
-        COMMAND windres -i "${rc_file}" -o "${win32_resource_file}"
+        COMMAND "${windres_executable}" -i "${rc_file}" -o "${win32_resource_file}"
         MAIN_DEPENDENCY "${rc_file}"
         DEPENDS ${win32_resources})
   else()
