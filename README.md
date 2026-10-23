@@ -1,7 +1,7 @@
 # ScanTailor Advanced Color
 
 The ScanTailor version that merges the features of the `ScanTailor Featured`, `ScanTailor Enhanced`, `ScanTailor Universal` and `ScanTailor Advanced` forks,
-developed by `OpenAI Codex` with human supervision.
+developed by `OpenAI Codex` and `Anthropic Claude` with human supervision.
 
 This fork is also a good fit for preservation-oriented workflows where the operator needs only minimal interventions
 such as cropping, rotating, deskewing, page splitting, and light cleanup, while preserving the source image
@@ -302,6 +302,10 @@ The original ScanTailor and ScanTailor Advanced work remains credited to its his
 For this `ScanTailor Advanced Color` branch, the preservation-color changes, LCMS2 integration, Windows build refresh,
 and the current README / build documentation were implemented with **OpenAI Codex**, in collaboration with the
 repository owner.
+
+The 1.2.1 port of upstream ScanTailor Advanced fixes (original implementations by Pablo Ventura), metadata
+preservation via Exiv2, the output bit depth option, memory-aware batch processing, the cross-platform builds and
+the related bug fixes were implemented with **Anthropic Claude**, in collaboration with the repository owner.
 
 ## Features
 

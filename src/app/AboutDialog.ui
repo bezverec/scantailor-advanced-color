@@ -172,7 +172,7 @@ font-weight:bold;</string>
            <item>
             <widget class="QLabel" name="label_30">
              <property name="text">
-              <string>OpenAI Codex (implemented with Jan Houserek collaboration)</string>
+              <string>OpenAI Codex and Anthropic Claude (implemented with Jan Houserek collaboration)</string>
              </property>
             </widget>
            </item>
