@@ -6,7 +6,10 @@
 #include <QColorSpace>
 #include <QImageWriter>
 
+#include <QDebug>
+
 #include "ColorProfileUtils.h"
+#include "ImageMetadataCopier.h"
 #include "OutputFileFormatSettings.h"
 #include "TiffWriter.h"
 
@@ -22,6 +25,20 @@ QImage flattenForJpeg(const QImage& image) {
 
 bool ImageFileWriter::writeImage(const QString& filePath, const QImage& image) {
   return writeImage(filePath, image, OutputFileFormatSettings::getInstance().format());
+}
+
+bool ImageFileWriter::writeImage(const QString& filePath, const QImage& image, const QString& metadataSourcePath) {
+  if (!writeImage(filePath, image)) {
+    return false;
+  }
+  if (OutputFileFormatSettings::getInstance().preserveMetadata() && image_metadata::isCopySupported()
+      && !metadataSourcePath.isEmpty()) {
+    QString error;
+    if (!image_metadata::copyMetadata(metadataSourcePath, filePath, &error)) {
+      qWarning().noquote() << "Could not copy metadata from" << metadataSourcePath << "to" << filePath << ":" << error;
+    }
+  }
+  return true;
 }
 
 bool ImageFileWriter::writeImage(const QString& filePath, const QImage& image, const OutputFileFormat format) {

@@ -87,6 +87,8 @@ class OptionsWidget : public FilterOptionsWidget, private Ui::OptionsWidget {
 
   void renderingIntentChanged(int idx);
 
+  void preserveMetadataToggled(bool checked);
+
   void blackOnWhiteToggled(bool value);
 
   void applyProcessingParamsClicked();
@@ -189,6 +191,8 @@ class OptionsWidget : public FilterOptionsWidget, private Ui::OptionsWidget {
   void updateOutputFormatDisplay();
 
   void updateColorManagementDisplay();
+
+  void updateMetadataDisplay();
 
   void addOptionsWidgetBinarization(OptionsWidgetBinarization* widget);
 

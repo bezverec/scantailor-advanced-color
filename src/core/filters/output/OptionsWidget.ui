@@ -223,6 +223,16 @@
         </item>
        </layout>
       </item>
+      <item>
+       <widget class="QCheckBox" name="preserveMetadataCB">
+        <property name="toolTip">
+         <string>Copy descriptive EXIF, XMP and IPTC metadata (camera, date, author, copyright, GPS...) from the source image to the output files.</string>
+        </property>
+        <property name="text">
+         <string>Preserve metadata (EXIF, XMP, IPTC)</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>

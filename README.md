@@ -26,6 +26,12 @@ Brings in the application fixes and features of upstream `ScanTailor Advanced` u
 - Select Content: a manual content box follows the page box when it moves
 - Linux (Qt5 builds): falls back to X11 (`xcb`) under Wayland unless `SCANTAILOR_NO_XCB_FALLBACK=1` is set
 
+Also new in this fork:
+
+- Output: **Preserve metadata (EXIF, XMP, IPTC)**, on by default, copies descriptive metadata from the source image
+  to the output files via `Exiv2`
+- fixed a crash after confirming Fix DPI opened from the Page Layout panel
+
 ## What's new in 1.1.3-experimental
 
 - RAW / DNG import support via `LibRaw`, with processed export to TIFF / PNG / JPEG
@@ -111,6 +117,10 @@ In particular, the current codebase contains support for:
 - writing TIFF output with embedded ICC profiles
 - selecting output ICC behavior (`Embedded / Source`, `sRGB`, `Adobe RGB`, `eciRGB v2`, or custom ICC) with rendering intent
 - using Little CMS 2 (`lcms2`) helpers for fallback ICC profile generation and color-space conversion when needed
+- copying descriptive EXIF / XMP / IPTC metadata (camera, capture date, author, copyright, GPS, captions) from the
+  source image to TIFF / PNG / JPEG output via `Exiv2` (**Output > Preserve metadata**, on by default). Tags describing
+  the pixel data (dimensions, orientation, resolution, ICC profile, thumbnails, DNG raw tags, Camera Raw settings,
+  embedded gain maps / motion photo data) keep the values of the output file
 
 This is especially relevant for TIFF / TIF collections where the user wants to crop, rotate, deskew, or split pages
 without unnecessarily flattening the source into a lower-fidelity derivative.
@@ -652,6 +662,7 @@ The repository includes a `vcpkg.json` manifest with the required dependencies:
 - zlib
 - Qt6 (`qtbase`, `qtsvg`, `qttools`)
 - Little CMS (`lcms`, providing `lcms2`)
+- Exiv2 (`exiv2`, for copying metadata to output; the build works without it, the option is then disabled)
 
 Recommended reproducible Windows build recipe:
 

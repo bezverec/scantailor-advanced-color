@@ -48,6 +48,7 @@ set(common_sources
     OutputFileFormatSettings.cpp OutputFileFormatSettings.h
     ImageMetadataLoader.cpp ImageMetadataLoader.h
     ImageFileWriter.cpp ImageFileWriter.h
+    ImageMetadataCopier.cpp ImageMetadataCopier.h
     RawImageLoader.cpp RawImageLoader.h
     RawSettings.cpp RawSettings.h
     RawMetadataLoader.cpp RawMetadataLoader.h
@@ -151,6 +152,11 @@ endif()
 
 if (TARGET LibRaw::LibRaw)
   target_link_libraries(core PRIVATE LibRaw::LibRaw)
+endif()
+
+if (TARGET Exiv2::exiv2lib)
+  target_link_libraries(core PRIVATE Exiv2::exiv2lib)
+  target_compile_definitions(core PRIVATE SCANTAILOR_HAVE_EXIV2)
 endif()
 
 translation_sources(scantailor ${common_sources} ${common_ui_files})

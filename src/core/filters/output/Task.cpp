@@ -389,8 +389,10 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data, 
 
         QDir().mkdir(foregroundDir);
         QDir().mkdir(backgroundDir);
-        if (!ImageFileWriter::writeImage(foregroundFilePath, outputImageWithForeground->getForegroundImage())
-            || !ImageFileWriter::writeImage(backgroundFilePath, outputImageWithForeground->getBackgroundImage())) {
+        if (!ImageFileWriter::writeImage(foregroundFilePath, outputImageWithForeground->getForegroundImage(),
+                                         sourceFileInfo.filePath())
+            || !ImageFileWriter::writeImage(backgroundFilePath, outputImageWithForeground->getBackgroundImage(),
+                                            sourceFileInfo.filePath())) {
           invalidateParams = true;
         }
 
@@ -399,7 +401,8 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data, 
 
           QDir().mkdir(originalBackgroundDir);
           if (!ImageFileWriter::writeImage(originalBackgroundFilePath,
-                                           outputImageWithOrigBg->getOriginalBackgroundImage())) {
+                                           outputImageWithOrigBg->getOriginalBackgroundImage(),
+                                           sourceFileInfo.filePath())) {
             invalidateParams = true;
           }
         }
@@ -419,7 +422,7 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data, 
       removeOutputFormatVariants(m_outFileNameGen, m_pageId, backgroundDir);
     }
 
-    if (!ImageFileWriter::writeImage(outFilePath, outImg)) {
+    if (!ImageFileWriter::writeImage(outFilePath, outImg, sourceFileInfo.filePath())) {
       invalidateParams = true;
     } else {
       removeOutputFormatVariantsExcept(m_outFileNameGen, m_pageId, outputFormat);

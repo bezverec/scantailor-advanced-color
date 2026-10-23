@@ -17,6 +17,7 @@
 #include "OptionsWidgetBinarizationSauvola.h"
 #include "OptionsWidgetBinarizationWolf.h"
 #include "PictureZoneComparator.h"
+#include "core/ImageMetadataCopier.h"
 #include "core/OutputFileFormatSettings.h"
 
 using namespace core;
@@ -112,6 +113,7 @@ OptionsWidget::OptionsWidget(std::shared_ptr<Settings> settings, const PageSelec
   updateDpiDisplay();
   updateOutputFormatDisplay();
   updateColorManagementDisplay();
+  updateMetadataDisplay();
   updateColorsDisplay();
   updateDewarpingDisplay();
 
@@ -139,6 +141,7 @@ void OptionsWidget::preUpdateUI(const PageId& pageId) {
   updateDpiDisplay();
   updateOutputFormatDisplay();
   updateColorManagementDisplay();
+  updateMetadataDisplay();
   updateColorsDisplay();
   updateDewarpingDisplay();
   updateProcessingDisplay();
@@ -225,6 +228,16 @@ void OptionsWidget::renderingIntentChanged(const int idx) {
 
   OutputFileFormatSettings::getInstance().setRenderingIntent(intent);
   updateColorManagementDisplay();
+  emit invalidateAllThumbnails();
+  emit reloadRequested();
+}
+
+void OptionsWidget::preserveMetadataToggled(const bool checked) {
+  if (OutputFileFormatSettings::getInstance().preserveMetadata() == checked) {
+    return;
+  }
+
+  OutputFileFormatSettings::getInstance().setPreserveMetadata(checked);
   emit invalidateAllThumbnails();
   emit reloadRequested();
 }
@@ -700,6 +713,17 @@ void OptionsWidget::updateColorManagementDisplay() {
   renderingIntentBox->setEnabled(enableColorManagement && (profileMode != OutputColorProfileMode::Source));
 }
 
+void OptionsWidget::updateMetadataDisplay() {
+  preserveMetadataCB->blockSignals(true);
+  preserveMetadataCB->setChecked(OutputFileFormatSettings::getInstance().preserveMetadata());
+  preserveMetadataCB->blockSignals(false);
+
+  if (!image_metadata::isCopySupported()) {
+    preserveMetadataCB->setEnabled(false);
+    preserveMetadataCB->setToolTip(tr("This build was compiled without Exiv2, metadata cannot be copied."));
+  }
+}
+
 void OptionsWidget::updateColorsDisplay() {
   colorModeSelector->blockSignals(true);
 
@@ -1077,6 +1101,7 @@ void OptionsWidget::setupUiConnections() {
   CONNECT(outputProfileBox, SIGNAL(currentIndexChanged(int)), this, SLOT(outputProfileChanged(int)));
   CONNECT(customProfileButton, SIGNAL(clicked()), this, SLOT(chooseCustomProfileClicked()));
   CONNECT(renderingIntentBox, SIGNAL(currentIndexChanged(int)), this, SLOT(renderingIntentChanged(int)));
+  CONNECT(preserveMetadataCB, SIGNAL(toggled(bool)), this, SLOT(preserveMetadataToggled(bool)));
   CONNECT(colorModeSelector, SIGNAL(currentIndexChanged(int)), this, SLOT(colorModeChanged(int)));
   CONNECT(thresholdMethodBox, SIGNAL(currentIndexChanged(int)), this, SLOT(thresholdMethodChanged(int)));
   CONNECT(fillingColorBox, SIGNAL(currentIndexChanged(int)), this, SLOT(fillingColorChanged(int)));

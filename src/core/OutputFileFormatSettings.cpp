@@ -138,9 +138,18 @@ void OutputFileFormatSettings::setCustomIccProfilePath(const QString& path) {
   m_customIccProfilePath = path;
 }
 
+bool OutputFileFormatSettings::preserveMetadata() const {
+  return m_preserveMetadata;
+}
+
+void OutputFileFormatSettings::setPreserveMetadata(const bool preserve) {
+  m_preserveMetadata = preserve;
+}
+
 void OutputFileFormatSettings::resetToDefault() {
   m_format = OutputFileFormat::Tiff;
   m_colorProfileMode = OutputColorProfileMode::Source;
   m_renderingIntent = OutputRenderingIntent::RelativeColorimetric;
   m_customIccProfilePath.clear();
+  m_preserveMetadata = true;
 }

@@ -1,6 +1,10 @@
 {
   "dependencies": [
     "boost",
+    {
+      "name": "exiv2",
+      "features": ["xmp"]
+    },
     "lcms",
     "libjpeg-turbo",
     "libraw",

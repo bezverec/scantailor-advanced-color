@@ -40,6 +40,11 @@ class OutputFileFormatSettings {
 
   void setCustomIccProfilePath(const QString& path);
 
+  /** Copy EXIF / XMP / IPTC metadata from the source image to the output files. */
+  bool preserveMetadata() const;
+
+  void setPreserveMetadata(bool preserve);
+
   void resetToDefault();
 
  private:
@@ -49,6 +54,7 @@ class OutputFileFormatSettings {
   OutputColorProfileMode m_colorProfileMode = OutputColorProfileMode::Source;
   OutputRenderingIntent m_renderingIntent = OutputRenderingIntent::RelativeColorimetric;
   QString m_customIccProfilePath;
+  bool m_preserveMetadata = true;
 };
 
 #endif  // SCANTAILOR_CORE_OUTPUTFILEFORMATSETTINGS_H_

@@ -7,7 +7,7 @@ These notes describe the local macOS build flow that worked on April 20, 2026 on
 Install the required Homebrew packages:
 
 ```bash
-brew install cmake qt qtwebengine boost libtiff libpng jpeg-turbo libraw little-cms2 zlib
+brew install cmake qt qtwebengine boost libtiff libpng jpeg-turbo libraw little-cms2 zlib exiv2
 ```
 
 Notes:

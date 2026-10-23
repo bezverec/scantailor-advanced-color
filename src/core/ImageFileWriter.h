@@ -14,6 +14,13 @@ class ImageFileWriter {
   static bool writeImage(const QString& filePath, const QImage& image);
 
   static bool writeImage(const QString& filePath, const QImage& image, OutputFileFormat format);
+
+  /**
+   * Writes the image in the current output format and, if enabled in
+   * OutputFileFormatSettings, copies EXIF / XMP / IPTC metadata from \p metadataSourcePath.
+   * Failing to copy metadata does not fail the write.
+   */
+  static bool writeImage(const QString& filePath, const QImage& image, const QString& metadataSourcePath);
 };
 
 #endif  // SCANTAILOR_CORE_IMAGEFILEWRITER_H_

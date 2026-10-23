@@ -260,6 +260,43 @@ if (ENABLE_LIBRAW)
   endif()
 endif()
 
+#================================= Exiv2 =================================#
+
+option(ENABLE_EXIV2 "Copy EXIF / XMP / IPTC metadata from source images to output via Exiv2." ON)
+
+if (ENABLE_EXIV2)
+  find_package(exiv2 CONFIG QUIET)
+
+  if (NOT TARGET Exiv2::exiv2lib)
+    if (TARGET exiv2lib)
+      # Exiv2 0.27 exports a plain target name.
+      add_library(Exiv2::exiv2lib INTERFACE IMPORTED)
+      set_target_properties(Exiv2::exiv2lib PROPERTIES INTERFACE_LINK_LIBRARIES exiv2lib)
+    else()
+      find_path(Exiv2_INCLUDE_DIR exiv2/exiv2.hpp)
+      find_library(Exiv2_LIBRARY NAMES exiv2 libexiv2)
+      if (Exiv2_INCLUDE_DIR AND Exiv2_LIBRARY)
+        add_library(Exiv2::exiv2lib UNKNOWN IMPORTED)
+        set_target_properties(
+            Exiv2::exiv2lib PROPERTIES
+            INTERFACE_INCLUDE_DIRECTORIES "${Exiv2_INCLUDE_DIR}"
+            IMPORTED_LOCATION "${Exiv2_LIBRARY}")
+      endif()
+    endif()
+  endif()
+
+  if (TARGET Exiv2::exiv2lib)
+    if (WIN32 AND TARGET exiv2lib)
+      add_dynamic_library_locations(exiv2lib)
+    elseif (WIN32)
+      add_dynamic_library_locations(Exiv2::exiv2lib)
+    endif()
+    message(STATUS "Exiv2 found - output metadata preservation enabled.")
+  else()
+    message(WARNING "Exiv2 not found. Output metadata preservation will be disabled.")
+  endif()
+endif()
+
 #================================= Boost ================================#
 
 #set(Boost_NO_WARN_NEW_VERSIONS ON)
@@ -540,6 +577,12 @@ if (WIN32)
 
   if (TARGET LibRaw::LibRaw)
     list(APPEND dep_libs LibRaw::LibRaw)
+  endif()
+
+  if (TARGET exiv2lib)
+    list(APPEND dep_libs exiv2lib)
+  elseif (TARGET Exiv2::exiv2lib)
+    list(APPEND dep_libs Exiv2::exiv2lib)
   endif()
 
   foreach (_target ${dep_libs})
