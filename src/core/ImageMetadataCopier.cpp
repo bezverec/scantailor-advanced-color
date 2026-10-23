@@ -10,6 +10,7 @@
 #include <exiv2/exiv2.hpp>
 
 #include <exception>
+#include <stdexcept>
 #include <mutex>
 #include <string>
 #endif
@@ -176,8 +177,12 @@ bool shouldCopyXmp(const Exiv2::Xmpdatum& datum) {
   return true;
 }
 
-/** Returns false if the source had nothing worth copying and \p targetData was left untouched. */
-bool copyMetadataLocked(const QByteArray& sourceData, QByteArray* targetData) {
+/**
+ * Returns false if the source had nothing worth copying; \p targetData is then not read at all.
+ * \p readTarget loads the output file, so it is only read when needed.
+ */
+template <typename ReadTarget>
+bool copyMetadataLocked(const QByteArray& sourceData, ReadTarget readTarget, QByteArray* targetData) {
   static const bool logLevelSet = [] {
     // Damaged maker notes and the like are reported per file, not worth a console message each.
     Exiv2::LogMsg::setLevel(Exiv2::LogMsg::mute);
@@ -187,7 +192,11 @@ bool copyMetadataLocked(const QByteArray& sourceData, QByteArray* targetData) {
 
   auto source = openFromMemory(sourceData);
   source->readMetadata();
+  if (source->exifData().empty() && source->xmpData().empty() && source->iptcData().empty()) {
+    return false;
+  }
 
+  readTarget(targetData);
   auto target = openFromMemory(*targetData);
   target->readMetadata();
 
@@ -257,28 +266,37 @@ bool isCopySupported() {
 }
 
 bool copyMetadata(const QString& sourcePath, const QString& targetPath, QString* errorMessage) {
+  auto fail = [errorMessage](const QString& message) {
+    if (errorMessage) {
+      *errorMessage = message;
+    }
+    return false;
+  };
+
+  // Everything happens under the lock, including file I/O, so that parallel output
+  // threads never hold more than one page's worth of file data in memory at a time.
+  std::lock_guard<std::mutex> lock(exiv2Mutex());
+
   QByteArray sourceData;
   if (!readFile(sourcePath, &sourceData)) {
     return true;  // Nothing to copy from.
   }
-  QByteArray targetData;
-  if (!readFile(targetPath, &targetData)) {
-    if (errorMessage) {
-      *errorMessage = QStringLiteral("cannot read %1").arg(targetPath);
-    }
-    return false;
-  }
 
+  QByteArray targetData;
   bool changed = false;
   try {
-    std::lock_guard<std::mutex> lock(exiv2Mutex());
-    changed = copyMetadataLocked(sourceData, &targetData);
+    changed = copyMetadataLocked(
+        sourceData,
+        [&targetPath](QByteArray* data) {
+          if (!readFile(targetPath, data)) {
+            throw std::runtime_error("cannot read the output file");
+          }
+        },
+        &targetData);
   } catch (const std::exception& e) {
-    if (errorMessage) {
-      *errorMessage = QString::fromLocal8Bit(e.what());
-    }
-    return false;
+    return fail(QString::fromLocal8Bit(e.what()));
   }
+  sourceData.clear();
 
   if (!changed) {
     return true;
@@ -286,10 +304,7 @@ bool copyMetadata(const QString& sourcePath, const QString& targetPath, QString*
 
   QSaveFile file(targetPath);
   if (!file.open(QIODevice::WriteOnly) || (file.write(targetData) != targetData.size()) || !file.commit()) {
-    if (errorMessage) {
-      *errorMessage = QStringLiteral("cannot write %1").arg(targetPath);
-    }
-    return false;
+    return fail(QStringLiteral("cannot write %1").arg(targetPath));
   }
   return true;
 }
