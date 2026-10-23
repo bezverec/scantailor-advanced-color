@@ -210,6 +210,7 @@ void OptionsWidget::layoutTypeSet(const std::set<PageId>& pages, const LayoutTyp
     for (const PageId& pageId : pages) {
       Settings::UpdateAction updateAction;
       updateAction.setLayoutType(layoutType);
+      LayoutType appliedLayoutType = layoutType;
       if (applyCut && (layoutType != SINGLE_PAGE_UNCUT)) {
         Params newPageParams(params);
         const Params* oldPageParams = m_settings->getPageRecord(pageId.imageId()).params();
@@ -218,6 +219,7 @@ void OptionsWidget::layoutTypeSet(const std::set<PageId>& pages, const LayoutTyp
               params.pageLayout(), oldPageParams->pageLayout().uncutOutline().boundingRect());
 
           updateAction.setLayoutType(newPageLayout.toLayoutType());
+          appliedLayoutType = newPageLayout.toLayoutType();
           newPageParams.setPageLayout(newPageLayout);
 
           Dependencies deps = oldPageParams->dependencies();
@@ -227,6 +229,10 @@ void OptionsWidget::layoutTypeSet(const std::set<PageId>& pages, const LayoutTyp
         updateAction.setParams(newPageParams);
       }
       m_settings->updatePage(pageId.imageId(), updateAction);
+      // Split or join the logical pages right away, as for the current page. Otherwise
+      // pages not processed again yet keep showing the old split everywhere else.
+      m_pages->setLayoutTypeFor(pageId.imageId(), (appliedLayoutType == TWO_PAGES) ? ProjectPages::TWO_PAGE_LAYOUT
+                                                                                    : ProjectPages::ONE_PAGE_LAYOUT);
     }
   } else {
     for (const PageId& pageId : pages) {
