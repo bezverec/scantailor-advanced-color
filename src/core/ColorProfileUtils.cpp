@@ -8,6 +8,7 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QImage>
+#include <QSysInfo>
 #include <QtGlobal>
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
@@ -143,68 +144,95 @@ int lcmsIntent(const OutputRenderingIntent renderingIntent) {
   return INTENT_RELATIVE_COLORIMETRIC;
 }
 
+/** lcms2 pixel type that reads and writes \p format as is, or 0 if the image has to be converted first. */
+cmsUInt32Number directLcmsPixelType(const QImage::Format format) {
+  switch (format) {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
+    case QImage::Format_RGBX64:
+    case QImage::Format_RGBA64:
+      return TYPE_RGBA_16;
+#endif
+#if QT_VERSION >= QT_VERSION_CHECK(5, 2, 0)
+    case QImage::Format_RGBX8888:
+    case QImage::Format_RGBA8888:
+      return TYPE_RGBA_8;
+#endif
+    case QImage::Format_RGB888:
+      return TYPE_RGB_8;
+    case QImage::Format_RGB32:
+    case QImage::Format_ARGB32:
+      // 0xAARRGGBB words: B, G, R, A in memory on little-endian machines.
+      return (QSysInfo::ByteOrder == QSysInfo::LittleEndian) ? TYPE_BGRA_8 : TYPE_ARGB_8;
+    default:
+      return 0;
+  }
+}
+
+/**
+ * Converts \p image from \p srcProfile to \p dstProfile.
+ *
+ * Output pages can be several gigabytes, so formats lcms2 understands are transformed
+ * straight into a single new image of the same format: one extra copy instead of
+ * converting to RGBA64 and back. Resolution and text keys are carried over.
+ */
 QImage convertColorImageWithLcms(const QImage& image, const QByteArray& srcProfile, const QByteArray& dstProfile,
                                  const OutputRenderingIntent renderingIntent) {
   if (image.isNull() || srcProfile.isEmpty() || dstProfile.isEmpty() || srcProfile == dstProfile) {
     return image;
   }
 
+  QImage input(image);
+  cmsUInt32Number pixelType = directLcmsPixelType(input.format());
+  const bool convertedInput = (pixelType == 0);
+  if (convertedInput) {
+    // Indexed, premultiplied and other formats lcms2 cannot read directly.
+#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
+    if (image.depth() > 8) {
+      input = image.convertToFormat(QImage::Format_RGBA64);
+    } else
+#endif
+    {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 5, 0)
+      input = image.convertToFormat(QImage::Format_RGBA8888);
+#else
+      input = image.convertToFormat(QImage::Format_ARGB32);
+#endif
+    }
+    pixelType = directLcmsPixelType(input.format());
+  }
+
+  QImage outImage(input.size(), input.format());
+  if (input.isNull() || outImage.isNull() || (pixelType == 0)) {
+    return image;
+  }
+  outImage.setDotsPerMeterX(image.dotsPerMeterX());
+  outImage.setDotsPerMeterY(image.dotsPerMeterY());
+  for (const QString& key : image.textKeys()) {
+    outImage.setText(key, image.text(key));
+  }
+
   cmsHPROFILE src = cmsOpenProfileFromMem(srcProfile.constData(), cmsUInt32Number(srcProfile.size()));
   cmsHPROFILE dst = cmsOpenProfileFromMem(dstProfile.constData(), cmsUInt32Number(dstProfile.size()));
-  if (!src || !dst) {
-    if (src) {
-      cmsCloseProfile(src);
-    }
-    if (dst) {
-      cmsCloseProfile(dst);
-    }
-    return image;
+  cmsHTRANSFORM transform = nullptr;
+  if (src && dst) {
+    transform = cmsCreateTransform(src, pixelType, dst, pixelType, lcmsIntent(renderingIntent), cmsFLAGS_COPY_ALPHA);
   }
-
-  QImage srcImage;
-  QImage outImage;
-  cmsUInt32Number pixelType = 0;
-
-#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
-  if (image.depth() > 8) {
-    srcImage = image.convertToFormat(QImage::Format_RGBA64);
-    outImage = QImage(srcImage.size(), QImage::Format_RGBA64);
-    pixelType = TYPE_RGBA_16;
-  } else
-#endif
-  {
-#if QT_VERSION >= QT_VERSION_CHECK(5, 5, 0)
-    srcImage = image.convertToFormat(QImage::Format_RGBA8888);
-    outImage = QImage(srcImage.size(), QImage::Format_RGBA8888);
-    pixelType = TYPE_RGBA_8;
-#else
-    srcImage = image.convertToFormat(QImage::Format_ARGB32);
-    outImage = QImage(srcImage.size(), QImage::Format_ARGB32);
-    pixelType = TYPE_BGRA_8;
-#endif
-  }
-
-  if (srcImage.isNull() || outImage.isNull()) {
+  if (src) {
     cmsCloseProfile(src);
-    cmsCloseProfile(dst);
-    return image;
   }
-
-  cmsHTRANSFORM transform
-      = cmsCreateTransform(src, pixelType, dst, pixelType, lcmsIntent(renderingIntent), cmsFLAGS_COPY_ALPHA);
+  if (dst) {
+    cmsCloseProfile(dst);
+  }
   if (!transform) {
-    cmsCloseProfile(src);
-    cmsCloseProfile(dst);
     return image;
   }
 
-  for (int y = 0; y < srcImage.height(); ++y) {
-    cmsDoTransform(transform, srcImage.constScanLine(y), outImage.scanLine(y), cmsUInt32Number(srcImage.width()));
+  const auto width = cmsUInt32Number(input.width());
+  for (int y = 0; y < input.height(); ++y) {
+    cmsDoTransform(transform, input.constScanLine(y), outImage.scanLine(y), width);
   }
-
   cmsDeleteTransform(transform);
-  cmsCloseProfile(src);
-  cmsCloseProfile(dst);
+  input = QImage();
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
   const QColorSpace dstColorSpace(QColorSpace::fromIccProfile(dstProfile));
@@ -213,21 +241,21 @@ QImage convertColorImageWithLcms(const QImage& image, const QByteArray& srcProfi
   }
 #endif
 
+  if (!convertedInput) {
+    return outImage;
+  }
+
 #if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
   if (image.depth() > 8) {
     if (image.hasAlphaChannel()) {
-      return outImage.convertToFormat(QImage::Format_RGBA64);
+      return outImage;
     }
     return outImage.convertToFormat(QImage::Format_RGBX64);
   }
 #endif
 
   if (image.hasAlphaChannel()) {
-#if QT_VERSION >= QT_VERSION_CHECK(5, 5, 0)
-    return outImage.convertToFormat(QImage::Format_RGBA8888);
-#else
-    return outImage.convertToFormat(QImage::Format_ARGB32);
-#endif
+    return outImage;
   }
 
   return outImage.convertToFormat(QImage::Format_RGB32);
