@@ -7,6 +7,7 @@ set(sources
     TestImageId.cpp
     TestImageMetadataCopier.cpp
     TestMargins.cpp
+    TestOutputBitDepth.cpp
     TestPageId.cpp
     TestPageRange.cpp
     TestPageSequence.cpp

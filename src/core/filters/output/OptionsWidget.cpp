@@ -68,6 +68,12 @@ OptionsWidget::OptionsWidget(std::shared_ptr<Settings> settings, const PageSelec
   outputProfileBox->addItem(tr("eciRGB v2 (ICC v4)"), static_cast<int>(OutputColorProfileMode::EciRgbV2));
   outputProfileBox->addItem(tr("Custom ICC"), static_cast<int>(OutputColorProfileMode::Custom));
 
+  bitDepthBox->addItem(tr("Same as source"), static_cast<int>(OutputBitDepth::Source));
+  bitDepthBox->addItem(tr("8 bits per channel"), static_cast<int>(OutputBitDepth::Bits8));
+  bitDepthBox->addItem(tr("16 bits per channel"), static_cast<int>(OutputBitDepth::Bits16));
+  bitDepthBox->setToolTip(tr("Bits per channel of colour and grayscale output. Black and white output stays 1-bit, "
+                             "JPEG is always 8-bit."));
+
   renderingIntentBox->addItem(tr("Relative colorimetric"),
                               static_cast<int>(OutputRenderingIntent::RelativeColorimetric));
   renderingIntentBox->addItem(tr("Perceptual"), static_cast<int>(OutputRenderingIntent::Perceptual));
@@ -228,6 +234,17 @@ void OptionsWidget::renderingIntentChanged(const int idx) {
 
   OutputFileFormatSettings::getInstance().setRenderingIntent(intent);
   updateColorManagementDisplay();
+  emit invalidateAllThumbnails();
+  emit reloadRequested();
+}
+
+void OptionsWidget::bitDepthChanged(const int idx) {
+  const auto bitDepth = static_cast<OutputBitDepth>(bitDepthBox->itemData(idx).toInt());
+  if (OutputFileFormatSettings::getInstance().bitDepth() == bitDepth) {
+    return;
+  }
+
+  OutputFileFormatSettings::getInstance().setBitDepth(bitDepth);
   emit invalidateAllThumbnails();
   emit reloadRequested();
 }
@@ -711,6 +728,14 @@ void OptionsWidget::updateColorManagementDisplay() {
   customProfilePathLabel->setVisible(enableColorManagement && customProfileSelected);
   renderingIntentLabel->setEnabled(enableColorManagement && (profileMode != OutputColorProfileMode::Source));
   renderingIntentBox->setEnabled(enableColorManagement && (profileMode != OutputColorProfileMode::Source));
+
+  bitDepthBox->blockSignals(true);
+  bitDepthBox->setCurrentIndex(
+      bitDepthBox->findData(static_cast<int>(OutputFileFormatSettings::getInstance().bitDepth())));
+  bitDepthBox->blockSignals(false);
+  const bool bitDepthApplies = (m_outputFileFormat != OutputFileFormat::Jpeg);
+  bitDepthLabel->setEnabled(bitDepthApplies);
+  bitDepthBox->setEnabled(bitDepthApplies);
 }
 
 void OptionsWidget::updateMetadataDisplay() {
@@ -1102,6 +1127,7 @@ void OptionsWidget::setupUiConnections() {
   CONNECT(customProfileButton, SIGNAL(clicked()), this, SLOT(chooseCustomProfileClicked()));
   CONNECT(renderingIntentBox, SIGNAL(currentIndexChanged(int)), this, SLOT(renderingIntentChanged(int)));
   CONNECT(preserveMetadataCB, SIGNAL(toggled(bool)), this, SLOT(preserveMetadataToggled(bool)));
+  CONNECT(bitDepthBox, SIGNAL(currentIndexChanged(int)), this, SLOT(bitDepthChanged(int)));
   CONNECT(colorModeSelector, SIGNAL(currentIndexChanged(int)), this, SLOT(colorModeChanged(int)));
   CONNECT(thresholdMethodBox, SIGNAL(currentIndexChanged(int)), this, SLOT(thresholdMethodChanged(int)));
   CONNECT(fillingColorBox, SIGNAL(currentIndexChanged(int)), this, SLOT(fillingColorChanged(int)));

@@ -89,6 +89,8 @@ class OptionsWidget : public FilterOptionsWidget, private Ui::OptionsWidget {
 
   void preserveMetadataToggled(bool checked);
 
+  void bitDepthChanged(int idx);
+
   void blackOnWhiteToggled(bool value);
 
   void applyProcessingParamsClicked();

@@ -101,6 +101,41 @@ bool outputRenderingIntentFromString(const QString& str, OutputRenderingIntent* 
   return false;
 }
 
+QString outputBitDepthToString(const OutputBitDepth bitDepth) {
+  switch (bitDepth) {
+    case OutputBitDepth::Source:
+      return QStringLiteral("source");
+    case OutputBitDepth::Bits8:
+      return QStringLiteral("8");
+    case OutputBitDepth::Bits16:
+      return QStringLiteral("16");
+  }
+
+  return QStringLiteral("source");
+}
+
+bool outputBitDepthFromString(const QString& str, OutputBitDepth* bitDepth) {
+  if (!bitDepth) {
+    return false;
+  }
+
+  const QString token = normalizeToken(str);
+  if (token == QStringLiteral("source")) {
+    *bitDepth = OutputBitDepth::Source;
+    return true;
+  }
+  if (token == QStringLiteral("8")) {
+    *bitDepth = OutputBitDepth::Bits8;
+    return true;
+  }
+  if (token == QStringLiteral("16")) {
+    *bitDepth = OutputBitDepth::Bits16;
+    return true;
+  }
+
+  return false;
+}
+
 OutputFileFormatSettings& OutputFileFormatSettings::getInstance() {
   static OutputFileFormatSettings settings;
   return settings;
@@ -146,10 +181,19 @@ void OutputFileFormatSettings::setPreserveMetadata(const bool preserve) {
   m_preserveMetadata = preserve;
 }
 
+OutputBitDepth OutputFileFormatSettings::bitDepth() const {
+  return m_bitDepth;
+}
+
+void OutputFileFormatSettings::setBitDepth(const OutputBitDepth bitDepth) {
+  m_bitDepth = bitDepth;
+}
+
 void OutputFileFormatSettings::resetToDefault() {
   m_format = OutputFileFormat::Tiff;
   m_colorProfileMode = OutputColorProfileMode::Source;
   m_renderingIntent = OutputRenderingIntent::RelativeColorimetric;
   m_customIccProfilePath.clear();
   m_preserveMetadata = true;
+  m_bitDepth = OutputBitDepth::Source;
 }

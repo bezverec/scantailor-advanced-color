@@ -30,6 +30,8 @@ Also new in this fork:
 
 - Output: **Preserve metadata (EXIF, XMP, IPTC)**, on by default, copies descriptive metadata from the source image
   to the output files via `Exiv2`
+- Output: **Bit depth** (same as source / 8 / 16 bits per channel) for colour and grayscale output; colour
+  conversion runs at the higher of the two precisions
 - fixed a crash after confirming Fix DPI opened from the Page Layout panel
 
 ## What's new in 1.1.3-experimental

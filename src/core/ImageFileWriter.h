@@ -8,6 +8,7 @@
 #include <QString>
 
 #include "OutputFileFormat.h"
+#include "OutputFileFormatSettings.h"
 
 class ImageFileWriter {
  public:
@@ -21,6 +22,13 @@ class ImageFileWriter {
    * Failing to copy metadata does not fail the write.
    */
   static bool writeImage(const QString& filePath, const QImage& image, const QString& metadataSourcePath);
+
+  /**
+   * Converts colour / grayscale images to 8 or 16 bits per channel, keeping resolution,
+   * text keys and colour space. Black and white (1-bit) and palette images are returned
+   * as they are, as is everything for OutputBitDepth::Source.
+   */
+  static QImage convertToBitDepth(const QImage& image, OutputBitDepth bitDepth);
 };
 
 #endif  // SCANTAILOR_CORE_IMAGEFILEWRITER_H_

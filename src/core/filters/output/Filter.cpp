@@ -65,6 +65,7 @@ QDomElement Filter::saveSettings(const ProjectWriter& writer, QDomDocument& doc)
     outputFormatEl.setAttribute("customIccProfilePath", OutputFileFormatSettings::getInstance().customIccProfilePath());
   }
   outputFormatEl.setAttribute("preserveMetadata", OutputFileFormatSettings::getInstance().preserveMetadata() ? "1" : "0");
+  outputFormatEl.setAttribute("bitDepth", outputBitDepthToString(OutputFileFormatSettings::getInstance().bitDepth()));
   filterEl.appendChild(outputFormatEl);
 
   writer.enumPages(
@@ -117,6 +118,11 @@ void Filter::loadSettings(const ProjectReader& reader, const QDomElement& filter
     // Projects saved before this option existed get the default (on).
     OutputFileFormatSettings::getInstance().setPreserveMetadata(outputFormatEl.attribute("preserveMetadata", "1")
                                                                 != "0");
+
+    OutputBitDepth bitDepth = OutputBitDepth::Source;
+    if (outputBitDepthFromString(outputFormatEl.attribute("bitDepth"), &bitDepth)) {
+      OutputFileFormatSettings::getInstance().setBitDepth(bitDepth);
+    }
   }
 
   const QString pageTagName("page");

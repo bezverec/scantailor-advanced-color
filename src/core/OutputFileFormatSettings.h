@@ -12,6 +12,9 @@ enum class OutputColorProfileMode { Source, SRgb, AdobeRgb, EciRgbV2, Custom };
 
 enum class OutputRenderingIntent { Perceptual, RelativeColorimetric, Saturation, AbsoluteColorimetric };
 
+/** Bits per channel of colour / grayscale output. Black and white output stays 1-bit. */
+enum class OutputBitDepth { Source, Bits8, Bits16 };
+
 QString outputColorProfileModeToString(OutputColorProfileMode mode);
 
 bool outputColorProfileModeFromString(const QString& str, OutputColorProfileMode* mode);
@@ -19,6 +22,10 @@ bool outputColorProfileModeFromString(const QString& str, OutputColorProfileMode
 QString outputRenderingIntentToString(OutputRenderingIntent intent);
 
 bool outputRenderingIntentFromString(const QString& str, OutputRenderingIntent* intent);
+
+QString outputBitDepthToString(OutputBitDepth bitDepth);
+
+bool outputBitDepthFromString(const QString& str, OutputBitDepth* bitDepth);
 
 class OutputFileFormatSettings {
  public:
@@ -45,6 +52,10 @@ class OutputFileFormatSettings {
 
   void setPreserveMetadata(bool preserve);
 
+  OutputBitDepth bitDepth() const;
+
+  void setBitDepth(OutputBitDepth bitDepth);
+
   void resetToDefault();
 
  private:
@@ -55,6 +66,7 @@ class OutputFileFormatSettings {
   OutputRenderingIntent m_renderingIntent = OutputRenderingIntent::RelativeColorimetric;
   QString m_customIccProfilePath;
   bool m_preserveMetadata = true;
+  OutputBitDepth m_bitDepth = OutputBitDepth::Source;
 };
 
 #endif  // SCANTAILOR_CORE_OUTPUTFILEFORMATSETTINGS_H_

@@ -302,6 +302,46 @@
        </layout>
       </item>
       <item>
+       <layout class="QHBoxLayout" name="horizontalLayoutBitDepth">
+         <item>
+          <spacer name="spacerBitDepthLeft">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>1</width>
+             <height>1</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        <item>
+         <widget class="QLabel" name="bitDepthLabel">
+          <property name="text">
+           <string>Bit depth:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="bitDepthBox"/>
+        </item>
+         <item>
+          <spacer name="spacerBitDepthRight">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>1</width>
+             <height>1</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+       </layout>
+      </item>
+      <item>
        <widget class="QCheckBox" name="preserveMetadataCB">
         <property name="toolTip">
          <string>Copy descriptive EXIF, XMP and IPTC metadata (camera, date, author, copyright, GPS...) from the source image to the output files.</string>
