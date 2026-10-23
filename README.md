@@ -115,7 +115,7 @@ In particular, the current codebase contains support for:
 - preserving higher bit-depth image paths where Qt / libtiff make that possible
 - preserving and propagating ICC profile / color space metadata through the processing pipeline
 - writing TIFF output with embedded ICC profiles
-- selecting output ICC behavior (`Embedded / Source`, `sRGB`, `Adobe RGB`, `eciRGB v2 (ICC v4)`, or custom ICC) with rendering intent
+- selecting output ICC behavior (`Embedded / Source`, `sRGB (ICC v4)`, `Adobe RGB (1998)`, `eciRGB v2 (ICC v4)`, or custom ICC) with rendering intent
 - using Little CMS 2 (`lcms2`) helpers for fallback ICC profile generation and color-space conversion when needed
 - copying descriptive EXIF / XMP / IPTC metadata (camera, capture date, author, copyright, GPS, captions) from the
   source image to TIFF / PNG / JPEG output via `Exiv2` (**Output > Preserve metadata**, on by default). Tags describing
@@ -197,9 +197,9 @@ The current output profile policies are:
 - `Embedded / Source`
   Keeps the effective profile coming from the working image when available. This is the most conservative option when
   the goal is to avoid unnecessary color reinterpretation.
-- `sRGB`
+- `sRGB (ICC v4)`
   Uses the bundled `sRGB v4 ICC preference` profile.
-- `Adobe RGB`
+- `Adobe RGB (1998)`
   Uses the bundled `Adobe RGB (1998)` profile.
 - `eciRGB v2 (ICC v4)`
   Uses the bundled `eciRGB v2 ICCv4` profile (ICC version 4.2). This is the most relevant preset for preservation-oriented workflows that

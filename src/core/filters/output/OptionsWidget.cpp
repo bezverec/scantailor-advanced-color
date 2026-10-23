@@ -63,8 +63,8 @@ OptionsWidget::OptionsWidget(std::shared_ptr<Settings> settings, const PageSelec
   outputFormatBox->addItem(tr("PNG"), static_cast<int>(OutputFileFormat::Png));
   outputFormatBox->addItem(tr("JPEG"), static_cast<int>(OutputFileFormat::Jpeg));
   outputProfileBox->addItem(tr("Embedded / Source"), static_cast<int>(OutputColorProfileMode::Source));
-  outputProfileBox->addItem(tr("sRGB"), static_cast<int>(OutputColorProfileMode::SRgb));
-  outputProfileBox->addItem(tr("Adobe RGB"), static_cast<int>(OutputColorProfileMode::AdobeRgb));
+  outputProfileBox->addItem(tr("sRGB (ICC v4)"), static_cast<int>(OutputColorProfileMode::SRgb));
+  outputProfileBox->addItem(tr("Adobe RGB (1998)"), static_cast<int>(OutputColorProfileMode::AdobeRgb));
   outputProfileBox->addItem(tr("eciRGB v2 (ICC v4)"), static_cast<int>(OutputColorProfileMode::EciRgbV2));
   outputProfileBox->addItem(tr("Custom ICC"), static_cast<int>(OutputColorProfileMode::Custom));
 
