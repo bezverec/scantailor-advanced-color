@@ -13,6 +13,7 @@
 #include <boost/function.hpp>
 #include <memory>
 #include <set>
+#include <unordered_map>
 #include <vector>
 
 #include "AbstractCommand.h"
@@ -265,6 +266,11 @@ class MainWindow : public QMainWindow, private FilterUiInterface, private Ui::Ma
 
   bool isOutputFilter(int filterIdx) const;
 
+  quint64 estimateBatchPageMemory(const PageInfo& page) const;
+
+  /** Starts the next batch page if a thread is free and memory allows; returns whether it did. */
+  bool submitNextBatchTask();
+
   PageView getCurrentView() const;
 
   void updateMainArea();
@@ -326,6 +332,8 @@ class MainWindow : public QMainWindow, private FilterUiInterface, private Ui::Ma
   std::unique_ptr<ThumbnailSequence> m_thumbSequence;
   std::unique_ptr<WorkerThreadPool> m_workerThreadPool;
   std::unique_ptr<ProcessingTaskQueue> m_batchQueue;
+  // Estimated peak memory of each batch task currently running.
+  std::unordered_map<const BackgroundTask*, quint64> m_batchMemoryReservations;
   std::unique_ptr<ProcessingTaskQueue> m_interactiveQueue;
   QStackedLayout* m_imageFrameLayout;
   QStackedLayout* m_optionsFrameLayout;

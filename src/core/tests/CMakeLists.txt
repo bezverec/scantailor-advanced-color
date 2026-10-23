@@ -12,6 +12,7 @@ set(sources
     TestPageSequence.cpp
     TestSelectContentApply.cpp
     TestSmartFilenameOrdering.cpp
+    TestSystemMemory.cpp
     TestUnits.cpp)
 
 add_executable(core_tests ${sources})

@@ -27,6 +27,9 @@ class ProcessingTaskQueue {
    */
   BackgroundTaskPtr takeForProcessing();
 
+  /** The page takeForProcessing() would return next, or a null PageInfo if there is none. */
+  PageInfo nextPageForProcessing() const;
+
   void processingFinished(const BackgroundTaskPtr& task);
 
   /**

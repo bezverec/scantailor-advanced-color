@@ -48,6 +48,10 @@ void Filter::preUpdateUI(FilterUiInterface* ui, const PageInfo& pageInfo) {
   ui->setOptionsWidget(m_optionsWidget.get(), ui->KEEP_OWNERSHIP);
 }
 
+Dpi Filter::outputDpi(const PageId& pageId) const {
+  return m_settings->getParams(pageId).outputDpi();
+}
+
 QDomElement Filter::saveSettings(const ProjectWriter& writer, QDomDocument& doc) const {
   QDomElement filterEl(doc.createElement("output"));
   QDomElement outputFormatEl(doc.createElement("file-format"));

@@ -30,6 +30,15 @@ BackgroundTaskPtr ProcessingTaskQueue::takeForProcessing() {
   return nullptr;
 }
 
+PageInfo ProcessingTaskQueue::nextPageForProcessing() const {
+  for (const Entry& ent : m_queue) {
+    if (!ent.takenForProcessing) {
+      return ent.pageInfo;
+    }
+  }
+  return PageInfo();
+}
+
 void ProcessingTaskQueue::processingFinished(const BackgroundTaskPtr& task) {
   auto it(m_queue.begin());
   const auto end(m_queue.end());

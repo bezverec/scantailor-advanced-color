@@ -45,6 +45,7 @@
 #include "PageSequence.h"
 #include "ProcessingIndicationWidget.h"
 #include "ProcessingTaskQueue.h"
+#include "SystemMemory.h"
 #include "ProjectCreationContext.h"
 #include "ProjectOpeningContext.h"
 #include "ProjectPages.h"
@@ -1256,16 +1257,12 @@ void MainWindow::startBatchProcessing() {
   filterList->setBatchProcessingInProgress(true);
   filterList->setEnabled(false);
 
-  BackgroundTaskPtr task(m_batchQueue->takeForProcessing());
-  if (task) {
-    do {
-      m_workerThreadPool->submitTask(task);
-      if (!m_workerThreadPool->hasSpareCapacity()) {
-        break;
-      }
-    } while ((task = m_batchQueue->takeForProcessing()));
-  } else {
+  m_batchMemoryReservations.clear();
+  if (m_batchQueue->nextPageForProcessing().isNull()) {
     stopBatchProcessing();
+  } else {
+    while (submitNextBatchTask()) {
+    }
   }
 
   PageInfo selectedPage(m_batchQueue->selectedPage());
@@ -1288,6 +1285,7 @@ void MainWindow::stopBatchProcessing(MainAreaAction mainArea) {
 
   m_batchQueue->cancelAndClear();
   m_batchQueue.reset();
+  m_batchMemoryReservations.clear();
 
   filterList->setBatchProcessingInProgress(false);
   filterList->setEnabled(true);
@@ -1310,6 +1308,7 @@ void MainWindow::filterResult(const BackgroundTaskPtr& task, const FilterResultP
   if (m_batchQueue) {
     m_batchQueue->processingFinished(task);
   }
+  m_batchMemoryReservations.erase(task.get());
 
   if (task->isCancelled()) {
     return;
@@ -1360,13 +1359,8 @@ void MainWindow::filterResult(const BackgroundTaskPtr& task, const FilterResultP
       return;
     }
 
-    do {
-      const BackgroundTaskPtr task(m_batchQueue->takeForProcessing());
-      if (!task) {
-        break;
-      }
-      m_workerThreadPool->submitTask(task);
-    } while (m_workerThreadPool->hasSpareCapacity());
+    while (submitNextBatchTask()) {
+    }
 
     const PageInfo page(m_batchQueue->selectedPage());
     if (!page.isNull()) {
@@ -1374,6 +1368,43 @@ void MainWindow::filterResult(const BackgroundTaskPtr& task, const FilterResultP
     }
   }
 }  // MainWindow::filterResult
+
+quint64 MainWindow::estimateBatchPageMemory(const PageInfo& page) const {
+  Dpi outputDpi;
+  if (isOutputFilter(m_curFilter)) {
+    outputDpi = m_stages->outputFilter()->outputDpi(page.id());
+  }
+  return system_memory::estimatePageBytes(page.metadata().size(), page.metadata().dpi(), outputDpi);
+}
+
+bool MainWindow::submitNextBatchTask() {
+  if (!m_batchQueue || !m_workerThreadPool->hasSpareCapacity()) {
+    return false;
+  }
+  const PageInfo page(m_batchQueue->nextPageForProcessing());
+  if (page.isNull()) {
+    return false;
+  }
+
+  // Start another page only if memory allows it; the next finished page tries again.
+  const quint64 needed = estimateBatchPageMemory(page);
+  quint64 reserved = 0;
+  for (const auto& reservation : m_batchMemoryReservations) {
+    reserved += reservation.second;
+  }
+  if (!system_memory::canStartPage(system_memory::availableBytes(), reserved, needed,
+                                   int(m_batchMemoryReservations.size()))) {
+    return false;
+  }
+
+  const BackgroundTaskPtr task(m_batchQueue->takeForProcessing());
+  if (!task) {
+    return false;
+  }
+  m_batchMemoryReservations[task.get()] = needed;
+  m_workerThreadPool->submitTask(task);
+  return true;
+}
 
 void MainWindow::debugToggled(const bool enabled) {
   m_debug = enabled;

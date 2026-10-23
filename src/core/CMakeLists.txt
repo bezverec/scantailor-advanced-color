@@ -49,6 +49,7 @@ set(common_sources
     ImageMetadataLoader.cpp ImageMetadataLoader.h
     ImageFileWriter.cpp ImageFileWriter.h
     ImageMetadataCopier.cpp ImageMetadataCopier.h
+    SystemMemory.cpp SystemMemory.h
     RawImageLoader.cpp RawImageLoader.h
     RawSettings.cpp RawSettings.h
     RawMetadataLoader.cpp RawMetadataLoader.h
