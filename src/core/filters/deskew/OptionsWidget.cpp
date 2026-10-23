@@ -3,6 +3,7 @@
 
 #include "OptionsWidget.h"
 
+#include <QButtonGroup>
 #include <utility>
 
 #include <core/DefaultParams.h>
@@ -49,6 +50,15 @@ OptionsWidget::OptionsWidget(std::shared_ptr<Settings> settings, const PageSelec
       m_pageSelectionAccessor(pageSelectionAccessor),
       m_connectionManager(std::bind(&OptionsWidget::setupUiConnections, this)) {
   setupUi(this);
+  // Deskew and oblique each have their own Auto / Manual pair. As auto-exclusive siblings
+  // all four buttons would form a single group, so checking one pair's button would
+  // uncheck the other pair and its mode change would never be signalled.
+  auto* deskewModeGroup = new QButtonGroup(this);
+  deskewModeGroup->addButton(autoBtn);
+  deskewModeGroup->addButton(manualBtn);
+  auto* obliqueModeGroup = new QButtonGroup(this);
+  obliqueModeGroup->addButton(obliqueAutoBtn);
+  obliqueModeGroup->addButton(obliqueManualBtn);
   angleSpinBox->setSuffix(QChar(0x00B0));  // the degree symbol
   angleSpinBox->setRange(-MAX_ANGLE, MAX_ANGLE);
   angleSpinBox->adjustSize();
