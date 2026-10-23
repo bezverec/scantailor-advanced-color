@@ -163,7 +163,11 @@ bool TiffWriter::writeImage(QIODevice& device, const QImage& image) {
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
   if ((image.depth() == 64) && !image.isGrayscale()) {
-    return writeRGBA64Image(tif, image.convertToFormat(QImage::Format_RGBA64), image.hasAlphaChannel());
+    // RGBX64 has the same layout as RGBA64; writing it directly saves a full-size copy.
+    const bool directlyWritable
+        = (image.format() == QImage::Format_RGBA64) || (image.format() == QImage::Format_RGBX64);
+    return writeRGBA64Image(tif, directlyWritable ? image : image.convertToFormat(QImage::Format_RGBA64),
+                            image.hasAlphaChannel());
   }
 #endif
 
@@ -400,7 +404,7 @@ bool TiffWriter::writeARGB32Image(const TiffHandle& tif, const QImage& image) {
 }  // TiffWriter::writeARGB32Image
 
 bool TiffWriter::writeRGBA64Image(const TiffHandle& tif, const QImage& image, const bool writeAlpha) {
-  assert(image.format() == QImage::Format_RGBA64);
+  assert((image.format() == QImage::Format_RGBA64) || (image.format() == QImage::Format_RGBX64));
 
   TIFFSetField(tif.handle(), TIFFTAG_SAMPLESPERPIXEL, uint16_t(writeAlpha ? 4 : 3));
   configureCompression(tif, effectiveColorCompression(image), image);
