@@ -712,16 +712,7 @@ void MainWindow::setOptionsWidget(FilterOptionsWidget* widget, const Ownership o
     return;
   }
 
-  if (m_optionsWidget) {
-    disconnect(m_optionsWidget, SIGNAL(reloadRequested()), this, SLOT(reloadRequested()));
-    disconnect(m_optionsWidget, SIGNAL(invalidateThumbnail(const PageId&)), this,
-               SLOT(invalidateThumbnail(const PageId&)));
-    disconnect(m_optionsWidget, SIGNAL(invalidateThumbnail(const PageInfo&)), this,
-               SLOT(invalidateThumbnail(const PageInfo&)));
-    disconnect(m_optionsWidget, SIGNAL(invalidateAllThumbnails()), this, SLOT(invalidateAllThumbnails()));
-    disconnect(m_optionsWidget, SIGNAL(goToPage(const PageId&)), this, SLOT(goToPage(const PageId&)));
-    disconnect(m_optionsWidget, SIGNAL(fixDpiRequested()), this, SLOT(fixDpiDialogRequested()));
-  }
+  disconnectOptionsWidget();
 
   m_optionsFrameLayout->addWidget(widget);
   m_optionsWidget = widget;
@@ -737,6 +728,20 @@ void MainWindow::setOptionsWidget(FilterOptionsWidget* widget, const Ownership o
   connect(widget, SIGNAL(goToPage(const PageId&)), this, SLOT(goToPage(const PageId&)));
   connect(widget, SIGNAL(fixDpiRequested()), this, SLOT(fixDpiDialogRequested()));
 }  // MainWindow::setOptionsWidget
+
+void MainWindow::disconnectOptionsWidget() {
+  if (!m_optionsWidget) {
+    return;
+  }
+  disconnect(m_optionsWidget, SIGNAL(reloadRequested()), this, SLOT(reloadRequested()));
+  disconnect(m_optionsWidget, SIGNAL(invalidateThumbnail(const PageId&)), this,
+             SLOT(invalidateThumbnail(const PageId&)));
+  disconnect(m_optionsWidget, SIGNAL(invalidateThumbnail(const PageInfo&)), this,
+             SLOT(invalidateThumbnail(const PageInfo&)));
+  disconnect(m_optionsWidget, SIGNAL(invalidateAllThumbnails()), this, SLOT(invalidateAllThumbnails()));
+  disconnect(m_optionsWidget, SIGNAL(goToPage(const PageId&)), this, SLOT(goToPage(const PageId&)));
+  disconnect(m_optionsWidget, SIGNAL(fixDpiRequested()), this, SLOT(fixDpiDialogRequested()));
+}
 
 ImageViewBase* MainWindow::findPrimaryImageView(QWidget* root) {
   if (!root) {
@@ -1379,7 +1384,11 @@ void MainWindow::fixDpiDialogRequested() {
     return;
   }
 
-  assert(!m_fixDpiDialog);
+  if (m_fixDpiDialog) {
+    m_fixDpiDialog->raise();
+    m_fixDpiDialog->activateWindow();
+    return;
+  }
   m_fixDpiDialog = new FixDpiDialog(m_pages->toImageFileInfo(), this);
   m_fixDpiDialog->setAttribute(Qt::WA_DeleteOnClose);
   m_fixDpiDialog->setWindowModality(Qt::WindowModal);
@@ -1390,13 +1399,17 @@ void MainWindow::fixDpiDialogRequested() {
 }
 
 void MainWindow::fixedDpiSubmitted() {
-  assert(m_fixDpiDialog);
+  // Use the dialog that emitted accepted(), not m_fixDpiDialog, which may already be gone.
+  auto* dialog = qobject_cast<FixDpiDialog*>(sender());
+  if (!dialog) {
+    return;
+  }
   assert(m_pages);
   assert(m_thumbSequence);
 
   const PageInfo selectedPageBefore(m_thumbSequence->selectionLeader());
 
-  m_pages->updateMetadataFrom(m_fixDpiDialog->files());
+  m_pages->updateMetadataFrom(dialog->files());
 
   // The thumbnail list also stores page metadata, including the DPI.
   m_thumbSequence->reset(currentPageSequence(), ThumbnailSequence::KEEP_SELECTION,
@@ -1617,6 +1630,9 @@ void MainWindow::removeWidgetsFromLayout(QLayout* layout) {
 }
 
 void MainWindow::removeFilterOptionsWidget() {
+  // Filters usually keep ownership of their options widget and hand the same
+  // instance back later, so its signals must not stay connected to us.
+  disconnectOptionsWidget();
   removeWidgetsFromLayout(m_optionsFrameLayout);
   // Delete the old widget we were owning, if any.
   m_optionsWidgetCleanup.clear();

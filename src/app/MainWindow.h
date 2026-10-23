@@ -245,6 +245,8 @@ class MainWindow : public QMainWindow, private FilterUiInterface, private Ui::Ma
 
   void removeFilterOptionsWidget();
 
+  void disconnectOptionsWidget();
+
   void removeImageWidget();
 
   void updateProjectActions();
