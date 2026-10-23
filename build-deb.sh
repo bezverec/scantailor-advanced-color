@@ -26,7 +26,7 @@ echo "Building ScanTailor Advanced Color ${VERSION}"
 
 # Configure and build
 cd "$BUILD_DIR"
-cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release ..
+cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release -DENABLE_NATIVE_ARCH=OFF ..
 make -j"$(nproc)"
 
 # Install into staging directory for the .deb

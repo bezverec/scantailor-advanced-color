@@ -20,6 +20,16 @@ set(CMAKE_CXX_STANDARD 17)
 # Option to disable tests for offline/chroot builds where Boost or test deps may be missing (issue #61).
 option(BUILD_TESTS "Build unit tests (math_tests, imageproc_tests, core_tests, foundation_tests, qt_tests)" ON)
 
+# -march=native ties the binaries to the build machine's CPU, so turn it off for
+# redistributable packages; it cannot work when cross-compiling at all.
+if (CMAKE_CROSSCOMPILING)
+  set(_native_arch_default OFF)
+else()
+  set(_native_arch_default ON)
+endif()
+option(ENABLE_NATIVE_ARCH "Optimize GCC release builds for the build machine's CPU (-march=native)."
+       ${_native_arch_default})
+
 if (NOT DEFAULT_COMPILER_FLAGS_IS_SET)
   if (MSVC)
     option(WIN_XP "Whether to build for Windows XP." OFF)
@@ -45,7 +55,9 @@ if (NOT DEFAULT_COMPILER_FLAGS_IS_SET)
   if (CMAKE_COMPILER_IS_GNUCC AND CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Wpedantic -Werror=return-type -Wno-unused")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -Werror=return-type -Wno-unused")
-    add_compile_options("$<$<CONFIG:RELEASE>:-march=native;-mtune=native>")
+    if (ENABLE_NATIVE_ARCH)
+      add_compile_options("$<$<CONFIG:RELEASE>:-march=native;-mtune=native>")
+    endif()
   endif()
 
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}"
