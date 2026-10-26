@@ -784,10 +784,10 @@ To build a `.deb` package (with application icon and menu entry):
 ./build-deb.sh
 ```
 
-This produces `scantailor-advanced_<version>_<arch>.deb` in the project root. Install with:
+This produces `scantailor-advanced-color_<version>_<arch>.deb` in the project root. Install with:
 
 ```bash
-sudo dpkg -i scantailor-advanced_*.deb
+sudo apt install ./scantailor-advanced-color_*.deb
 ```
 
 ### Building a Windows `.exe` from Linux (cross-compile)

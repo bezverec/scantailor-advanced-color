@@ -22,6 +22,9 @@ if [[ -z "$VERSION" ]]; then
   exit 1
 fi
 
+# Distinct from upstream's scantailor-advanced package; both install /usr/bin/scantailor.
+PACKAGE="scantailor-advanced-color"
+
 echo "Building ScanTailor Advanced Color ${VERSION}"
 
 # Configure and build
@@ -55,19 +58,21 @@ if [[ -z "$DEPS" ]]; then
 fi
 
 cat > "${DEBIAN_DIR}/control" << EOF
-Package: scantailor-advanced
+Package: ${PACKAGE}
 Version: ${VERSION}
 Section: graphics
 Priority: optional
 Architecture: ${ARCH}
 Depends: ${DEPS}
+Conflicts: scantailor, scantailor-advanced
+Replaces: scantailor-advanced
 Maintainer: 4lex4 <4lex49@zoho.com>
 Description: Interactive post-processing tool for scanned pages
  ScanTailor Advanced Color merges features from ScanTailor Featured and Enhanced,
  with improvements for page splitting, deskewing, content selection,
  margins, dewarping and output. Supports batch processing and multiple
  output formats.
-Homepage: https://github.com/4lex4/scantailor-advanced
+Homepage: https://github.com/bezverec/scantailor-advanced-color
 EOF
 
 # Optional: refresh icon and desktop caches after install
@@ -88,6 +93,6 @@ chmod 755 "${DEBIAN_DIR}/postinst"
 
 # Build the .deb
 cd "$SCRIPT_DIR"
-dpkg-deb --root-owner-group --build "$PKG_DIR" "scantailor-advanced_${VERSION}_${ARCH}.deb"
+dpkg-deb --root-owner-group --build "$PKG_DIR" "${PACKAGE}_${VERSION}_${ARCH}.deb"
 
-echo "Done: scantailor-advanced_${VERSION}_${ARCH}.deb"
+echo "Done: ${PACKAGE}_${VERSION}_${ARCH}.deb"
