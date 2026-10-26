@@ -293,8 +293,13 @@ MainWindow::MainWindow()
           SLOT(pastLastPageContextMenuRequested(const QPoint&)));
   connect(selectionModeBtn, SIGNAL(clicked(bool)), m_thumbSequence.get(), SLOT(setSelectionModeEnabled(bool)));
 
-  connect(thumbView->verticalScrollBar(), SIGNAL(sliderMoved(int)), this, SLOT(thumbViewScrolled()));
-  connect(thumbView->verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(thumbViewScrolled()));
+  // Only scrolling by the user (wheel, keys, scroll bar) may turn "Keep current page in view"
+  // off; relayouts of the thumbnails move the scroll bar too. Queued, because the view has
+  // not scrolled yet when these signals are emitted.
+  connect(thumbView->verticalScrollBar(), SIGNAL(actionTriggered(int)), this, SLOT(thumbViewScrolled()),
+          Qt::QueuedConnection);
+  connect(thumbView->verticalScrollBar(), SIGNAL(sliderMoved(int)), this, SLOT(thumbViewScrolled()),
+          Qt::QueuedConnection);
   connect(focusButton, SIGNAL(clicked(bool)), this, SLOT(thumbViewFocusToggled(bool)));
   connect(sortOptions, SIGNAL(currentIndexChanged(int)), this, SLOT(pageOrderingChanged(int)));
   connect(thumbColumnViewBtn, &QToolButton::clicked, this, [this, &settings](bool checked) {
@@ -1138,14 +1143,15 @@ void MainWindow::thumbViewScrolled() {
   const QRectF viewportRect(thumbView->viewport()->rect());
   const QRectF viewportItemRect(thumbView->viewportTransform().mapRect(rect));
 
-  const double intersectionThreshold = 0.5;
-  if ((viewportItemRect.top() >= viewportRect.top())
-      && (viewportItemRect.top() + viewportItemRect.height() * intersectionThreshold <= viewportRect.bottom())) {
-    // Item is visible.
-  } else if ((viewportItemRect.bottom() <= viewportRect.bottom())
-             && (viewportItemRect.bottom() - viewportItemRect.height() * intersectionThreshold >= viewportRect.top())) {
-    // Item is visible.
-  } else {
+  // Use the same margin the view keeps when following the page. With a looser test, the
+  // next relayout would scroll back to the page against the direction the user scrolls.
+  const int scrollMargin = 20;
+  const QRectF followedArea(viewportRect.adjusted(0, scrollMargin, 0, -scrollMargin));
+  const bool stillFollowed = (viewportItemRect.height() > followedArea.height())
+                                 ? viewportItemRect.intersects(viewportRect)
+                                 : ((viewportItemRect.top() >= followedArea.top())
+                                    && (viewportItemRect.bottom() <= followedArea.bottom()));
+  if (!stillFollowed) {
     focusButton->setChecked(false);
   }
 }

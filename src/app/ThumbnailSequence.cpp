@@ -240,6 +240,8 @@ class ThumbnailSequence::Impl {
   std::shared_ptr<const PageOrderProvider> m_orderProvider;
   GraphicsScene m_graphicsScene;
   QRectF m_sceneRect;
+  // Where the selection leader was after the last layout, to notice when a layout moves it.
+  QRectF m_laidOutLeaderRect;
   bool m_selectionMode;
   std::unique_ptr<ViewportRubberBandFilter> m_rubberBandFilter;
 };
@@ -659,14 +661,22 @@ void ThumbnailSequence::Impl::updateSceneItemsPos() {
   }
 
   commitSceneRect();
+
+  // Thumbnails above the selected one change size when they are regenerated (e.g. after
+  // cropping), which moves the selected one. Report that, so the view can follow it.
+  if (m_selectionLeader) {
+    const CompositeItem* composite = m_selectionLeader->composite;
+    const QRectF leaderRect(composite->mapToScene(composite->boundingRect()).boundingRect());
+    if (leaderRect != m_laidOutLeaderRect) {
+      m_laidOutLeaderRect = leaderRect;
+      m_owner.emitNewSelectionLeader(m_selectionLeader->pageInfo, composite, REDUNDANT_SELECTION);
+    }
+  }
 }
 
 void ThumbnailSequence::Impl::invalidateThumbnailImpl(const ItemsById::iterator idIt) {
   CompositeItem* const newComposite = getCompositeItem(&*idIt, idIt->pageInfo).release();
   CompositeItem* const oldComposite = idIt->composite;
-  const QSizeF oldSize(oldComposite->boundingRect().size());
-  const QSizeF newSize(newComposite->boundingRect().size());
-  const QPointF oldPos(newComposite->pos());
 
   idIt->composite = newComposite;
   idIt->incompleteThumbnail = newComposite->incompleteThumbnail();
@@ -685,14 +695,8 @@ void ThumbnailSequence::Impl::invalidateThumbnailImpl(const ItemsById::iterator 
   // Move our item to its intended position.
   m_itemsInOrder.relocate(afterNew, m_itemsInOrder.begin());
 
+  // Also reports the selection leader if this moved or resized it.
   updateSceneItemsPos();
-
-  // Possibly emit the newSelectionLeader() signal.
-  if (m_selectionLeader == &*idIt) {
-    if ((oldSize != newSize) || (oldPos != idIt->composite->pos())) {
-      m_owner.emitNewSelectionLeader(idIt->pageInfo, idIt->composite, REDUNDANT_SELECTION);
-    }
-  }
 }  // ThumbnailSequence::Impl::invalidateThumbnailImpl
 
 void ThumbnailSequence::Impl::invalidateAllThumbnails() {
