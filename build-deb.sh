@@ -66,7 +66,7 @@ Architecture: ${ARCH}
 Depends: ${DEPS}
 Conflicts: scantailor, scantailor-advanced
 Replaces: scantailor-advanced
-Maintainer: 4lex4 <4lex49@zoho.com>
+Maintainer: Jan Houserek <jan.houserek@gmail.com>
 Description: Interactive post-processing tool for scanned pages
  ScanTailor Advanced Color merges features from ScanTailor Featured and Enhanced,
  with improvements for page splitting, deskewing, content selection,
