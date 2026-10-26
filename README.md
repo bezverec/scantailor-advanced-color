@@ -10,7 +10,7 @@ characteristics as much as possible.
 ### Screenshot
 <img width="2560" height="1392" alt="scantailor_advanced_color_1 1 3" src="https://github.com/user-attachments/assets/cd272470-cad1-4eae-af01-30c44896315c" />
 
-## What's new in 1.2.1-experimental (rc1)
+## What's new in 1.2.1-experimental (rc2)
 
 Brings in the application fixes and features of upstream `ScanTailor Advanced` up to 1.2.1
 (original implementations by Pablo Ventura):
@@ -45,6 +45,9 @@ Fixes:
 - Split Pages: a layout applied to all pages was lost when the project was saved before the pages were
   processed again, and pages kept showing the old split until then
 - fixed a crash after confirming Fix DPI opened from the Page Layout panel
+- thumbnails: the panel follows the current page again while many pages are processed, and no longer scrolls back
+  against the mouse wheel when thumbnails are regenerated (rc2)
+- Linux: the package is now called `scantailor-advanced-color` and conflicts with the upstream packages (rc2)
 
 ## What's new in 1.1.3-experimental
 
